@@ -8,6 +8,8 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 - New look for the search overlay: drifting aurora gradient behind a frosted-glass panel, a search pill with an animated gradient ring that spins faster while results load, a gradient greeting with one-tap suggestion chips, results grouped in glass cards with item animations, a glowing top-hit card and gradient icon tiles.
 - Violet/magenta/cyan brand palette for light and dark; wallpaper colours (dynamic color) are now off by default and can be turned back on in Settings.
 - Gradient home-screen widget and app icon.
+- Contacts show one-tap Call, Message and WhatsApp icon buttons on every row; the top hit shows an icon row with short captions; the long-press sheet shows icons.
+- Fixed: the list now jumps back to the top hit when results change (it used to stay scrolled), and text on the glass panels is no longer black in dark mode.
 - All motion stops when the system "Remove animations" setting is on.
 
 ### Added

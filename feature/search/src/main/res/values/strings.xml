@@ -60,6 +60,15 @@
     <string name="action_hide">Hide from results</string>
     <string name="action_hide_hint">Undo in Settings → Privacy → Hidden results</string>
 
+    <string name="short_call">Call</string>
+    <string name="short_message">Message</string>
+    <string name="short_whatsapp">WhatsApp</string>
+    <string name="short_email">Email</string>
+    <string name="short_contact">Contact</string>
+    <string name="short_info">App info</string>
+    <string name="short_play_store">Play Store</string>
+    <string name="short_folder">Folder</string>
+
     <string name="greeting">What are you looking for?</string>
     <string name="greeting_sub">Apps, people, files, settings, quick maths. Just start typing.</string>
     <!-- Tapping a chip types it into the search field. Keep them short and universal. -->

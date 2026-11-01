@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -40,6 +41,7 @@ fun ResultActionSheet(
             (listOf(result.primaryAction) + result.secondaryActions).distinct().forEach { action ->
                 ListItem(
                     headlineContent = { Text(actionLabel(action)) },
+                    leadingContent = { ActionGlyph(action, Modifier.size(24.dp)) },
                     modifier = Modifier.clickable { onAction(action) },
                 )
             }

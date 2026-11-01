@@ -12,7 +12,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -126,7 +128,11 @@ fun GlowBorderBox(
             }
             .padding(if (intense) borderWidth + 1.dp else borderWidth),
     ) {
-        Box(Modifier.clip(shape).background(containerColor), content = content)
+        // Explicit content colour: translucent containers defeat contentColorFor(), which
+        // otherwise falls back to black text on our dark glass.
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+            Box(Modifier.clip(shape).background(containerColor), content = content)
+        }
     }
 }
 

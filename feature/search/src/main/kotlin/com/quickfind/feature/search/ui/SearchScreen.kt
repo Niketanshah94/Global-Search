@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -116,6 +118,10 @@ fun SearchScreen(
 ) {
     val dismissThreshold = with(LocalDensity.current) { 96.dp.toPx() }
     val reducedMotion = rememberReducedMotion()
+    // Keyed items make LazyColumn keep the old first item in view when results change, which
+    // pushed the new top hit off screen. Always show the best result first.
+    val listState = rememberLazyListState()
+    LaunchedEffect(state.query, state.topHit?.id) { listState.scrollToItem(0) }
     // Pulling down past the top of the results (or on the bar) closes search (spec 7).
     val pullToDismiss = remember(actions) {
         object : NestedScrollConnection {
@@ -158,6 +164,7 @@ fun SearchScreen(
             shape = RoundedCornerShape(32.dp),
             // Frosted glass: the aurora shows through the panel.
             color = MaterialTheme.colorScheme.surface.copy(alpha = 0.86f),
+            contentColor = MaterialTheme.colorScheme.onSurface,
             border = BorderStroke(1.dp, Color.White.copy(alpha = 0.12f)),
         ) {
             Column(Modifier.fillMaxSize()) {
@@ -165,6 +172,7 @@ fun SearchScreen(
                     SearchField(state, actions, focusRequester, dismissThreshold, pullDownCloses = true, reducedMotion = reducedMotion)
                 }
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
@@ -311,6 +319,7 @@ private fun LazyListScope.results(state: SearchUiState, actions: SearchActions, 
                         onClick = { actions.onResultClick(result) },
                         onLongClick = { actions.onResultLongClick(result) },
                         icon = icon,
+                        onAction = { actions.onAction(result, it) },
                     )
                 }
                 if (section.moreCount > 0 || section.expanded) {
@@ -369,7 +378,7 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
             GlassGroup(Modifier.animateItem()) {
                 empty.pinned.forEachIndexed { i, r ->
                     if (i > 0) RowDivider()
-                    ResultRow(r, { actions.onResultClick(r) }, { actions.onResultLongClick(r) }, icon)
+                    ResultRow(r, { actions.onResultClick(r) }, { actions.onResultLongClick(r) }, icon, onAction = { actions.onAction(r, it) })
                 }
             }
         }
@@ -380,7 +389,7 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
             GlassGroup(Modifier.animateItem()) {
                 empty.recentFiles.forEachIndexed { i, r ->
                     if (i > 0) RowDivider()
-                    ResultRow(r, { actions.onResultClick(r) }, { actions.onResultLongClick(r) }, icon)
+                    ResultRow(r, { actions.onResultClick(r) }, { actions.onResultLongClick(r) }, icon, onAction = { actions.onAction(r, it) })
                 }
             }
         }
@@ -461,6 +470,7 @@ private fun GlassGroup(modifier: Modifier = Modifier, content: @Composable () ->
         modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp),
         shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.08f)),
     ) {
         Column(Modifier.padding(vertical = 4.dp)) { content() }

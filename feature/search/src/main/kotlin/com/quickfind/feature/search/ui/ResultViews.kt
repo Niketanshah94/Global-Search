@@ -4,8 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +17,21 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.ui.unit.Dp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -115,7 +122,9 @@ fun ResultRow(
     onLongClick: () -> Unit,
     icon: IconContent,
     modifier: Modifier = Modifier,
+    onAction: ((ResultAction) -> Unit)? = null,
 ) {
+    val quick = if (onAction != null) rowQuickActions(result) else emptyList()
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -156,8 +165,88 @@ fun ResultRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        if (quick.isNotEmpty() && onAction != null) {
+            Spacer(Modifier.width(4.dp))
+            quick.forEach { action -> QuickActionButton(action, size = 38.dp) { onAction(action) } }
+        }
     }
 }
+
+/** Contacts and numbers get one-tap Call / Message / WhatsApp buttons right on the row. */
+fun rowQuickActions(result: SearchResult): List<ResultAction> = when (result.type) {
+    SourceType.CONTACT, SourceType.PHONE_NUMBER -> allActions(result)
+        .filter { it is ResultAction.Call || it is ResultAction.Sms || it is ResultAction.WhatsApp }
+        .distinctBy { it::class }
+        .take(3)
+    else -> emptyList()
+}
+
+/** Icon row under the top hit: up to four actions, contact actions first. */
+fun topHitQuickActions(result: SearchResult): List<ResultAction> = when (result.type) {
+    SourceType.CONTACT, SourceType.PHONE_NUMBER -> allActions(result).distinctBy { it::class }.take(4)
+    else -> result.secondaryActions.distinctBy { it::class }.take(4)
+}
+
+private fun allActions(result: SearchResult) = listOf(result.primaryAction) + result.secondaryActions
+
+private val WhatsAppGreen = Color(0xFF25D366)
+
+/** The glyph for an action. WhatsApp is drawn as a green bubble with a phone, not the trademarked logo. */
+@Composable
+fun ActionGlyph(action: ResultAction, modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+    val description = actionLabel(action)
+    when (action) {
+        is ResultAction.WhatsApp -> Box(modifier, contentAlignment = Alignment.Center) {
+            Icon(painterResource(UiR.drawable.ic_bubble_round), description, Modifier.fillMaxSize(), tint = WhatsAppGreen)
+            Icon(Icons.Default.Call, null, Modifier.fillMaxSize(0.5f), tint = Color.White)
+        }
+        is ResultAction.Call -> Icon(Icons.Default.Call, description, modifier, tint)
+        is ResultAction.Sms -> Icon(painterResource(UiR.drawable.ic_chat), description, modifier, tint)
+        is ResultAction.Email -> Icon(Icons.Default.Email, description, modifier, tint)
+        is ResultAction.OpenContact -> Icon(Icons.Default.Person, description, modifier, tint)
+        is ResultAction.AppDetails -> Icon(Icons.Default.Info, description, modifier, tint)
+        is ResultAction.Uninstall -> Icon(Icons.Default.Delete, description, modifier, tint)
+        is ResultAction.PlayStore -> Icon(Icons.Default.ShoppingCart, description, modifier, tint)
+        is ResultAction.ShareFile -> Icon(Icons.Default.Share, description, modifier, tint)
+        is ResultAction.OpenFolder -> Icon(painterResource(UiR.drawable.ic_folder), description, modifier, tint)
+        is ResultAction.CopyText -> Icon(painterResource(UiR.drawable.ic_copy), description, modifier, tint)
+        is ResultAction.LaunchApp, is ResultAction.OpenFile, is ResultAction.OpenSetting, is ResultAction.OpenUrl ->
+            Icon(painterResource(UiR.drawable.ic_open), description, modifier, tint)
+    }
+}
+
+@Composable
+fun QuickActionButton(action: ResultAction, size: Dp = 44.dp, onClick: () -> Unit) {
+    FilledTonalIconButton(
+        onClick = onClick,
+        modifier = Modifier.size(size),
+        colors = IconButtonDefaults.filledTonalIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.6f),
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+    ) {
+        ActionGlyph(action, Modifier.size(size * 0.5f))
+    }
+}
+
+/** One- or two-word captions for the top-hit icon row. */
+@Composable
+fun shortActionLabel(action: ResultAction): String = stringResource(
+    when (action) {
+        is ResultAction.Call -> R.string.short_call
+        is ResultAction.Sms -> R.string.short_message
+        is ResultAction.WhatsApp -> R.string.short_whatsapp
+        is ResultAction.Email -> R.string.short_email
+        is ResultAction.OpenContact -> R.string.short_contact
+        is ResultAction.AppDetails -> R.string.short_info
+        is ResultAction.Uninstall -> R.string.action_uninstall
+        is ResultAction.PlayStore -> R.string.short_play_store
+        is ResultAction.ShareFile -> R.string.action_share
+        is ResultAction.OpenFolder -> R.string.short_folder
+        is ResultAction.CopyText -> R.string.action_copy
+        is ResultAction.LaunchApp, is ResultAction.OpenFile, is ResultAction.OpenSetting, is ResultAction.OpenUrl -> R.string.action_open
+    },
+)
 
 /** The single best result; Enter opens it (spec 4.7). */
 @OptIn(ExperimentalFoundationApi::class)
@@ -217,22 +306,34 @@ fun TopHitCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                     result.subtitle?.let {
-                        Text(it, style = MaterialTheme.typography.bodyMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
                     }
                 }
             }
-            val quick = result.secondaryActions.take(3)
+            val quick = topHitQuickActions(result)
             if (quick.isNotEmpty()) {
                 Row(
-                    Modifier.padding(top = 12.dp).horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    Modifier.fillMaxWidth().padding(top = 14.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
                     quick.forEach { action ->
-                        AssistChip(
-                            onClick = { onAction(action) },
-                            label = { Text(actionLabel(action), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            shape = CircleShape,
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                            QuickActionButton(action, size = 48.dp) { onAction(action) }
+                            Text(
+                                shortActionLabel(action),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.padding(top = 4.dp),
+                            )
+                        }
                     }
                 }
             }
