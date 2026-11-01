@@ -77,9 +77,10 @@ the `MANAGE_EXTERNAL_STORAGE` declaration and the Data safety answers.
 
 ## Known gaps and decisions to confirm
 
-- **Not yet verified on a device.** The pure-Kotlin modules (`core:model`, `core:matching`) and the
-  `SearchEngine`/`SearchViewModel` logic have passing unit tests. The Android modules have not
-  been compiled in CI yet; run CI or `./gradlew assembleDebug` first and fix anything it reports.
+- **Not yet verified on a device.** CI builds every module, passes lint, runs the JVM unit
+  tests and produces an R8 release APK. The instrumented tests (Room DAOs, Compose UI),
+  the macrobenchmarks and the Phase 1 acceptance checks in `docs/PLAY_STORE.md` still need a
+  device or emulator.
 - Library versions in `gradle/libs.versions.toml` are pinned to a known-compatible set
   (Kotlin 2.2.21, AGP 8.13.0). Spec 3 asks for the latest stable; bump them in one change.
 - `core:ui` is an extra module so the two feature modules can share the theme.
