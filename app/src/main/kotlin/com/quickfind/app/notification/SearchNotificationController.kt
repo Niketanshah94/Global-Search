@@ -37,7 +37,7 @@ class SearchNotificationController @Inject constructor(
 ) {
     fun start() {
         scope.launch {
-            settings.settings.map { it.persistentNotification }.distinctUntilChanged().collect { on ->
+            settings.loaded.map { it.persistentNotification }.distinctUntilChanged().collect { on ->
                 if (on) show() else NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
             }
         }

@@ -58,11 +58,8 @@ class ActionExecutor @Inject constructor(
                 val launcherApps = activity.getSystemService(LauncherApps::class.java)
                 val userManager = activity.getSystemService(UserManager::class.java)
                 val user = userManager.getUserForSerialNumber(action.userSerial) ?: return fail(activity)
-                if (Build.VERSION.SDK_INT >= 28 && userManager.isQuietModeEnabled(user)) {
-                    // Paused work profile: ask the system to resume it instead of failing silently.
-                    userManager.requestQuietModeEnabled(false, user)
-                    return ActionOutcome.HANDLED
-                }
+                // A paused work profile is left to the system, which offers to turn work apps on.
+                // (requestQuietModeEnabled would need MODIFY_QUIET_MODE or the launcher role.)
                 launcherApps.startMainActivity(ComponentName(action.packageName, action.activityName), user, null, null)
             }
             is ResultAction.AppDetails -> {

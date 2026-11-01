@@ -15,6 +15,7 @@ import com.quickfind.core.data.di.ApplicationScope
 import com.quickfind.core.data.settings.SettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -57,25 +58,27 @@ class IndexScheduler @Inject constructor(
     /** Call once from Application.onCreate. */
     fun start() {
         scope.launch {
-            settings.settings
+            settings.loaded
                 .map { it.filesEnabled && !it.indexingPaused }
                 .distinctUntilChanged()
                 .collect { active -> if (active) schedulePeriodic() else cancelAll() }
         }
-        // Turning files on (after the initial value) deserves an immediate full index.
+        // Turning files on (after the stored value) deserves an immediate full index.
         scope.launch {
-            settings.settings.map { it.filesEnabled }.distinctUntilChanged().drop(1).collect { on ->
+            settings.loaded.map { it.filesEnabled }.distinctUntilChanged().drop(1).collect { on ->
                 if (on) requestFullScan()
             }
         }
     }
 
     fun onScreenStarted() {
-        if (!settings.settings.value.filesEnabled) return
-        requestQuickScan()
-        if (!observerRegistered) {
-            context.contentResolver.registerContentObserver(MediaStore.Files.getContentUri("external"), true, observer)
-            observerRegistered = true
+        scope.launch(Dispatchers.Main) {
+            if (!settings.load().filesEnabled) return@launch
+            requestQuickScan()
+            if (!observerRegistered) {
+                context.contentResolver.registerContentObserver(MediaStore.Files.getContentUri("external"), true, observer)
+                observerRegistered = true
+            }
         }
     }
 

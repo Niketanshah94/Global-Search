@@ -73,6 +73,7 @@ class SearchEngineTest {
 
     private class FakeSettings : SettingsRepository {
         override val settings = MutableStateFlow(UserSettings())
+        override val loaded = settings
         override suspend fun load() = settings.value
         override suspend fun update(transform: (UserSettings) -> UserSettings) { settings.value = transform(settings.value) }
     }

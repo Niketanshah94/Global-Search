@@ -14,6 +14,7 @@ import com.quickfind.core.matching.ranking.RankingWeights
 import com.quickfind.core.model.SourceType
 import com.quickfind.core.model.WebSearchEngine
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -28,6 +29,12 @@ interface SettingsRepository {
     /** Starts with defaults and updates once DataStore has loaded. */
     val settings: StateFlow<UserSettings>
 
+    /**
+     * Stored values only, never the defaults placeholder. Use this for anything that acts on
+     * a setting (scheduling, cancelling work) so a cold start does not briefly see defaults.
+     */
+    val loaded: Flow<UserSettings>
+
     /** Waits for the stored values (unlike [settings], which starts with defaults). */
     suspend fun load(): UserSettings
 
@@ -40,10 +47,11 @@ class DataStoreSettingsRepository @Inject constructor(
     @ApplicationScope scope: CoroutineScope,
 ) : SettingsRepository {
 
-    override val settings: StateFlow<UserSettings> = dataStore.data
+    override val loaded: Flow<UserSettings> = dataStore.data
         .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }
         .map(::read)
-        .stateIn(scope, SharingStarted.Eagerly, UserSettings())
+
+    override val settings: StateFlow<UserSettings> = loaded.stateIn(scope, SharingStarted.Eagerly, UserSettings())
 
     override suspend fun load(): UserSettings = read(
         try {
@@ -58,6 +66,11 @@ class DataStoreSettingsRepository @Inject constructor(
             val next = transform(read(prefs))
             write(prefs, next)
         }
+    }
+
+    private companion object {
+        // In a companion so it is initialised before the eager collector above can call read().
+        val biasTypes = listOf(SourceType.APP, SourceType.CONTACT, SourceType.SETTING, SourceType.FILE)
     }
 
     private object Keys {
@@ -85,7 +98,6 @@ class DataStoreSettingsRepository @Inject constructor(
         fun bias(type: SourceType) = intPreferencesKey("type_bias_${type.name.lowercase()}")
     }
 
-    private val biasTypes = listOf(SourceType.APP, SourceType.CONTACT, SourceType.SETTING, SourceType.FILE)
 
     private fun read(p: Preferences): UserSettings {
         val d = UserSettings()

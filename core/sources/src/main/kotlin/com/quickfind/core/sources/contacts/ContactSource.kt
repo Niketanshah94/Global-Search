@@ -86,7 +86,7 @@ class ContactSource @Inject constructor(
 
     override fun start() {
         scope.launch {
-            settings.settings.map { it.contactsEnabled }.distinctUntilChanged().collect { enabled ->
+            settings.loaded.map { it.contactsEnabled }.distinctUntilChanged().collect { enabled ->
                 if (enabled) refreshIfPermitted() else disable()
             }
         }

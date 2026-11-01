@@ -70,7 +70,8 @@ class FileIndexer @Inject constructor(
 
     private suspend fun run(full: Boolean) = mutex.withLock {
         withContext(io) {
-            val s = settings.settings.value
+            // load(), not .value: a worker-started process must not act on default settings.
+            val s = settings.load()
             if (!s.filesEnabled || s.indexingPaused) return@withContext
 
             if (FilePermissions.hasMediaAccess(context) || FilePermissions.hasAllFilesAccess(context)) {
