@@ -58,7 +58,7 @@ class FileSource @Inject constructor(
         val excluded = settings.settings.value.excludedFolders
         val scored = ArrayList<Pair<Int, SearchResult>>(candidates.size)
         for ((i, f) in candidates.values.withIndex()) {
-            if (i and 31 == 0) currentCoroutineContext().ensureActive()
+            if ((i and 31) == 0) currentCoroutineContext().ensureActive()
             val fullPath = if (f.isFolder) f.contentUri else f.relativePath
             if (excluded.any { fullPath.startsWith(it) }) continue
             val m = FuzzyMatcher.match(query, TextNormalizer.normalize(f.displayName))

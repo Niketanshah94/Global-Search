@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- "QuickFind" is a working name (spec 19); check trademark and Play availability. -->
+    <string name="app_name">QuickFind</string>
+    <string name="widget_name">QuickFind search</string>
+    <string name="widget_hint">Search your phone</string>
+    <string name="widget_description">A search bar for apps, contacts, files and settings</string>
+    <string name="tile_label">Search</string>
+    <string name="notification_channel">Search shortcut</string>
+    <string name="notification_title">Search your phone</string>
+    <string name="notification_text">Tap to search apps, contacts and files</string>
+    <string name="shortcut_files_short">Search files</string>
+    <string name="shortcut_files_long">Search files and folders</string>
+    <string name="shortcut_contacts_short">Search contacts</string>
+    <string name="shortcut_contacts_long">Search contacts</string>
+</resources>

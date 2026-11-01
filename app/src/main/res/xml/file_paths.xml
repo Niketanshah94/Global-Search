@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Shared storage root; only used for files found by the Tier B walk. -->
+    <external-path
+        name="storage"
+        path="." />
+</paths>

@@ -182,7 +182,7 @@ class ContactSource @Inject constructor(
         val whatsApp = installedApps.whatsAppPackage != null
         val out = ArrayList<Pair<Int, SearchResult>>()
         for ((i, e) in snapshot.withIndex()) {
-            if (i and 63 == 0) currentCoroutineContext().ensureActive()
+            if ((i and 63) == 0) currentCoroutineContext().ensureActive()
             var score = Int.MIN_VALUE
             var ranges = emptyList<IntRange>()
             var matchedPhone: String? = null

@@ -111,7 +111,7 @@ class AppSource @Inject constructor(
         val scored = ArrayList<Pair<Int, SearchResult>>()
         val snapshot = entries
         for ((i, e) in snapshot.withIndex()) {
-            if (i and 63 == 0) currentCoroutineContext().ensureActive()
+            if ((i and 63) == 0) currentCoroutineContext().ensureActive()
             if (e.record.isWork && !showWork) continue
             val label = FuzzyMatcher.match(query, e.label)
             val score: Int

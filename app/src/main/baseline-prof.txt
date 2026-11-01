@@ -1,0 +1,11 @@
+# Starter Baseline Profile (spec 9). Regenerate on a device with
+#   ./gradlew :app:generateReleaseBaselineProfile
+# which writes app/src/release/generated/baselineProfiles/baseline-prof.txt.
+# These hand-written rules cover the hot path until the generated profile is checked in.
+HSPLcom/quickfind/core/matching/**;->**(**)**
+HSPLcom/quickfind/core/sources/engine/SearchEngine**;->**(**)**
+HSPLcom/quickfind/core/sources/apps/AppSource**;->**(**)**
+HSPLcom/quickfind/core/sources/apps/AppIconLoader**;->**(**)**
+HSPLcom/quickfind/feature/search/**;->**(**)**
+Lcom/quickfind/core/matching/**;
+Lcom/quickfind/feature/search/**;

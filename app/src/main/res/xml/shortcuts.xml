@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static launcher shortcuts (spec 6). targetPackage must match applicationId. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutId="search_files"
+        android:shortcutLongLabel="@string/shortcut_files_long"
+        android:shortcutShortLabel="@string/shortcut_files_short">
+        <intent
+            android:action="com.quickfind.action.SEARCH"
+            android:targetClass="com.quickfind.feature.search.SearchActivity"
+            android:targetPackage="com.quickfind.app">
+            <extra
+                android:name="com.quickfind.extra.SCOPE"
+                android:value="files" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutId="search_contacts"
+        android:shortcutLongLabel="@string/shortcut_contacts_long"
+        android:shortcutShortLabel="@string/shortcut_contacts_short">
+        <intent
+            android:action="com.quickfind.action.SEARCH"
+            android:targetClass="com.quickfind.feature.search.SearchActivity"
+            android:targetPackage="com.quickfind.app">
+            <extra
+                android:name="com.quickfind.extra.SCOPE"
+                android:value="contacts" />
+        </intent>
+    </shortcut>
+</shortcuts>

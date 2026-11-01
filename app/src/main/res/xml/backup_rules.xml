@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Auto Backup rules for Android 11 and lower; see data_extraction_rules.xml for 12+. -->
+<full-backup-content>
+    <exclude domain="database" path="quickfind.db" />
+    <exclude domain="database" path="quickfind.db-wal" />
+    <exclude domain="database" path="quickfind.db-shm" />
+    <exclude domain="database" path="quickfind.db-journal" />
+    <exclude domain="file" path="apps_snapshot.json" />
+</full-backup-content>

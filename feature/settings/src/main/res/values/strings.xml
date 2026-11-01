@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="app_name_settings">QuickFind</string>
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
+    <string name="confirm_delete">Delete</string>
+    <string name="continue_label">Continue</string>
+    <string name="not_now">Not now</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+
+    <string name="section_sources">Search sources</string>
+    <string name="source_apps">Apps</string>
+    <string name="source_work_apps">Include work-profile apps</string>
+    <string name="source_contacts">Contacts</string>
+    <string name="source_contacts_summary">Names, nicknames, emails and numbers. Stays on your phone.</string>
+    <string name="source_files">Files &amp; folders</string>
+    <string name="source_files_summary">Photos, videos, audio and documents. Indexed on your phone.</string>
+    <string name="source_settings">System settings</string>
+    <string name="source_calculator">Calculator</string>
+    <string name="source_web">Web search &amp; websites</string>
+
+    <string name="section_search">Search behaviour</string>
+    <string name="search_engine">Search engine</string>
+    <string name="engine_custom">Custom</string>
+    <string name="engine_template">Search URL</string>
+    <string name="engine_template_hint" formatted="false">Must start with https:// and contain %s where the query goes</string>
+    <string name="ranking_learn">Learn from what I open</string>
+    <string name="ranking_learn_summary">Boosts results you picked before. History stays on this phone.</string>
+    <string name="clear_on_reopen">Clear the search when reopened</string>
+    <string name="direct_calling">Call directly</string>
+    <string name="direct_calling_summary">Start calls without opening the dialer first (needs phone permission)</string>
+
+    <string name="section_priorities">Result priorities</string>
+
+    <string name="section_appearance">Appearance</string>
+    <string name="bar_position">Search bar position</string>
+    <string name="bar_top">Top</string>
+    <string name="bar_bottom">Bottom (easier one-handed)</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="dynamic_color">Use wallpaper colours</string>
+
+    <string name="section_access">Quick access</string>
+    <string name="add_widget">Add search widget</string>
+    <string name="add_widget_summary">A search bar on your home screen</string>
+    <string name="set_assistant">Set as default assistant</string>
+    <string name="set_assistant_summary">Open search with a long-press on Home or a corner swipe</string>
+    <string name="set_assistant_done">QuickFind is your assistant app</string>
+    <string name="persistent_notification">Search notification</string>
+    <string name="persistent_notification_summary">A quiet notification that opens search</string>
+
+    <string name="section_more">More</string>
+    <string name="permissions_title">Permissions</string>
+    <string name="permissions_summary">See and change what QuickFind can access</string>
+    <string name="permissions_intro">QuickFind works with no permissions at all. Each one below only adds a search source.</string>
+    <string name="perm_contacts">Contacts</string>
+    <string name="perm_media">Photos, videos &amp; audio</string>
+    <string name="perm_all_files">All files access (full file search)</string>
+    <string name="perm_notifications">Notifications</string>
+    <string name="perm_call">Phone calls (direct calling)</string>
+    <string name="perm_granted">Allowed</string>
+    <string name="perm_not_granted">Not allowed · tap to allow</string>
+    <string name="perm_partial">Some photos only · tap to choose more</string>
+    <string name="open_app_settings">Open system app settings</string>
+
+    <string name="privacy_title">Privacy &amp; data</string>
+    <string name="privacy_summary">Indexing, excluded folders, history</string>
+    <string name="privacy_intro">Everything QuickFind indexes stays in private storage on this phone and is never uploaded. The index is excluded from backups.</string>
+    <string name="section_index">File index</string>
+    <string name="indexed_files">%1$d files indexed</string>
+    <string name="pause_indexing">Pause indexing</string>
+    <string name="pause_indexing_summary">Existing results stay searchable</string>
+    <string name="index_hidden">Include hidden folders</string>
+    <string name="reindex_now">Re-index now</string>
+    <string name="add_folder">Add a folder</string>
+    <string name="add_folder_summary">Search documents in a folder you choose, without full file access</string>
+    <string name="exclude_folder">Exclude a folder</string>
+    <string name="exclude_folder_summary">Files under it will not be indexed</string>
+    <string name="exclude_folder_path">Folder path</string>
+    <string name="exclude_folder_hint">For example WhatsApp/Media or DCIM/Screenshots</string>
+    <string name="section_data">Your data</string>
+    <string name="hidden_title">Hidden results</string>
+    <string name="hidden_count">%1$d hidden</string>
+    <string name="hidden_empty">Nothing is hidden. Long-press a result to hide it.</string>
+    <string name="unhide">Unhide</string>
+    <string name="clear_history">Clear search history</string>
+    <string name="clear_history_summary">Forget what you searched for and opened</string>
+    <string name="clear_history_confirm">Clear all search history? Ranking will start learning again.</string>
+    <string name="delete_index">Delete all index data</string>
+    <string name="delete_index_summary">Removes the file index; it rebuilds while files search is on</string>
+    <string name="delete_index_confirm">Delete the file index from this phone?</string>
+
+    <string name="pro_title">QuickFind Pro</string>
+    <string name="pro_summary">Coming soon</string>
+    <string name="about_title">About</string>
+    <string name="version">Version %1$s</string>
+    <string name="about_privacy">QuickFind searches your phone on your phone. It has no internet permission in this version: nothing you type or index leaves the device.</string>
+    <string name="licenses">Open-source licenses</string>
+
+    <string name="disclosure_contacts_title">Search your contacts?</string>
+    <string name="disclosure_contacts_text">QuickFind reads your contacts to find them by name or number. They are kept on this phone and never uploaded.</string>
+    <string name="disclosure_files_title">Search your files?</string>
+    <string name="disclosure_files_text">QuickFind reads file names and folders to build a search index on this phone. File contents are not read and nothing is uploaded.</string>
+    <string name="disclosure_all_files_title">Turn on full file search?</string>
+    <string name="disclosure_all_files_text">To find documents, downloads and other non-media files anywhere on your phone, Android needs you to allow “All files access” for QuickFind on the next screen. QuickFind only reads names and folders to build a search index that never leaves this phone.</string>
+
+    <string name="onboarding_1_title">Find anything on your phone</string>
+    <string name="onboarding_1_text">Apps, contacts, files, settings and quick sums, from one search bar. Type two or three letters and press Enter.</string>
+    <string name="onboarding_2_title">Choose what to search</string>
+    <string name="onboarding_2_text">Apps, settings and the calculator work right away. Contacts and files need your permission; you can change this later.</string>
+    <string name="onboarding_3_title">Open search from anywhere</string>
+    <string name="onboarding_3_text">Make QuickFind your default assistant app to open search with a long-press on Home or a corner swipe. You can also use the widget or the Quick Settings tile.</string>
+</resources>

@@ -52,6 +52,10 @@ interface FileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(files: List<FileEntity>)
 
+    /** Blocking variant for the file-tree walker, which runs inside a non-suspending visitor. */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upsertAllBlocking(files: List<FileEntity>)
+
     @Query(
         """
         SELECT files.* FROM files

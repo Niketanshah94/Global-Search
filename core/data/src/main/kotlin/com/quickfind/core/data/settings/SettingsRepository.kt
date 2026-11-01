@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.io.IOException
@@ -26,6 +27,9 @@ import javax.inject.Singleton
 interface SettingsRepository {
     /** Starts with defaults and updates once DataStore has loaded. */
     val settings: StateFlow<UserSettings>
+
+    /** Waits for the stored values (unlike [settings], which starts with defaults). */
+    suspend fun load(): UserSettings
 
     suspend fun update(transform: (UserSettings) -> UserSettings)
 }
@@ -40,6 +44,14 @@ class DataStoreSettingsRepository @Inject constructor(
         .catch { e -> if (e is IOException) emit(emptyPreferences()) else throw e }
         .map(::read)
         .stateIn(scope, SharingStarted.Eagerly, UserSettings())
+
+    override suspend fun load(): UserSettings = read(
+        try {
+            dataStore.data.first()
+        } catch (_: IOException) {
+            emptyPreferences()
+        },
+    )
 
     override suspend fun update(transform: (UserSettings) -> UserSettings) {
         dataStore.edit { prefs ->

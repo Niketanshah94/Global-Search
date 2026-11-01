@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <activity
+            android:name=".SearchActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="${applicationId}.search"
+            android:theme="@style/Theme.QuickFind.Overlay"
+            android:windowSoftInputMode="stateAlwaysVisible|adjustResize">
+
+            <!-- Opened by the widget, tile, notification and in-app links. -->
+            <intent-filter>
+                <action android:name="com.quickfind.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- Default digital assistant: long-press home / corner swipe (spec 6).
+                 Pixel lists apps with an ASSIST activity under "Default digital assistant app";
+                 Samsung and Xiaomi place the picker elsewhere, see SettingsScreen. -->
+            <intent-filter>
+                <action android:name="android.intent.action.ASSIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".folder.FolderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.QuickFind" />
+    </application>
+</manifest>
