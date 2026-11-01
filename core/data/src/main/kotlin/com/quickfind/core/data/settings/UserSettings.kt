@@ -27,7 +27,8 @@ data class UserSettings(
     // Look and behaviour
     val searchBarPosition: SearchBarPosition = SearchBarPosition.TOP,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
-    val dynamicColor: Boolean = true,
+    // Off by default so the Aurora palette shows; users can switch to wallpaper colours.
+    val dynamicColor: Boolean = false,
     val clearQueryOnReopen: Boolean = true,
     val persistentNotification: Boolean = false,
     val directCalling: Boolean = false,

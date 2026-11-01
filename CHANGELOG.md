@@ -4,6 +4,12 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Changed — "Aurora" design
+- New look for the search overlay: drifting aurora gradient behind a frosted-glass panel, a search pill with an animated gradient ring that spins faster while results load, a gradient greeting with one-tap suggestion chips, results grouped in glass cards with item animations, a glowing top-hit card and gradient icon tiles.
+- Violet/magenta/cyan brand palette for light and dark; wallpaper colours (dynamic color) are now off by default and can be turned back on in Settings.
+- Gradient home-screen widget and app icon.
+- All motion stops when the system "Remove animations" setting is on.
+
 ### Added
 - Multi-module project (`app`, `core/*`, `feature/*`, `benchmark`) with a version catalog, Hilt, Compose and GitHub Actions CI (Phase 0).
 - `core:matching`: from-scratch text normalizer (NFD diacritic folding that keeps Devanagari marks, camelCase/separator/digit word boundaries, index map for highlighting), Sublime-style fuzzy matcher with typo tolerance, history/frecency ranking, result grouping, a shunting-yard calculator and phone/URL detectors. Table-driven unit tests for every case in spec 4.6.

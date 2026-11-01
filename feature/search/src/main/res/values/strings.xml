@@ -59,4 +59,15 @@
     <string name="action_unpin">Unpin</string>
     <string name="action_hide">Hide from results</string>
     <string name="action_hide_hint">Undo in Settings → Privacy → Hidden results</string>
+
+    <string name="greeting">What are you looking for?</string>
+    <string name="greeting_sub">Apps, people, files, settings, quick maths. Just start typing.</string>
+    <!-- Tapping a chip types it into the search field. Keep them short and universal. -->
+    <string-array name="suggestions">
+        <item>wifi</item>
+        <item>bluetooth</item>
+        <item>2400*15%</item>
+        <item>battery</item>
+        <item>camera</item>
+    </string-array>
 </resources>

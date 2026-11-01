@@ -3,6 +3,7 @@ package com.quickfind.app.widget
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -28,8 +29,10 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.semantics.contentDescription
 import androidx.glance.semantics.semantics
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import com.quickfind.app.R
 import com.quickfind.feature.search.SearchActivity
 
@@ -51,7 +54,7 @@ class SearchWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .cornerRadius(28.dp)
-                .background(GlanceTheme.colors.widgetBackground)
+                .background(ImageProvider(R.drawable.widget_background))
                 .clickable(actionStartActivity(open))
                 .padding(horizontal = 16.dp)
                 .semantics { contentDescription = hint },
@@ -60,13 +63,13 @@ class SearchWidget : GlanceAppWidget() {
             Image(
                 provider = ImageProvider(R.drawable.ic_widget_search),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurfaceVariant),
+                colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
                 modifier = GlanceModifier.size(24.dp),
             )
             Spacer(GlanceModifier.width(12.dp))
             Text(
                 text = hint,
-                style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 16.sp),
+                style = TextStyle(color = ColorProvider(Color.White), fontSize = 16.sp, fontWeight = FontWeight.Medium),
                 maxLines = 1,
             )
         }

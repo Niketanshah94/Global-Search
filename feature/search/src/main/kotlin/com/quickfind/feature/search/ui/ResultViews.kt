@@ -4,6 +4,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,8 +25,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,6 +34,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -51,6 +53,8 @@ import com.quickfind.core.model.ResultIcon
 import com.quickfind.core.model.SearchResult
 import com.quickfind.core.model.SourceType
 import com.quickfind.core.sources.apps.AppIconLoader
+import com.quickfind.core.ui.Aurora
+import com.quickfind.core.ui.GlowBorderBox
 import com.quickfind.feature.search.R
 import com.quickfind.core.ui.R as UiR
 
@@ -165,11 +169,28 @@ fun TopHitCard(
     onAction: (ResultAction) -> Unit,
     icon: IconContent,
     modifier: Modifier = Modifier,
+    reducedMotion: Boolean = false,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+    GlowBorderBox(
+        shape = RoundedCornerShape(28.dp),
+        animated = !reducedMotion,
+        containerColor = MaterialTheme.colorScheme.surface,
+        modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
     ) {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                // Soft aurora wash behind the top hit.
+                .background(
+                    Brush.linearGradient(
+                        listOf(
+                            Aurora.Violet.copy(alpha = 0.18f),
+                            Aurora.Magenta.copy(alpha = 0.10f),
+                            Aurora.Cyan.copy(alpha = 0.14f),
+                        ),
+                    ),
+                ),
+        ) {
         Column(
             Modifier
                 .combinedClickable(
@@ -181,17 +202,17 @@ fun TopHitCard(
                 .padding(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.semantics(mergeDescendants = true) {}) {
-                icon(result, Modifier.size(48.dp))
+                icon(result, Modifier.size(56.dp))
                 Spacer(Modifier.width(16.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
-                        text = stringResource(R.string.top_hit),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        text = "✦ " + stringResource(R.string.top_hit),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         text = highlighted(result.title, result.matchedRanges),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -202,12 +223,20 @@ fun TopHitCard(
             }
             val quick = result.secondaryActions.take(3)
             if (quick.isNotEmpty()) {
-                Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    Modifier.padding(top = 12.dp).horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     quick.forEach { action ->
-                        AssistChip(onClick = { onAction(action) }, label = { Text(actionLabel(action), maxLines = 1, overflow = TextOverflow.Ellipsis) })
+                        AssistChip(
+                            onClick = { onAction(action) },
+                            label = { Text(actionLabel(action), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            shape = CircleShape,
+                        )
                     }
                 }
             }
+        }
         }
     }
 }
@@ -215,10 +244,12 @@ fun TopHitCard(
 @Composable
 fun GlyphIcon(type: SourceType, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.clip(CircleShape).background(MaterialTheme.colorScheme.secondaryContainer),
+        modifier = modifier
+            .clip(RoundedCornerShape(30))
+            .background(Brush.linearGradient(glyphColors(type))),
         contentAlignment = Alignment.Center,
     ) {
-        val tint = MaterialTheme.colorScheme.onSecondaryContainer
+        val tint = Color.White
         val m = Modifier.size(22.dp)
         when (type) {
             SourceType.CONTACT -> Icon(Icons.Default.Person, null, m, tint)
@@ -232,6 +263,15 @@ fun GlyphIcon(type: SourceType, modifier: Modifier = Modifier) {
             SourceType.APP -> Icon(Icons.Default.Star, null, m, tint)
         }
     }
+}
+
+/** Each kind of result gets its own slice of the aurora. */
+private fun glyphColors(type: SourceType): List<Color> = when (type) {
+    SourceType.CONTACT, SourceType.PHONE_NUMBER -> listOf(Aurora.Magenta, Aurora.Violet)
+    SourceType.FILE, SourceType.FOLDER -> listOf(Aurora.Amber, Aurora.Magenta)
+    SourceType.SETTING -> listOf(Aurora.Cyan, Aurora.Violet)
+    SourceType.CALCULATOR -> listOf(Aurora.Violet, Aurora.Cyan)
+    SourceType.URL, SourceType.WEB, SourceType.APP -> listOf(Aurora.Violet, Aurora.Magenta)
 }
 
 /** Real icons: app icons from the two-level cache, contact photos and thumbnails via Coil. */
@@ -251,13 +291,13 @@ fun ResultIconView(result: SearchResult, loader: AppIconLoader, modifier: Modifi
         }
         is ResultIcon.ContactPhoto -> Box(modifier, contentAlignment = Alignment.Center) {
             Box(
-                Modifier.fillMaxSize().clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                Modifier.fillMaxSize().clip(CircleShape).background(Brush.linearGradient(listOf(Aurora.Magenta, Aurora.Violet))),
                 contentAlignment = Alignment.Center,
             ) {
                 if (icon.initials.isNotEmpty()) {
-                    Text(icon.initials, color = MaterialTheme.colorScheme.onTertiaryContainer, style = MaterialTheme.typography.titleMedium)
+                    Text(icon.initials, color = Color.White, style = MaterialTheme.typography.titleMedium)
                 } else {
-                    Icon(Icons.Default.Person, typeLabel(result.type), tint = MaterialTheme.colorScheme.onTertiaryContainer)
+                    Icon(Icons.Default.Person, typeLabel(result.type), tint = Color.White)
                 }
             }
             if (icon.photoUri != null) {
@@ -275,7 +315,7 @@ fun ResultIconView(result: SearchResult, loader: AppIconLoader, modifier: Modifi
                 model = icon.uri,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(8.dp)),
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(30)),
             )
         }
         is ResultIcon.Glyph -> GlyphIcon(icon.type, modifier)
