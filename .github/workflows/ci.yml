@@ -24,7 +24,7 @@ jobs:
 
       # Spec 16: lint, unit tests and assembleRelease on every push.
       - name: Lint, unit tests, release build
-        run: ./gradlew lint test assembleRelease --stacktrace
+        run: ./gradlew lint test assembleRelease --continue
 
       - name: Upload reports
         if: always()

@@ -1,6 +1,7 @@
 package com.quickfind.feature.search
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.remember
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -54,7 +55,7 @@ class SearchScreenTest {
                     state = state,
                     barAtBottom = false,
                     actions = recorder,
-                    focusRequester = FocusRequester(),
+                    focusRequester = remember { FocusRequester() },
                     icon = { _, m -> Box(m) },
                 )
             }
