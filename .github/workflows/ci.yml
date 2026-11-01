@@ -24,7 +24,16 @@ jobs:
 
       # Spec 16: lint, unit tests and assembleRelease on every push.
       - name: Lint, unit tests, release build
-        run: ./gradlew lint test assembleRelease --continue
+        run: ./gradlew lint test assembleRelease assembleDebug --continue
+
+      # Installable test build (debug-signed). Download it from the run's Artifacts section.
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quickfind-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
 
       - name: Upload reports
         if: always()
