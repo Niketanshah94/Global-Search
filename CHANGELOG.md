@@ -4,6 +4,9 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Changed — intro screens
+- Aurora-style onboarding: drifting aurora background, a breathing glowing search orb, a demo search bar that types example queries and shows answers, gradient headlines, animated page dots, glass source cards with toggles (apps, contacts, files, calendar), entry-point cards and a glowing "Start searching" button. Motion stops with "Remove animations".
+
 ### Added — Sprint B
 - Indian-language names from English typing: Devanagari, Gujarati, Bengali, Gurmukhi, Odia, Tamil, Telugu, Kannada and Malayalam names are also matched in Latin letters ("rahul" finds "राहुल", "niketan" finds "નિકેતન"), for apps, contacts and files.
 - Notification search (last 7 days, on device) and a "Copy OTP" chip for codes from the last 10 minutes. Uses a notification listener that only stores while the source is on; Settings → Privacy can clear the history.

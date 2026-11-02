@@ -127,10 +127,22 @@
     <string name="disclosure_all_files_title">Turn on full file search?</string>
     <string name="disclosure_all_files_text">To find documents, downloads and other non-media files anywhere on your phone, Android needs you to allow “All files access” for QuickFind on the next screen. QuickFind only reads names and folders to build a search index that never leaves this phone.</string>
 
-    <string name="onboarding_1_title">Find anything on your phone</string>
+    <string name="onboarding_1_title">Find anything.\nInstantly.</string>
     <string name="onboarding_1_text">Apps, contacts, files, settings and quick sums, from one search bar. Type two or three letters and press Enter.</string>
     <string name="onboarding_2_title">Choose what to search</string>
     <string name="onboarding_2_text">Apps, settings and the calculator work right away. Contacts and files need your permission; you can change this later.</string>
     <string name="onboarding_3_title">Open search from anywhere</string>
+    <string name="onboarding_apps_hint">Every app, including work apps. Type 2–3 letters.</string>
+    <string name="onboarding_tile_title">Quick Settings tile</string>
+    <string name="onboarding_tile_text">Pull down the shade, tap Edit and drag “Search” in.</string>
+    <string name="onboarding_start">Start searching</string>
+    <!-- Demo bar on the first intro screen: "what you type|what you get". -->
+    <string-array name="onboarding_demo">
+        <item>wh|WhatsApp</item>
+        <item>100 usd in inr|live rate in ₹</item>
+        <item>rahul|Call · Message · WhatsApp</item>
+        <item>timer 10 min|⏱ Timer set</item>
+        <item>payment|PhonePe · GPay</item>
+    </string-array>
     <string name="onboarding_3_text">Make QuickFind your default assistant app to open search with a long-press on Home or a corner swipe. You can also use the widget or the Quick Settings tile.</string>
 </resources>
