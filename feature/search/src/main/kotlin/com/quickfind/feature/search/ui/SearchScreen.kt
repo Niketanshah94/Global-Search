@@ -110,6 +110,8 @@ object SearchTestTags {
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
+    /** Read straight from snapshot state so the field never lags the keyboard. */
+    queryText: String,
     state: SearchUiState,
     barAtBottom: Boolean,
     actions: SearchActions,
@@ -154,7 +156,9 @@ fun SearchScreen(
             .background(Color.Black.copy(alpha = 0.45f))
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { actions.onDismiss() },
     ) {
-        AuroraBackground(Modifier.fillMaxSize(), animated = !reducedMotion)
+        // Static aurora: a full-screen animated gradient costs frames while typing on mid-range
+        // phones. The glowing search ring carries the motion instead.
+        AuroraBackground(Modifier.fillMaxSize(), animated = false)
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -169,7 +173,7 @@ fun SearchScreen(
         ) {
             Column(Modifier.fillMaxSize()) {
                 if (!barAtBottom) {
-                    SearchField(state, actions, focusRequester, dismissThreshold, pullDownCloses = true, reducedMotion = reducedMotion)
+                    SearchField(queryText, state, actions, focusRequester, dismissThreshold, pullDownCloses = true, reducedMotion = reducedMotion)
                 }
                 LazyColumn(
                     state = listState,
@@ -185,7 +189,7 @@ fun SearchScreen(
                     if (state.hasQuery) results(state, actions, icon, reducedMotion) else emptyState(state, actions, icon)
                 }
                 if (barAtBottom) {
-                    SearchField(state, actions, focusRequester, dismissThreshold, pullDownCloses = true, reducedMotion = reducedMotion)
+                    SearchField(queryText, state, actions, focusRequester, dismissThreshold, pullDownCloses = true, reducedMotion = reducedMotion)
                 }
             }
         }
@@ -194,6 +198,7 @@ fun SearchScreen(
 
 @Composable
 private fun SearchField(
+    queryText: String,
     state: SearchUiState,
     actions: SearchActions,
     focusRequester: FocusRequester,
@@ -227,7 +232,7 @@ private fun SearchField(
             ),
     ) {
         TextField(
-            value = state.query,
+            value = queryText,
             onValueChange = actions::onQueryChange,
             modifier = Modifier
                 .weight(1f)
@@ -249,7 +254,7 @@ private fun SearchField(
             } else {
                 null
             },
-            trailingIcon = if (state.query.isNotEmpty()) {
+            trailingIcon = if (queryText.isNotEmpty()) {
                 { IconButton(onClick = { actions.onQueryChange("") }) { Icon(Icons.Default.Clear, stringResource(R.string.clear_query)) } }
             } else {
                 null

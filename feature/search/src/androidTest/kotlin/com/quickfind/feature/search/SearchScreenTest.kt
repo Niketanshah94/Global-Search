@@ -52,6 +52,7 @@ class SearchScreenTest {
         rule.setContent {
             QuickFindTheme(dynamicColor = false) {
                 SearchScreen(
+                    queryText = state.query,
                     state = state,
                     barAtBottom = false,
                     actions = recorder,

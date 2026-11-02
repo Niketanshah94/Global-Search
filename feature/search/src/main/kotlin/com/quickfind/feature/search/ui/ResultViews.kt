@@ -166,8 +166,10 @@ fun ResultRow(
             )
         }
         if (quick.isNotEmpty() && onAction != null) {
-            Spacer(Modifier.width(4.dp))
-            quick.forEach { action -> QuickActionButton(action, size = 38.dp) { onAction(action) } }
+            Spacer(Modifier.width(8.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                quick.forEach { action -> QuickActionButton(action, size = 36.dp) { onAction(action) } }
+            }
         }
     }
 }

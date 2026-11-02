@@ -1,5 +1,8 @@
 package com.quickfind.feature.search
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quickfind.core.data.history.HistoryRepository
@@ -31,6 +34,14 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
+
+    /**
+     * The text field's contents, as Compose snapshot state. The field must read this, not
+     * [uiState]: a StateFlow reaches the UI a frame later, and the keyboard then sees an old
+     * value and puts the cursor in the wrong place (and every keystroke waits a frame).
+     */
+    var queryText by mutableStateOf("")
+        private set
     private val scope = MutableStateFlow<SearchScope?>(null)
     private val expanded = MutableStateFlow<Set<ResultSection>>(emptySet())
     private val emptyContent = MutableStateFlow(EmptyStateContent(emptyList(), emptyList(), emptyList()))
@@ -72,6 +83,7 @@ class SearchViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchUiState())
 
     fun onQueryChange(text: String) {
+        queryText = text
         query.value = text
         expanded.value = emptySet()
     }
@@ -81,6 +93,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun clear() {
+        queryText = ""
         query.value = ""
         scope.value = null
         expanded.value = emptySet()

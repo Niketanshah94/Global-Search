@@ -115,6 +115,7 @@ class SearchActivity : ComponentActivity() {
                     }
                 }
                 SearchScreen(
+                    queryText = viewModel.queryText,
                     state = state,
                     barAtBottom = settings.searchBarPosition == SearchBarPosition.BOTTOM,
                     actions = actions,
