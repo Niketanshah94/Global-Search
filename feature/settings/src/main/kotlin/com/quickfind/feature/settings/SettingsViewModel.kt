@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.quickfind.core.data.db.FileDao
 import com.quickfind.core.data.db.HiddenResultEntity
+import com.quickfind.core.data.db.NotificationDao
 import com.quickfind.core.data.history.HistoryRepository
 import com.quickfind.core.data.results.ResultPrefsRepository
 import com.quickfind.core.data.settings.SettingsRepository
@@ -25,6 +26,7 @@ class SettingsViewModel @Inject constructor(
     private val indexer: FileIndexer,
     private val scheduler: IndexScheduler,
     fileDao: FileDao,
+    private val notificationDao: NotificationDao,
 ) : ViewModel() {
     val settings: StateFlow<UserSettings> = repository.settings
 
@@ -57,6 +59,10 @@ class SettingsViewModel @Inject constructor(
             scheduler.cancelAll()
             indexer.clear()
         }
+    }
+
+    fun clearNotifications() {
+        viewModelScope.launch { notificationDao.clear() }
     }
 
     fun unhide(id: String) {

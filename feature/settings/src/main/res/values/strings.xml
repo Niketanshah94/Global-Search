@@ -21,6 +21,18 @@
     <string name="source_files">Files &amp; folders</string>
     <string name="source_files_summary">Photos, videos, audio and documents. Indexed on your phone.</string>
     <string name="source_settings">System settings</string>
+    <string name="source_calendar">Calendar</string>
+    <string name="source_calendar_summary">Events from the last 30 days and the next 30</string>
+    <string name="source_notifications">Notifications &amp; OTP</string>
+    <string name="source_notifications_summary">Search the last 7 days of notifications and copy one-time codes</string>
+    <string name="source_notifications_no_access">Notification access is off · tap to allow</string>
+    <string name="source_semantic">Search by meaning (beta)</string>
+    <string name="source_semantic_summary">“payment” finds PhonePe, “taxi” finds Uber. Runs on your phone.</string>
+    <string name="disclosure_notifications_title">Search your notifications?</string>
+    <string name="disclosure_notifications_text">QuickFind will keep the title and text of new notifications for 7 days so you can search them and copy one-time codes. They stay on this phone and are never uploaded. On the next screen, allow Notification access for QuickFind.</string>
+    <string name="clear_notifications">Clear notification history</string>
+    <string name="clear_notifications_summary">Delete the notifications QuickFind has kept</string>
+    <string name="clear_notifications_confirm">Delete all saved notifications?</string>
     <string name="source_calculator">Calculator</string>
     <string name="source_web">Web search &amp; websites</string>
 

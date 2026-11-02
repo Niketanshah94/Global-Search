@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
@@ -92,6 +93,8 @@ fun typeLabel(type: SourceType): String = stringResource(
         SourceType.SETTING -> R.string.type_setting
         SourceType.CALCULATOR -> R.string.type_calculator
         SourceType.TOOL -> R.string.type_tool
+        SourceType.CALENDAR -> R.string.type_calendar
+        SourceType.NOTIFICATION -> R.string.type_notification
         SourceType.PHONE_NUMBER -> R.string.type_phone
         SourceType.URL -> R.string.type_url
         SourceType.WEB -> R.string.type_web
@@ -113,6 +116,8 @@ fun actionLabel(action: ResultAction): String = when (action) {
     is ResultAction.Navigate -> stringResource(R.string.action_navigate)
     is ResultAction.SetTimer -> stringResource(R.string.action_start_timer)
     is ResultAction.SetAlarm -> stringResource(R.string.action_set_alarm)
+    is ResultAction.OpenCalendarEvent -> stringResource(R.string.action_open_event)
+    is ResultAction.OpenNotification -> stringResource(R.string.action_open)
     is ResultAction.OpenContact -> stringResource(R.string.action_open_contact)
     is ResultAction.OpenFile -> stringResource(R.string.action_open)
     is ResultAction.ShareFile -> stringResource(R.string.action_share)
@@ -224,6 +229,8 @@ fun ActionGlyph(action: ResultAction, modifier: Modifier = Modifier, tint: Color
         is ResultAction.Navigate -> Icon(Icons.Default.LocationOn, description, modifier, tint)
         is ResultAction.SetTimer -> Icon(Icons.Default.PlayArrow, description, modifier, tint)
         is ResultAction.SetAlarm -> Icon(Icons.Default.Notifications, description, modifier, tint)
+        is ResultAction.OpenCalendarEvent -> Icon(Icons.Default.DateRange, description, modifier, tint)
+        is ResultAction.OpenNotification -> Icon(painterResource(UiR.drawable.ic_open), description, modifier, tint)
         is ResultAction.Call -> Icon(Icons.Default.Call, description, modifier, tint)
         is ResultAction.Sms -> Icon(painterResource(UiR.drawable.ic_chat), description, modifier, tint)
         is ResultAction.Email -> Icon(Icons.Default.Email, description, modifier, tint)
@@ -266,6 +273,8 @@ fun shortActionLabel(action: ResultAction): String = stringResource(
         is ResultAction.Navigate -> R.string.short_navigate
         is ResultAction.SetTimer -> R.string.short_timer
         is ResultAction.SetAlarm -> R.string.short_alarm
+        is ResultAction.OpenCalendarEvent -> R.string.short_event
+        is ResultAction.OpenNotification -> R.string.action_open
         is ResultAction.OpenContact -> R.string.short_contact
         is ResultAction.AppDetails -> R.string.short_info
         is ResultAction.Uninstall -> R.string.action_uninstall
@@ -388,6 +397,8 @@ fun GlyphIcon(type: SourceType, modifier: Modifier = Modifier) {
             SourceType.SETTING -> Icon(Icons.Default.Settings, null, m, tint)
             SourceType.CALCULATOR -> Text("=", style = MaterialTheme.typography.titleLarge, color = tint)
             SourceType.TOOL -> Icon(Icons.Default.Build, null, m, tint)
+            SourceType.CALENDAR -> Icon(Icons.Default.DateRange, null, m, tint)
+            SourceType.NOTIFICATION -> Icon(Icons.Default.Notifications, null, m, tint)
             SourceType.PHONE_NUMBER -> Icon(Icons.Default.Phone, null, m, tint)
             SourceType.URL -> Icon(painterResource(UiR.drawable.ic_globe), null, m, tint)
             SourceType.WEB -> Icon(Icons.Default.Search, null, m, tint)
@@ -401,6 +412,8 @@ private fun glyphColors(type: SourceType): List<Color> = when (type) {
     SourceType.CONTACT, SourceType.PHONE_NUMBER -> listOf(Aurora.Magenta, Aurora.Violet)
     SourceType.FILE, SourceType.FOLDER -> listOf(Aurora.Amber, Aurora.Magenta)
     SourceType.SETTING -> listOf(Aurora.Cyan, Aurora.Violet)
+    SourceType.CALENDAR -> listOf(Aurora.Cyan, Aurora.Magenta)
+    SourceType.NOTIFICATION -> listOf(Aurora.Amber, Aurora.Violet)
     SourceType.CALCULATOR, SourceType.TOOL -> listOf(Aurora.Violet, Aurora.Cyan)
     SourceType.URL, SourceType.WEB, SourceType.APP -> listOf(Aurora.Violet, Aurora.Magenta)
 }

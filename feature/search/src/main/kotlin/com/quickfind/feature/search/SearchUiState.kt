@@ -29,7 +29,12 @@ data class EmptyUi(
     val recentFiles: List<SearchResult> = emptyList(),
     /** The clipboard holds text or a link. Content is only read when the chip is tapped. */
     val clipboardAvailable: Boolean = false,
+    /** A one-time code from the last 10 minutes of notifications. */
+    val otp: OtpUi? = null,
 )
+
+@Immutable
+data class OtpUi(val code: String, val source: String)
 
 @Immutable
 data class SearchUiState(

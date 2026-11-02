@@ -16,6 +16,8 @@ import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.matching.FuzzyMatcher
 import com.quickfind.core.matching.NormalizedQuery
 import com.quickfind.core.matching.NormalizedText
+import com.quickfind.core.matching.SearchableText
+import com.quickfind.core.matching.match
 import com.quickfind.core.matching.PhoneNumbers
 import com.quickfind.core.matching.TextNormalizer
 import com.quickfind.core.model.ResultAction
@@ -51,8 +53,9 @@ private class ContactEntry(
     val nicknames: List<String>,
     val addresses: List<String>,
 ) {
-    val normalizedName: NormalizedText = TextNormalizer.normalize(name)
-    val normalizedNicknames: List<NormalizedText> = nicknames.map(TextNormalizer::normalize)
+    // Searchable in its own script and romanized: "rahul" finds "राहुल".
+    val normalizedName = SearchableText(name)
+    val normalizedNicknames: List<SearchableText> = nicknames.map(::SearchableText)
     val normalizedEmails: List<NormalizedText> = emails.map { TextNormalizer.normalize(it.substringBefore('@')) }
     val phoneDigits: List<String> = phones.map(PhoneNumbers::digitsOnly)
     val initials: String = name.split(' ').filter { it.isNotBlank() }.take(2)

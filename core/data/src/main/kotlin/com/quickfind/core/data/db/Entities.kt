@@ -47,6 +47,24 @@ data class NicknameEntity(
     val payload: String,
 )
 
+/** A notification kept for search for 7 days (spec 10.7). Never leaves the phone. */
+@Entity(
+    tableName = "notifications",
+    indices = [Index("posted_at"), Index(value = ["notification_key"], unique = true)],
+)
+data class NotificationEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    /** StatusBarNotification.key plus a hash of the content, so updated chats keep each message. */
+    @ColumnInfo(name = "notification_key") val key: String,
+    /** The live StatusBarNotification.key, to find the notification's own tap target. */
+    @ColumnInfo(name = "sbn_key") val sbnKey: String,
+    @ColumnInfo(name = "package_name") val packageName: String,
+    @ColumnInfo(name = "app_label") val appLabel: String,
+    val title: String,
+    val text: String,
+    @ColumnInfo(name = "posted_at") val postedAt: Long,
+)
+
 enum class FileOrigin { MEDIASTORE, WALK, SAF, DERIVED }
 
 /**

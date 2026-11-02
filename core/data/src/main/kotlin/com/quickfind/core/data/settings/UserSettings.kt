@@ -17,6 +17,11 @@ data class UserSettings(
     val filesEnabled: Boolean = false,
     val settingsEnabled: Boolean = true,
     val calculatorEnabled: Boolean = true,
+    val calendarEnabled: Boolean = false,
+    /** Needs "Notification access" granted in system settings. */
+    val notificationsEnabled: Boolean = false,
+    /** On-device embedding model: "payment" finds PhonePe, "taxi" finds Uber. */
+    val semanticEnabled: Boolean = true,
     val webEnabled: Boolean = true,
     val showWorkApps: Boolean = true,
 
@@ -57,5 +62,7 @@ data class UserSettings(
         SourceType.CALCULATOR, SourceType.TOOL -> calculatorEnabled
         SourceType.WEB, SourceType.URL -> webEnabled
         SourceType.PHONE_NUMBER -> true
+        SourceType.CALENDAR -> calendarEnabled
+        SourceType.NOTIFICATION -> notificationsEnabled
     }
 }

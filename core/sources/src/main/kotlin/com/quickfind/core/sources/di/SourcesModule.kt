@@ -2,6 +2,9 @@ package com.quickfind.core.sources.di
 
 import com.quickfind.core.sources.NicknameSource
 import com.quickfind.core.sources.SearchSource
+import com.quickfind.core.sources.calendar.CalendarSource
+import com.quickfind.core.sources.notifications.NotificationSource
+import com.quickfind.core.sources.semantic.SemanticSource
 import com.quickfind.core.sources.instant.CurrencySource
 import com.quickfind.core.sources.instant.SmartPasteSource
 import com.quickfind.core.sources.instant.ToolSource
@@ -35,4 +38,7 @@ abstract class SourcesModule {
     @Binds @IntoSet abstract fun currency(s: CurrencySource): SearchSource
     @Binds @IntoSet abstract fun smartPaste(s: SmartPasteSource): SearchSource
     @Binds @IntoSet abstract fun nicknames(s: NicknameSource): SearchSource
+    @Binds @IntoSet abstract fun calendar(s: CalendarSource): SearchSource
+    @Binds @IntoSet abstract fun notifications(s: NotificationSource): SearchSource
+    @Binds @IntoSet abstract fun semantic(s: SemanticSource): SearchSource
 }

@@ -72,6 +72,14 @@ sealed interface ResultAction {
     @Serializable
     data class CopyText(val text: String) : ResultAction
 
+    /** Opens one occurrence of a calendar event. */
+    @Serializable
+    data class OpenCalendarEvent(val eventId: Long, val beginMillis: Long, val endMillis: Long) : ResultAction
+
+    /** Opens a notification's own target if it is still showing, otherwise its app. */
+    @Serializable
+    data class OpenNotification(val key: String, val packageName: String) : ResultAction
+
     @Serializable
     data class OpenUrl(val url: String) : ResultAction
 }

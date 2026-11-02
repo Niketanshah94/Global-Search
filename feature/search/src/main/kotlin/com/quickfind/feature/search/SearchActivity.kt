@@ -109,6 +109,9 @@ class SearchActivity : ComponentActivity() {
                         override fun onToggleSection(section: ResultSection) = viewModel.toggleSection(section)
                         override fun onClearScope() = viewModel.setScope(null)
                         override fun onPasteClipboard() = paste()
+                        override fun onCopy(text: String) {
+                            executor.execute(this@SearchActivity, ResultAction.CopyText(text))
+                        }
                         override fun onDismissClipboard() = viewModel.dismissClipboard()
                         override fun onOpenSettings() {
                             startActivity(Intent(Destinations.ACTION_SETTINGS).setPackage(packageName))
@@ -239,6 +242,7 @@ class SearchActivity : ComponentActivity() {
         val INSTANT_TYPES = setOf(
             com.quickfind.core.model.SourceType.CALCULATOR,
             com.quickfind.core.model.SourceType.TOOL,
+            com.quickfind.core.model.SourceType.NOTIFICATION,
             com.quickfind.core.model.SourceType.WEB,
             com.quickfind.core.model.SourceType.URL,
             com.quickfind.core.model.SourceType.PHONE_NUMBER,

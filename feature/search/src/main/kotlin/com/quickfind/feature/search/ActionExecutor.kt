@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.ContentUris
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.LauncherApps
@@ -13,6 +14,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.UserManager
 import android.provider.AlarmClock
+import android.provider.CalendarContract
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -20,6 +22,7 @@ import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.matching.PhoneNumbers
 import com.quickfind.core.model.ResultAction
 import com.quickfind.core.sources.instant.InstalledApps
+import com.quickfind.core.sources.notifications.NotificationStore
 import com.quickfind.feature.search.folder.FolderActivity
 import java.io.File
 import javax.inject.Inject
@@ -38,6 +41,7 @@ enum class ActionOutcome {
 class ActionExecutor @Inject constructor(
     private val settings: SettingsRepository,
     private val installedApps: InstalledApps,
+    private val notifications: NotificationStore,
 ) {
     fun execute(activity: Activity, action: ResultAction): ActionOutcome = try {
         run(activity, action)
@@ -138,6 +142,18 @@ class ActionExecutor @Inject constructor(
                     .putExtra(AlarmClock.EXTRA_MINUTES, action.minute)
                     .putExtra(AlarmClock.EXTRA_SKIP_UI, false),
             )
+            is ResultAction.OpenCalendarEvent -> activity.startActivity(
+                Intent(Intent.ACTION_VIEW, ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, action.eventId))
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, action.beginMillis)
+                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, action.endMillis),
+            )
+            is ResultAction.OpenNotification -> {
+                if (!notifications.openLive(activity, action.key)) {
+                    // The notification is gone; open its app instead.
+                    val launch = activity.packageManager.getLaunchIntentForPackage(action.packageName) ?: return fail(activity)
+                    activity.startActivity(launch)
+                }
+            }
             is ResultAction.Email -> activity.startActivity(
                 Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + Uri.encode(action.address))),
             )

@@ -17,8 +17,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         FileFtsEntity::class,
         IndexMetaEntity::class,
         NicknameEntity::class,
+        NotificationEntity::class,
     ],
-    version = 2,
+    version = 3,
     // TODO(Phase 2): turn on schema export with the Room Gradle plugin before the first migration.
     exportSchema = false,
 )
@@ -28,6 +29,7 @@ abstract class QuickFindDatabase : RoomDatabase() {
     abstract fun resultPrefsDao(): ResultPrefsDao
     abstract fun fileDao(): FileDao
     abstract fun indexMetaDao(): IndexMetaDao
+    abstract fun notificationDao(): NotificationDao
 
     companion object {
         /** Excluded from Auto Backup (see app/src/main/res/xml/data_extraction_rules.xml). */
@@ -39,6 +41,21 @@ abstract class QuickFindDatabase : RoomDatabase() {
                 db.execSQL(
                     "CREATE TABLE IF NOT EXISTS `nicknames` (`result_id` TEXT NOT NULL, `nickname` TEXT NOT NULL, " +
                         "`payload` TEXT NOT NULL, PRIMARY KEY(`result_id`))",
+                )
+            }
+        }
+
+        /** v3 adds notification history. */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `notifications` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`notification_key` TEXT NOT NULL, `sbn_key` TEXT NOT NULL, `package_name` TEXT NOT NULL, " +
+                        "`app_label` TEXT NOT NULL, `title` TEXT NOT NULL, `text` TEXT NOT NULL, `posted_at` INTEGER NOT NULL)",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_notifications_posted_at` ON `notifications` (`posted_at`)")
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_notifications_notification_key` ON `notifications` (`notification_key`)",
                 )
             }
         }

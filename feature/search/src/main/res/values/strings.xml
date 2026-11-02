@@ -89,6 +89,14 @@
     <string name="remove">Remove</string>
     <string name="cancel">Cancel</string>
 
+    <string name="type_calendar">Calendar event</string>
+    <string name="type_notification">Notification</string>
+    <string name="section_calendar">Calendar</string>
+    <string name="section_notifications">Notifications</string>
+    <string name="action_open_event">Open event</string>
+    <string name="short_event">Event</string>
+    <string name="copy_otp">Copy OTP %1$s · %2$s</string>
+
     <string name="greeting">What are you looking for?</string>
     <string name="greeting_sub">Apps, people, files, settings, quick maths. Just start typing.</string>
     <!-- Tapping a chip types it into the search field. Keep them short and universal. -->
@@ -97,7 +105,7 @@
         <item>5 ft in cm</item>
         <item>100 usd in inr</item>
         <item>2400*15%</item>
-        <item>wifi</item>
+        <item>payment</item>
         <item>yt lofi</item>
     </string-array>
 </resources>

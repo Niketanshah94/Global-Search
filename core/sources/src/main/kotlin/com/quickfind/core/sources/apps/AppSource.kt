@@ -18,6 +18,8 @@ import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.matching.FuzzyMatcher
 import com.quickfind.core.matching.NormalizedQuery
 import com.quickfind.core.matching.NormalizedText
+import com.quickfind.core.matching.SearchableText
+import com.quickfind.core.matching.match
 import com.quickfind.core.matching.TextNormalizer
 import com.quickfind.core.model.ResultAction
 import com.quickfind.core.model.ResultIcon
@@ -54,12 +56,16 @@ internal data class AppRecord(
     val isWork: Boolean,
     val isDisabled: Boolean,
     val isSystem: Boolean,
+    /** ApplicationInfo.category; defaulted so older snapshots still load. */
+    val category: Int = -1,
 )
 
 private class AppEntry(val record: AppRecord) {
     val id = "app:${record.packageName}/${record.activityName}#${record.userSerial}"
-    val label: NormalizedText = TextNormalizer.normalize(record.label)
+    val label = SearchableText(record.label)
     val pkg: NormalizedText = TextNormalizer.normalize(record.packageName)
+    val keywords: List<String> = AppKeywords.forApp(record.packageName, record.category)
+    val normalizedKeywords: List<NormalizedText> = keywords.map(TextNormalizer::normalize)
 }
 
 /**
@@ -120,8 +126,18 @@ class AppSource @Inject constructor(
                 score = label.score
                 ranges = label.ranges
             } else {
-                val pkg = FuzzyMatcher.match(query, e.pkg) ?: continue
-                score = pkg.score + PACKAGE_MATCH_PENALTY
+                val pkg = FuzzyMatcher.match(query, e.pkg)
+                // "payment" -> PhonePe: what the app is for, from the curated keyword map.
+                val keyword = if (query.normalized.length >= KEYWORD_MIN_QUERY) {
+                    e.normalizedKeywords.mapNotNull { FuzzyMatcher.match(query, it) }.maxByOrNull { it.score }
+                } else {
+                    null
+                }
+                val best = listOfNotNull(
+                    pkg?.let { it.score + PACKAGE_MATCH_PENALTY },
+                    keyword?.let { it.score + KEYWORD_MATCH_PENALTY },
+                ).maxOrNull() ?: continue
+                score = best
                 ranges = emptyList()
             }
             scored += score to e.toResult(score, ranges)
@@ -130,6 +146,15 @@ class AppSource @Inject constructor(
     }
 
     override fun resultForId(id: String): SearchResult? = byId[id]?.toResult(0, emptyList())
+
+    /** Bumped whenever the app list changes, so the embedding index knows to rebuild. */
+    @Volatile var version: Int = 0
+        private set
+
+    /** One short description per app for the embedding model: label plus what it is for. */
+    fun semanticDocuments(): List<Pair<String, String>> = entries
+        .filter { !it.record.isDisabled }
+        .map { e -> e.id to (listOf(e.record.label) + e.keywords).joinToString(". ") }
 
     private fun AppEntry.toResult(score: Int, ranges: List<IntRange>): SearchResult {
         val r = record
@@ -180,6 +205,7 @@ class AppSource @Inject constructor(
                     isWork = isWork,
                     isDisabled = quiet || (ai.flags and ApplicationInfo.FLAG_SUSPENDED) != 0,
                     isSystem = (ai.flags and ApplicationInfo.FLAG_SYSTEM) != 0,
+                    category = ai.category,
                 )
             }
         }
@@ -191,6 +217,7 @@ class AppSource @Inject constructor(
         val list = records.map(::AppEntry)
         entries = list
         byId = list.associateBy { it.id }
+        version++
     }
 
     private fun scheduleReload() {
@@ -226,5 +253,7 @@ class AppSource @Inject constructor(
 
     private companion object {
         const val PACKAGE_MATCH_PENALTY = -20
+        const val KEYWORD_MATCH_PENALTY = -25
+        const val KEYWORD_MIN_QUERY = 3
     }
 }

@@ -55,6 +55,23 @@ object SystemLinks {
         )
     }
 
+    fun hasNotificationAccess(context: Context): Boolean =
+        androidx.core.app.NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
+
+    /** Notification access is granted on a system screen; API 30+ can open our own entry directly. */
+    fun openNotificationAccess(activity: Activity) {
+        val component = ComponentName(activity.packageName, NOTIFICATION_LISTENER)
+        val detail = if (Build.VERSION.SDK_INT >= 30) {
+            Intent(Settings.ACTION_NOTIFICATION_LISTENER_DETAIL_SETTINGS)
+                .putExtra(Settings.EXTRA_NOTIFICATION_LISTENER_COMPONENT_NAME, component.flattenToString())
+        } else {
+            null
+        }
+        open(activity, *listOfNotNull(detail, Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)).toTypedArray())
+    }
+
+    private const val NOTIFICATION_LISTENER = "com.quickfind.core.sources.notifications.QuickFindNotificationListener"
+
     fun openAppDetails(activity: Activity) {
         open(activity, Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${activity.packageName}")))
     }

@@ -4,6 +4,13 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Added — Sprint B
+- Indian-language names from English typing: Devanagari, Gujarati, Bengali, Gurmukhi, Odia, Tamil, Telugu, Kannada and Malayalam names are also matched in Latin letters ("rahul" finds "राहुल", "niketan" finds "નિકેતન"), for apps, contacts and files.
+- Notification search (last 7 days, on device) and a "Copy OTP" chip for codes from the last 10 minutes. Uses a notification listener that only stores while the source is on; Settings → Privacy can clear the history.
+- Calendar search, 30 days back to 30 days ahead, upcoming events first, with Navigate for event locations.
+- India-aware app keywords: "payment"/"upi" find PhonePe, GPay, Paytm and BHIM; "taxi", "food", "grocery", "train", "stocks", "medicine" and more; Android app categories ("games", "music", "photos").
+- Search by meaning (beta): a 6 MB on-device embedding model (Universal Sentence Encoder via MediaPipe Text Embedder, Apache 2.0) finds apps by what they do. Runs after the 80 ms pause and scores below name matches.
+
 ### Added — Sprint A
 - Unit converter (length, weight, temperature, data, volume, speed), offline: "5 ft in cm", "30 c to f", "10 km".
 - Currency converter: "100 usd in inr", "$50", "€20 to inr", using European Central Bank rates from frankfurter.app, cached 12 hours. Adds the `INTERNET` permission; nothing typed is sent, and it can be turned off in Settings.

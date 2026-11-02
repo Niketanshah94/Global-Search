@@ -8,5 +8,7 @@ object OpenSourceLicenses {
         "Kotlin standard library, kotlinx.coroutines, kotlinx.serialization" to "Apache License 2.0",
         "Coil" to "Apache License 2.0",
         "Material Design icons" to "Apache License 2.0",
+        "MediaPipe Tasks" to "Apache License 2.0",
+        "Universal Sentence Encoder model" to "Apache License 2.0",
     )
 }

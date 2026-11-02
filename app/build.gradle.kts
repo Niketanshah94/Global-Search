@@ -37,6 +37,11 @@ android {
 
     buildFeatures { compose = true }
 
+    // The embedding model is memory-mapped by MediaPipe and must stay uncompressed.
+    androidResources {
+        noCompress += "tflite"
+    }
+
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }

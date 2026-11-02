@@ -29,6 +29,8 @@ kotlin {
 dependencies {
     api(project(":core:data"))
     implementation(libs.androidx.core.ktx)
+    // On-device text embeddings for meaning-based search (spec 3 tech stack; 16 KB page-size ready).
+    implementation(libs.mediapipe.tasks.text)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

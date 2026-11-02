@@ -84,6 +84,9 @@ class DataStoreSettingsRepository @Inject constructor(
         val engine = stringPreferencesKey("search_engine")
         val customTemplate = stringPreferencesKey("custom_search_template")
         val prefixes = booleanPreferencesKey("prefixes_enabled")
+        val calendar = booleanPreferencesKey("source_calendar")
+        val notifications = booleanPreferencesKey("source_notifications")
+        val semantic = booleanPreferencesKey("semantic_enabled")
         val currency = booleanPreferencesKey("currency_enabled")
         val barPosition = stringPreferencesKey("search_bar_position")
         val theme = stringPreferencesKey("theme_mode")
@@ -117,6 +120,9 @@ class DataStoreSettingsRepository @Inject constructor(
             searchEngine = enumOr(p[Keys.engine], d.searchEngine),
             customSearchTemplate = p[Keys.customTemplate] ?: d.customSearchTemplate,
             prefixesEnabled = p[Keys.prefixes] ?: d.prefixesEnabled,
+            calendarEnabled = p[Keys.calendar] ?: d.calendarEnabled,
+            notificationsEnabled = p[Keys.notifications] ?: d.notificationsEnabled,
+            semanticEnabled = p[Keys.semantic] ?: d.semanticEnabled,
             currencyEnabled = p[Keys.currency] ?: d.currencyEnabled,
             searchBarPosition = enumOr(p[Keys.barPosition], d.searchBarPosition),
             themeMode = enumOr(p[Keys.theme], d.themeMode),
@@ -145,6 +151,9 @@ class DataStoreSettingsRepository @Inject constructor(
         p[Keys.engine] = s.searchEngine.name
         p[Keys.customTemplate] = s.customSearchTemplate
         p[Keys.prefixes] = s.prefixesEnabled
+        p[Keys.calendar] = s.calendarEnabled
+        p[Keys.notifications] = s.notificationsEnabled
+        p[Keys.semantic] = s.semanticEnabled
         p[Keys.currency] = s.currencyEnabled
         p[Keys.barPosition] = s.searchBarPosition.name
         p[Keys.theme] = s.themeMode.name

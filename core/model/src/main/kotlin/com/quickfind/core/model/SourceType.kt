@@ -9,6 +9,8 @@ enum class SourceType {
     CONTACT,
     FILE,
     FOLDER,
+    CALENDAR,
+    NOTIFICATION,
     SETTING,
     CALCULATOR,
     /** Instant tools: unit and currency conversion, timers, alarms, email and map shortcuts. */
@@ -34,8 +36,10 @@ enum class SourceKind {
 enum class ResultSection(val types: Set<SourceType>) {
     APPS(setOf(SourceType.APP)),
     CONTACTS(setOf(SourceType.CONTACT, SourceType.PHONE_NUMBER)),
+    CALENDAR(setOf(SourceType.CALENDAR)),
     FILES(setOf(SourceType.FILE, SourceType.FOLDER)),
     SETTINGS(setOf(SourceType.SETTING)),
+    NOTIFICATIONS(setOf(SourceType.NOTIFICATION)),
     WEB(setOf(SourceType.URL, SourceType.WEB, SourceType.CALCULATOR, SourceType.TOOL)),
     ;
 

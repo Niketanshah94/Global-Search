@@ -13,6 +13,7 @@ import com.quickfind.core.model.WebSearchEngine
 import com.quickfind.core.model.SearchResult
 import com.quickfind.core.model.SourceKind
 import com.quickfind.core.model.SourceType
+import com.quickfind.core.sources.OtpProvider
 import com.quickfind.core.sources.SearchSource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -44,6 +45,7 @@ data class EmptyStateContent(
     val pinned: List<SearchResult>,
     val recentApps: List<SearchResult>,
     val recentFiles: List<SearchResult>,
+    val otp: OtpProvider.Code? = null,
 )
 
 /**
@@ -148,7 +150,8 @@ class SearchEngine @Inject constructor(
             .toList()
         val recentFiles = enabled.flatMap { runCatching { it.recent(RECENT_FILES) }.getOrDefault(emptyList()) }
             .filter { it.id !in hidden }
-        return EmptyStateContent(pinned = emptyList(), recentApps = recentApps, recentFiles = recentFiles)
+        val otp = sources.filterIsInstance<OtpProvider>().firstNotNullOfOrNull { it.latestOtp() }
+        return EmptyStateContent(pinned = emptyList(), recentApps = recentApps, recentFiles = recentFiles, otp = otp)
     }
 
     /** Learns from the user's pick (spec 4.7 historyBoost/frecency). */

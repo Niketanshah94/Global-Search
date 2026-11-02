@@ -43,6 +43,7 @@ class SearchScreenTest {
         override fun onToggleSection(section: ResultSection) { events += "toggle:$section" }
         override fun onClearScope() { events += "clearScope" }
         override fun onPasteClipboard() { events += "paste" }
+        override fun onCopy(text: String) { events += "copy:$text" }
         override fun onDismissClipboard() { events += "dismissClip" }
         override fun onOpenSettings() { events += "settings" }
         override fun onDismiss() { events += "dismiss" }

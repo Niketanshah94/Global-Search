@@ -56,7 +56,13 @@ class SearchViewModel @Inject constructor(
 
     /** Empty-screen content plus result id -> nickname, so the sheet updates as soon as one is set. */
     private val emptyUi = combine(emptyContent, resultPrefs.pinned, clipboard, resultPrefs.nicknames) { content, pinned, clip, nicks ->
-        EmptyUi(pinned = pinned, recentApps = content.recentApps, recentFiles = content.recentFiles, clipboardAvailable = clip) to
+        EmptyUi(
+            pinned = pinned,
+            recentApps = content.recentApps,
+            recentFiles = content.recentFiles,
+            clipboardAvailable = clip,
+            otp = content.otp?.let { OtpUi(it.code, it.source) },
+        ) to
             nicks.entries.associate { (nick, r) -> r.id to nick }
     }
 

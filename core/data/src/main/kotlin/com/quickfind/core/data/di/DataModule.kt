@@ -9,6 +9,7 @@ import androidx.room.Room
 import com.quickfind.core.data.db.FileDao
 import com.quickfind.core.data.db.HistoryDao
 import com.quickfind.core.data.db.IndexMetaDao
+import com.quickfind.core.data.db.NotificationDao
 import com.quickfind.core.data.db.QuickFindDatabase
 import com.quickfind.core.data.db.ResultPrefsDao
 import com.quickfind.core.data.history.HistoryRepository
@@ -37,7 +38,7 @@ object DataProvidesModule {
     @Singleton
     fun database(@ApplicationContext context: Context): QuickFindDatabase =
         Room.databaseBuilder(context, QuickFindDatabase::class.java, QuickFindDatabase.NAME)
-            .addMigrations(QuickFindDatabase.MIGRATION_1_2)
+            .addMigrations(QuickFindDatabase.MIGRATION_1_2, QuickFindDatabase.MIGRATION_2_3)
             // The index is rebuildable and history is a convenience: never block startup on a migration.
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
@@ -46,6 +47,7 @@ object DataProvidesModule {
     @Provides fun historyDao(db: QuickFindDatabase): HistoryDao = db.historyDao()
     @Provides fun resultPrefsDao(db: QuickFindDatabase): ResultPrefsDao = db.resultPrefsDao()
     @Provides fun indexMetaDao(db: QuickFindDatabase): IndexMetaDao = db.indexMetaDao()
+    @Provides fun notificationDao(db: QuickFindDatabase): NotificationDao = db.notificationDao()
 
     @Provides
     @Singleton

@@ -53,7 +53,9 @@ feature/settings/ Settings, onboarding, permission screens
 benchmark/        Macrobenchmarks and Baseline Profile generator
 ```
 
-`core/ai`, `core/billing` and `feature/launcher` arrive with Phases 2–4.
+`core/ai`, `core/billing` and `feature/launcher` arrive with Phases 2–4. The on-device embedding
+model for meaning search lives in `core/sources/src/main/assets/universal_sentence_encoder.tflite`
+(Universal Sentence Encoder, Apache 2.0, from MediaPipe's model storage).
 
 ## How search works
 

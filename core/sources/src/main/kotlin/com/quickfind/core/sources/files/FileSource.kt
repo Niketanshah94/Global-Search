@@ -9,7 +9,8 @@ import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.matching.FileNameTokens
 import com.quickfind.core.matching.FuzzyMatcher
 import com.quickfind.core.matching.NormalizedQuery
-import com.quickfind.core.matching.TextNormalizer
+import com.quickfind.core.matching.SearchableText
+import com.quickfind.core.matching.match
 import com.quickfind.core.model.ResultAction
 import com.quickfind.core.model.ResultIcon
 import com.quickfind.core.model.SearchResult
@@ -61,7 +62,7 @@ class FileSource @Inject constructor(
             if ((i and 31) == 0) currentCoroutineContext().ensureActive()
             val fullPath = if (f.isFolder) f.contentUri else f.relativePath
             if (excluded.any { fullPath.startsWith(it) }) continue
-            val m = FuzzyMatcher.match(query, TextNormalizer.normalize(f.displayName))
+            val m = FuzzyMatcher.match(query, SearchableText(f.displayName))
             // Matched only through the folder path: keep, but well below name matches.
             val score = m?.score ?: PATH_ONLY_SCORE
             scored += score to toResult(f, score, m?.ranges.orEmpty())

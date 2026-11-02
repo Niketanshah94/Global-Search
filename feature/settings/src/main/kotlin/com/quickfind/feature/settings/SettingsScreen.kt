@@ -52,7 +52,7 @@ import com.quickfind.core.model.WebSearchEngine
 private enum class Page { MAIN, PERMISSIONS, PRIVACY, HIDDEN, ABOUT }
 
 /** Which explanation dialog is showing before a permission prompt. */
-private enum class Disclosure { CONTACTS, FILES, ALL_FILES, NONE }
+private enum class Disclosure { CONTACTS, FILES, ALL_FILES, NOTIFICATIONS, NONE }
 
 private fun granted(context: Context, permission: String) =
     ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
@@ -88,6 +88,8 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
     }
     val callGranted = remember(tick) { granted(context, Manifest.permission.CALL_PHONE) }
     val isAssistant = remember(tick) { SystemLinks.isDefaultAssistant(context) }
+    val calendarGranted = remember(tick) { granted(context, Manifest.permission.READ_CALENDAR) }
+    val notificationAccess = remember(tick) { SystemLinks.hasNotificationAccess(context) }
 
     val contactsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         tick++
@@ -96,6 +98,10 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
     val mediaLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
         tick++
         if (result.values.any { it }) viewModel.updateAndReindex { it.copy(filesEnabled = true) }
+    }
+    val calendarLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
+        tick++
+        if (ok) viewModel.update { it.copy(calendarEnabled = true) }
     }
     val notificationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         tick++
@@ -157,6 +163,21 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
                             !on -> viewModel.update { it.copy(filesEnabled = false) }
                             mediaGranted || allFiles -> viewModel.updateAndReindex { it.copy(filesEnabled = true) }
                             else -> disclosure = Disclosure.FILES
+                        }
+                    },
+                    onCalendar = { on ->
+                        when {
+                            !on -> viewModel.update { it.copy(calendarEnabled = false) }
+                            calendarGranted -> viewModel.update { it.copy(calendarEnabled = true) }
+                            else -> calendarLauncher.launch(Manifest.permission.READ_CALENDAR)
+                        }
+                    },
+                    notificationAccess = notificationAccess,
+                    onNotificationSearch = { on ->
+                        when {
+                            !on -> viewModel.update { it.copy(notificationsEnabled = false) }
+                            notificationAccess -> viewModel.update { it.copy(notificationsEnabled = true) }
+                            else -> disclosure = Disclosure.NOTIFICATIONS
                         }
                     },
                     onNotification = { on ->
@@ -246,6 +267,16 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
             },
             onDismiss = { disclosure = Disclosure.NONE },
         )
+        Disclosure.NOTIFICATIONS -> DisclosureDialog(
+            title = stringResource(R.string.disclosure_notifications_title),
+            text = stringResource(R.string.disclosure_notifications_text),
+            onConfirm = {
+                disclosure = Disclosure.NONE
+                viewModel.update { it.copy(notificationsEnabled = true) }
+                activity?.let(SystemLinks::openNotificationAccess)
+            },
+            onDismiss = { disclosure = Disclosure.NONE },
+        )
         Disclosure.NONE -> Unit
     }
 
@@ -281,6 +312,9 @@ private fun LazyListScope.mainPage(
     viewModel: SettingsViewModel,
     onContacts: (Boolean) -> Unit,
     onFiles: (Boolean) -> Unit,
+    onCalendar: (Boolean) -> Unit,
+    notificationAccess: Boolean,
+    onNotificationSearch: (Boolean) -> Unit,
     onNotification: (Boolean) -> Unit,
     onDirectCalling: (Boolean) -> Unit,
     onEngine: () -> Unit,
@@ -295,6 +329,22 @@ private fun LazyListScope.mainPage(
     item { SwitchRow(stringResource(R.string.source_work_apps), null, s.showWorkApps, enabled = s.appsEnabled) { on -> viewModel.update { it.copy(showWorkApps = on) } } }
     item { SwitchRow(stringResource(R.string.source_contacts), stringResource(R.string.source_contacts_summary), s.contactsEnabled, onChange = onContacts) }
     item { SwitchRow(stringResource(R.string.source_files), stringResource(R.string.source_files_summary), s.filesEnabled, onChange = onFiles) }
+    item { SwitchRow(stringResource(R.string.source_calendar), stringResource(R.string.source_calendar_summary), s.calendarEnabled, onChange = onCalendar) }
+    item {
+        SwitchRow(
+            stringResource(R.string.source_notifications),
+            stringResource(
+                if (s.notificationsEnabled && !notificationAccess) R.string.source_notifications_no_access else R.string.source_notifications_summary,
+            ),
+            s.notificationsEnabled,
+            onChange = onNotificationSearch,
+        )
+    }
+    item {
+        SwitchRow(stringResource(R.string.source_semantic), stringResource(R.string.source_semantic_summary), s.semanticEnabled) { on ->
+            viewModel.update { it.copy(semanticEnabled = on) }
+        }
+    }
     item { SwitchRow(stringResource(R.string.source_settings), null, s.settingsEnabled) { on -> viewModel.update { it.copy(settingsEnabled = on) } } }
     item { SwitchRow(stringResource(R.string.source_calculator), null, s.calculatorEnabled) { on -> viewModel.update { it.copy(calculatorEnabled = on) } } }
     item { SwitchRow(stringResource(R.string.source_web), null, s.webEnabled) { on -> viewModel.update { it.copy(webEnabled = on) } } }
@@ -486,6 +536,11 @@ private fun LazyListScope.privacyPage(
     item { SectionTitle(stringResource(R.string.section_data)) }
     item { ClickRow(stringResource(R.string.hidden_title), stringResource(R.string.hidden_count, hiddenCount), onClick = onHidden) }
     item { ClickRow(stringResource(R.string.clear_history), stringResource(R.string.clear_history_summary)) { onConfirm(R.string.clear_history_confirm) { viewModel.clearHistory() } } }
+    item {
+        ClickRow(stringResource(R.string.clear_notifications), stringResource(R.string.clear_notifications_summary)) {
+            onConfirm(R.string.clear_notifications_confirm) { viewModel.clearNotifications() }
+        }
+    }
     item { ClickRow(stringResource(R.string.delete_index), stringResource(R.string.delete_index_summary)) { onConfirm(R.string.delete_index_confirm) { viewModel.deleteIndex() } } }
 }
 

@@ -113,6 +113,27 @@ interface FileDao {
 }
 
 @Dao
+interface NotificationDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: NotificationEntity)
+
+    @Query(
+        """
+        SELECT * FROM notifications
+        WHERE posted_at >= :since AND (title LIKE :pattern OR text LIKE :pattern OR app_label LIKE :pattern)
+        ORDER BY posted_at DESC LIMIT :limit
+        """,
+    )
+    suspend fun search(pattern: String, since: Long, limit: Int): List<NotificationEntity>
+
+    @Query("SELECT * FROM notifications WHERE posted_at >= :since ORDER BY posted_at DESC LIMIT :limit")
+    suspend fun recent(since: Long, limit: Int): List<NotificationEntity>
+
+    @Query("DELETE FROM notifications WHERE posted_at < :before") suspend fun prune(before: Long)
+    @Query("DELETE FROM notifications") suspend fun clear()
+}
+
+@Dao
 interface IndexMetaDao {
     @Query("SELECT value FROM index_meta WHERE `key` = :key") suspend fun get(key: String): String?
     @Upsert suspend fun put(entity: IndexMetaEntity)

@@ -95,6 +95,7 @@ interface SearchActions {
     fun onAction(result: SearchResult, action: ResultAction)
     fun onToggleSection(section: ResultSection)
     fun onClearScope()
+    fun onCopy(text: String)
     fun onPasteClipboard()
     fun onDismissClipboard()
     fun onOpenSettings()
@@ -291,7 +292,9 @@ private fun sectionTitle(section: ResultSection): String = stringResource(
     when (section) {
         ResultSection.APPS -> R.string.section_apps
         ResultSection.CONTACTS -> R.string.section_contacts
+        ResultSection.CALENDAR -> R.string.section_calendar
         ResultSection.FILES -> R.string.section_files
+        ResultSection.NOTIFICATIONS -> R.string.section_notifications
         ResultSection.SETTINGS -> R.string.section_settings
         ResultSection.WEB -> R.string.section_web
     },
@@ -359,6 +362,17 @@ private fun LazyListScope.results(state: SearchUiState, actions: SearchActions, 
 private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchActions, icon: IconContent) {
     val empty = state.empty
     item(key = "greeting", contentType = "greeting") { Greeting(actions) }
+    empty.otp?.let { otp ->
+        item(key = "otp", contentType = "otp") {
+            AssistChip(
+                onClick = { actions.onCopy(otp.code) },
+                label = { Text(stringResource(R.string.copy_otp, otp.code, otp.source), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                leadingIcon = { Text("🔑") },
+                shape = CircleShape,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).animateItem(),
+            )
+        }
+    }
     if (empty.clipboardAvailable) {
         item(key = "clipboard", contentType = "clipboard") {
             Row(Modifier.padding(horizontal = 16.dp, vertical = 4.dp).animateItem(), verticalAlignment = Alignment.CenterVertically) {

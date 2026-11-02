@@ -15,6 +15,13 @@ Suggested justification:
 The in-app explanation shown before the system screen is `disclosure_all_files_text` in
 `feature/settings/src/main/res/values/strings.xml`. Expect a manual review.
 
+## Notification listener
+
+QuickFind declares a `NotificationListenerService` for the optional "Notifications & OTP" source.
+Notification content is stored on the device for 7 days and never uploaded. The in-app explanation
+(`disclosure_notifications_text`) is shown before the system "Notification access" screen. Declare
+this in the Data safety form as data processed on device, not collected.
+
 ## Prominent disclosure
 
 Contacts and files each show an explanation dialog before the system permission prompt
