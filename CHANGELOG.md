@@ -5,6 +5,7 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 ## [Unreleased] — Phase 1 MVP
 
 ### Changed — intro screens
+- Permissions are now asked during the intro: a "Your phone. Your data." screen explains privacy in four short points, then an "Allow access" screen gives each permission (contacts, files, calendar, notifications) a one-line reason and an Allow button, with "Allow & continue" to grant all at once and "Not now" to skip. Settings → About → Show intro again replays it.
 - Aurora-style onboarding: drifting aurora background, a breathing glowing search orb, a demo search bar that types example queries and shows answers, gradient headlines, animated page dots, glass source cards with toggles (apps, contacts, files, calendar), entry-point cards and a glowing "Start searching" button. Motion stops with "Remove animations".
 
 ### Added — Sprint B

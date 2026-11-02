@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
@@ -42,6 +43,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -121,7 +123,10 @@ class OnboardingViewModel @Inject constructor(
     }
 }
 
-/** Three skippable screens (spec 15): value + widget, sources, open from anywhere. */
+/**
+ * Four short, skippable screens: what it does, how privacy works, permissions (asked here,
+ * each with a reason), and how to open search from anywhere.
+ */
 @AndroidEntryPoint
 class OnboardingActivity : ComponentActivity() {
     private val viewModel: OnboardingViewModel by viewModels()
@@ -145,7 +150,7 @@ class OnboardingActivity : ComponentActivity() {
 @Composable
 private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, onDone: () -> Unit) {
     val context = LocalContext.current
-    val pager = rememberPagerState { 3 }
+    val pager = rememberPagerState { PAGES }
     val scope = rememberCoroutineScope()
     val reducedMotion = rememberReducedMotion()
 
@@ -161,6 +166,8 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
         ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
     }
     val isAssistant = remember(tick) { SystemLinks.isDefaultAssistant(context) }
+    val mediaGranted = remember(tick) { FilePermissions.hasMediaAccess(context) }
+    val notificationAccess = remember(tick) { SystemLinks.hasNotificationAccess(context) }
 
     val contactsLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
         tick++
@@ -174,6 +181,17 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
         tick++
         if (result.values.any { it }) viewModel.enableFiles()
     }
+    // "Allow & continue": every runtime permission in one system sequence, then turn on
+    // exactly the sources that were allowed and move on.
+    val allLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+        tick++
+        val contacts = result[Manifest.permission.READ_CONTACTS] == true || contactsGranted
+        val calendar = result[Manifest.permission.READ_CALENDAR] == true || calendarGranted
+        val media = FilePermissions.mediaPermissions().any { result[it] == true } || FilePermissions.hasMediaAccess(context)
+        viewModel.update { it.copy(contactsEnabled = contacts, calendarEnabled = calendar) }
+        if (media) viewModel.enableFiles()
+        scope.launch { pager.animateScrollToPage(PAGE_ACCESS + 1) }
+    }
 
     Box(Modifier.fillMaxSize()) {
         AuroraBackground(Modifier.fillMaxSize(), animated = !reducedMotion)
@@ -183,7 +201,7 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                PageDots(count = 3, current = pager.currentPage)
+                PageDots(count = PAGES, current = pager.currentPage)
                 TextButton(onClick = onDone) { Text(stringResource(R.string.skip)) }
             }
             HorizontalPager(state = pager, modifier = Modifier.weight(1f)) { page ->
@@ -204,33 +222,56 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                                 }
                             }
                         }
-                        1 -> {
-                            GradientTitle(stringResource(R.string.onboarding_2_title))
-                            Body(stringResource(R.string.onboarding_2_text))
-                            SourceCard("📱", stringResource(R.string.source_apps), stringResource(R.string.onboarding_apps_hint), s.appsEnabled) { on ->
-                                viewModel.update { it.copy(appsEnabled = on) }
+                        PAGE_PRIVACY -> {
+                            Text("🔒", style = MaterialTheme.typography.displayMedium)
+                            GradientTitle(stringResource(R.string.privacy_page_title))
+                            PrivacyPoint("📱", stringResource(R.string.privacy_point_device_title), stringResource(R.string.privacy_point_device_text))
+                            PrivacyPoint("👁", stringResource(R.string.privacy_point_names_title), stringResource(R.string.privacy_point_names_text))
+                            PrivacyPoint("🚫", stringResource(R.string.privacy_point_nothing_sent_title), stringResource(R.string.privacy_point_nothing_sent_text))
+                            PrivacyPoint("🎛", stringResource(R.string.privacy_point_control_title), stringResource(R.string.privacy_point_control_text))
+                        }
+                        PAGE_ACCESS -> {
+                            GradientTitle(stringResource(R.string.access_page_title))
+                            Body(stringResource(R.string.access_page_text))
+                            PermissionCard(
+                                emoji = "👤",
+                                title = stringResource(R.string.source_contacts),
+                                why = stringResource(R.string.access_contacts_why),
+                                granted = contactsGranted && s.contactsEnabled,
+                            ) {
+                                if (contactsGranted) viewModel.update { it.copy(contactsEnabled = true) } else contactsLauncher.launch(Manifest.permission.READ_CONTACTS)
                             }
-                            SourceCard("👤", stringResource(R.string.source_contacts), stringResource(R.string.disclosure_contacts_text), s.contactsEnabled) { on ->
-                                when {
-                                    !on -> viewModel.update { it.copy(contactsEnabled = false) }
-                                    contactsGranted -> viewModel.update { it.copy(contactsEnabled = true) }
-                                    else -> contactsLauncher.launch(Manifest.permission.READ_CONTACTS)
-                                }
+                            PermissionCard(
+                                emoji = "🗂",
+                                title = stringResource(R.string.source_files),
+                                why = stringResource(R.string.access_files_why),
+                                granted = mediaGranted && s.filesEnabled,
+                            ) {
+                                if (mediaGranted) viewModel.enableFiles() else mediaLauncher.launch(FilePermissions.mediaPermissions())
                             }
-                            SourceCard("🗂", stringResource(R.string.source_files), stringResource(R.string.disclosure_files_text), s.filesEnabled) { on ->
-                                when {
-                                    !on -> viewModel.update { it.copy(filesEnabled = false) }
-                                    FilePermissions.hasMediaAccess(context) -> viewModel.enableFiles()
-                                    else -> mediaLauncher.launch(FilePermissions.mediaPermissions())
-                                }
+                            PermissionCard(
+                                emoji = "📅",
+                                title = stringResource(R.string.source_calendar),
+                                why = stringResource(R.string.access_calendar_why),
+                                granted = calendarGranted && s.calendarEnabled,
+                            ) {
+                                if (calendarGranted) viewModel.update { it.copy(calendarEnabled = true) } else calendarLauncher.launch(Manifest.permission.READ_CALENDAR)
                             }
-                            SourceCard("📅", stringResource(R.string.source_calendar), stringResource(R.string.source_calendar_summary), s.calendarEnabled) { on ->
-                                when {
-                                    !on -> viewModel.update { it.copy(calendarEnabled = false) }
-                                    calendarGranted -> viewModel.update { it.copy(calendarEnabled = true) }
-                                    else -> calendarLauncher.launch(Manifest.permission.READ_CALENDAR)
-                                }
+                            PermissionCard(
+                                emoji = "🔑",
+                                title = stringResource(R.string.source_notifications),
+                                why = stringResource(R.string.access_notifications_why),
+                                granted = notificationAccess && s.notificationsEnabled,
+                            ) {
+                                viewModel.update { it.copy(notificationsEnabled = true) }
+                                (context as? ComponentActivity)?.let(SystemLinks::openNotificationAccess)
                             }
+                            Text(
+                                stringResource(R.string.access_page_footer),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                            )
                         }
                         else -> {
                             GradientTitle(stringResource(R.string.onboarding_3_title))
@@ -250,13 +291,38 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                     }
                 }
             }
-            val last = pager.currentPage == 2
+            val page = pager.currentPage
+            val last = page == PAGES - 1
+            val needsAsk = page == PAGE_ACCESS && !(contactsGranted && mediaGranted && calendarGranted)
             GlowButton(
-                text = stringResource(if (last) R.string.onboarding_start else R.string.next),
+                text = stringResource(
+                    when {
+                        last -> R.string.onboarding_start
+                        needsAsk -> R.string.access_allow_continue
+                        else -> R.string.next
+                    },
+                ),
                 animated = !reducedMotion,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+                modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 12.dp),
             ) {
-                if (last) onDone() else scope.launch { pager.animateScrollToPage(pager.currentPage + 1) }
+                when {
+                    last -> onDone()
+                    needsAsk -> allLauncher.launch(
+                        (listOf(Manifest.permission.READ_CONTACTS, Manifest.permission.READ_CALENDAR) + FilePermissions.mediaPermissions())
+                            .toTypedArray(),
+                    )
+                    else -> scope.launch { pager.animateScrollToPage(page + 1) }
+                }
+            }
+            // Always a way past the permission step without granting anything.
+            Box(Modifier.fillMaxWidth().padding(bottom = 8.dp), contentAlignment = Alignment.Center) {
+                if (needsAsk) {
+                    TextButton(onClick = { scope.launch { pager.animateScrollToPage(page + 1) } }) {
+                        Text(stringResource(R.string.not_now))
+                    }
+                } else {
+                    Spacer(Modifier.height(48.dp))
+                }
             }
         }
     }
@@ -450,4 +516,51 @@ private fun Body(text: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,
     )
+}
+
+private const val PAGES = 4
+private const val PAGE_PRIVACY = 1
+private const val PAGE_ACCESS = 2
+
+@Composable
+private fun PrivacyPoint(emoji: String, title: String, text: String) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+        EmojiTile(emoji)
+        Spacer(Modifier.width(14.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
+            Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+/** One permission: what it is for, and an Allow button that turns into "Allowed ✓". */
+@Composable
+private fun PermissionCard(emoji: String, title: String, why: String, granted: Boolean, onAllow: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.1f)),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            EmojiTile(emoji)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
+                Text(why, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Spacer(Modifier.width(8.dp))
+            if (granted) {
+                Text(
+                    stringResource(R.string.access_allowed),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+            } else {
+                FilledTonalButton(onClick = onAllow, shape = CircleShape) { Text(stringResource(R.string.access_allow)) }
+            }
+        }
+    }
 }

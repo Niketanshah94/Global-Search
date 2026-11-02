@@ -135,6 +135,26 @@
     <string name="onboarding_apps_hint">Every app, including work apps. Type 2–3 letters.</string>
     <string name="onboarding_tile_title">Quick Settings tile</string>
     <string name="onboarding_tile_text">Pull down the shade, tap Edit and drag “Search” in.</string>
+    <string name="privacy_page_title">Your phone. Your data.</string>
+    <string name="privacy_point_device_title">Stays on your phone</string>
+    <string name="privacy_point_device_text">Your contacts, files and history are searched on this phone and never uploaded.</string>
+    <string name="privacy_point_names_title">Names, not contents</string>
+    <string name="privacy_point_names_text">We read file names and folders, not what is inside your documents or photos.</string>
+    <string name="privacy_point_nothing_sent_title">Nothing you type is sent</string>
+    <string name="privacy_point_nothing_sent_text">No ads, no tracking. The only download is public currency rates, and you can turn it off.</string>
+    <string name="privacy_point_control_title">You are in control</string>
+    <string name="privacy_point_control_text">Every permission is optional. Change it or delete all data anytime in Settings.</string>
+    <string name="access_page_title">Allow access</string>
+    <string name="access_page_text">Each one adds something you can search. Apps, settings and the calculator work without any.</string>
+    <string name="access_contacts_why">Find people by name or number, then call, message or WhatsApp.</string>
+    <string name="access_files_why">Find photos, videos, music and documents by name.</string>
+    <string name="access_calendar_why">Find meetings and events from the last and next 30 days.</string>
+    <string name="access_notifications_why">Search recent notifications and copy OTPs. Kept 7 days on this phone.</string>
+    <string name="access_page_footer">You can change any of these later in Settings → Permissions.</string>
+    <string name="access_allow">Allow</string>
+    <string name="access_allowed">Allowed ✓</string>
+    <string name="access_allow_continue">Allow &amp; continue</string>
+    <string name="replay_intro">Show intro again</string>
     <string name="onboarding_start">Start searching</string>
     <!-- Demo bar on the first intro screen: "what you type|what you get". -->
     <string-array name="onboarding_demo">

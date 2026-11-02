@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.quickfind.core.data.Destinations
 import com.quickfind.core.data.settings.SearchBarPosition
 import com.quickfind.core.data.settings.ThemeMode
 import com.quickfind.core.data.settings.UserSettings
@@ -233,7 +234,9 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
                         )
                     }
                 }
-                Page.ABOUT -> aboutPage(versionName(context))
+                Page.ABOUT -> aboutPage(versionName(context)) {
+                    context.startActivity(Intent(Destinations.ACTION_ONBOARDING).setPackage(context.packageName))
+                }
             }
         }
     }
@@ -544,8 +547,9 @@ private fun LazyListScope.privacyPage(
     item { ClickRow(stringResource(R.string.delete_index), stringResource(R.string.delete_index_summary)) { onConfirm(R.string.delete_index_confirm) { viewModel.deleteIndex() } } }
 }
 
-private fun LazyListScope.aboutPage(version: String) {
+private fun LazyListScope.aboutPage(version: String, onReplayIntro: () -> Unit) {
     item { ListItem(headlineContent = { Text(stringResource(R.string.app_name_settings)) }, supportingContent = { Text(stringResource(R.string.version, version)) }) }
+    item { ClickRow(stringResource(R.string.replay_intro), null, onClick = onReplayIntro) }
     item { Text(stringResource(R.string.about_privacy), Modifier.padding(16.dp)) }
     item { SectionTitle(stringResource(R.string.licenses)) }
     items(OpenSourceLicenses.entries, key = { it.first }) { (name, license) ->
