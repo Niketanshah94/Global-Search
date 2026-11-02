@@ -4,6 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [
@@ -14,8 +16,9 @@ import androidx.room.TypeConverters
         FileEntity::class,
         FileFtsEntity::class,
         IndexMetaEntity::class,
+        NicknameEntity::class,
     ],
-    version = 1,
+    version = 2,
     // TODO(Phase 2): turn on schema export with the Room Gradle plugin before the first migration.
     exportSchema = false,
 )
@@ -29,6 +32,16 @@ abstract class QuickFindDatabase : RoomDatabase() {
     companion object {
         /** Excluded from Auto Backup (see app/src/main/res/xml/data_extraction_rules.xml). */
         const val NAME = "quickfind.db"
+
+        /** v2 adds nicknames. Hand-written so upgrading keeps history, pins and the index. */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `nicknames` (`result_id` TEXT NOT NULL, `nickname` TEXT NOT NULL, " +
+                        "`payload` TEXT NOT NULL, PRIMARY KEY(`result_id`))",
+                )
+            }
+        }
     }
 }
 

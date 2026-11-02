@@ -10,6 +10,7 @@ enum class SearchScope(val types: Set<SourceType>) {
     APPS(setOf(SourceType.APP)),
     CONTACTS(setOf(SourceType.CONTACT, SourceType.PHONE_NUMBER)),
     FILES(setOf(SourceType.FILE, SourceType.FOLDER)),
+    SETTINGS(setOf(SourceType.SETTING)),
 }
 
 @Immutable
@@ -40,6 +41,8 @@ data class SearchUiState(
     val isSearching: Boolean = false,
     val empty: EmptyUi = EmptyUi(),
     val pinnedIds: Set<String> = emptySet(),
+    /** Result id -> the nickname the user gave it. */
+    val nicknames: Map<String, String> = emptyMap(),
 ) {
     val hasQuery: Boolean get() = query.isNotBlank()
     val noResults: Boolean get() = hasQuery && !isSearching && topHit == null && sections.isEmpty()

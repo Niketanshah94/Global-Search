@@ -1,6 +1,8 @@
 package com.quickfind.core.data.results
 
 import com.quickfind.core.data.db.HiddenResultEntity
+import com.quickfind.core.data.db.NicknameEntity
+import com.quickfind.core.matching.TextNormalizer
 import com.quickfind.core.data.db.PinnedResultEntity
 import com.quickfind.core.data.db.ResultPrefsDao
 import com.quickfind.core.data.di.ApplicationScope
@@ -21,10 +23,15 @@ interface ResultPrefsRepository {
     val hidden: Flow<List<HiddenResultEntity>>
     val pinned: Flow<List<SearchResult>>
 
+    /** Normalized nickname -> the result it opens. */
+    val nicknames: StateFlow<Map<String, SearchResult>>
+
     suspend fun hide(result: SearchResult)
     suspend fun unhide(resultId: String)
     suspend fun pin(result: SearchResult)
     suspend fun unpin(resultId: String)
+    suspend fun setNickname(result: SearchResult, nickname: String)
+    suspend fun removeNickname(resultId: String)
 }
 
 @Singleton
@@ -58,4 +65,21 @@ class RoomResultPrefsRepository @Inject constructor(
     }
 
     override suspend fun unpin(resultId: String) = dao.unpin(resultId)
+
+    override val nicknames: StateFlow<Map<String, SearchResult>> = dao.nicknames()
+        .map { list ->
+            list.mapNotNull { e ->
+                runCatching { e.nickname to json.decodeFromString(SearchResult.serializer(), e.payload) }.getOrNull()
+            }.toMap()
+        }
+        .stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
+    override suspend fun setNickname(result: SearchResult, nickname: String) {
+        val key = TextNormalizer.fold(nickname).trim()
+        if (key.isEmpty()) return removeNickname(result.id)
+        val clean = result.copy(matchedRanges = emptyList(), matchScore = 0)
+        dao.setNickname(NicknameEntity(result.id, key, json.encodeToString(SearchResult.serializer(), clean)))
+    }
+
+    override suspend fun removeNickname(resultId: String) = dao.removeNickname(resultId)
 }

@@ -70,6 +70,9 @@ class SearchViewModelTest {
         override suspend fun unhide(resultId: String) { hiddenIds.value -= resultId }
         override suspend fun pin(result: SearchResult) { pinned.value += result }
         override suspend fun unpin(resultId: String) { pinned.value = pinned.value.filter { it.id != resultId } }
+        override val nicknames = MutableStateFlow(emptyMap<String, SearchResult>())
+        override suspend fun setNickname(result: SearchResult, nickname: String) { nicknames.value += (nickname to result) }
+        override suspend fun removeNickname(resultId: String) { nicknames.value = nicknames.value.filterValues { it.id != resultId } }
     }
 
     private class Settings : SettingsRepository {
@@ -146,5 +149,24 @@ class SearchViewModelTest {
         vm.clear()
         assertEquals("", vm.uiState.value.query)
         assertEquals(null, vm.uiState.value.scope)
+    }
+
+    @Test
+    fun scopePrefixBecomesChip() = runTest(dispatcher) {
+        val vm = vm()
+        vm.onQueryChange("a ")
+        assertEquals(SearchScope.APPS, vm.uiState.value.scope)
+        assertEquals("", vm.queryText)
+        vm.onQueryChange("wh")
+        assertEquals("WhatsApp", vm.uiState.value.topHit!!.title)
+    }
+
+    @Test
+    fun nicknameIsExposed() = runTest(dispatcher) {
+        val vm = vm()
+        vm.onQueryChange("wh")
+        val whatsapp = vm.uiState.value.topHit!!
+        vm.setNickname(whatsapp, "chat")
+        assertEquals("chat", vm.uiState.value.nicknames[whatsapp.id])
     }
 }

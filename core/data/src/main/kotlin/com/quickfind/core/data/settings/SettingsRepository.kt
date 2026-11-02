@@ -83,6 +83,8 @@ class DataStoreSettingsRepository @Inject constructor(
         val workApps = booleanPreferencesKey("show_work_apps")
         val engine = stringPreferencesKey("search_engine")
         val customTemplate = stringPreferencesKey("custom_search_template")
+        val prefixes = booleanPreferencesKey("prefixes_enabled")
+        val currency = booleanPreferencesKey("currency_enabled")
         val barPosition = stringPreferencesKey("search_bar_position")
         val theme = stringPreferencesKey("theme_mode")
         val dynamicColor = booleanPreferencesKey("dynamic_color")
@@ -114,6 +116,8 @@ class DataStoreSettingsRepository @Inject constructor(
             showWorkApps = p[Keys.workApps] ?: d.showWorkApps,
             searchEngine = enumOr(p[Keys.engine], d.searchEngine),
             customSearchTemplate = p[Keys.customTemplate] ?: d.customSearchTemplate,
+            prefixesEnabled = p[Keys.prefixes] ?: d.prefixesEnabled,
+            currencyEnabled = p[Keys.currency] ?: d.currencyEnabled,
             searchBarPosition = enumOr(p[Keys.barPosition], d.searchBarPosition),
             themeMode = enumOr(p[Keys.theme], d.themeMode),
             dynamicColor = p[Keys.dynamicColor] ?: d.dynamicColor,
@@ -140,6 +144,8 @@ class DataStoreSettingsRepository @Inject constructor(
         p[Keys.workApps] = s.showWorkApps
         p[Keys.engine] = s.searchEngine.name
         p[Keys.customTemplate] = s.customSearchTemplate
+        p[Keys.prefixes] = s.prefixesEnabled
+        p[Keys.currency] = s.currencyEnabled
         p[Keys.barPosition] = s.searchBarPosition.name
         p[Keys.theme] = s.themeMode.name
         p[Keys.dynamicColor] = s.dynamicColor

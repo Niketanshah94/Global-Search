@@ -33,6 +33,24 @@ sealed interface ResultAction {
     data class WhatsApp(val number: String) : ResultAction
 
     @Serializable
+    data class Telegram(val number: String) : ResultAction
+
+    @Serializable
+    data class Signal(val number: String) : ResultAction
+
+    /** Opens a maps app at a postal address or place name. */
+    @Serializable
+    data class Navigate(val address: String) : ResultAction
+
+    /** Starts a countdown in the clock app (AlarmClock.ACTION_SET_TIMER). */
+    @Serializable
+    data class SetTimer(val seconds: Int) : ResultAction
+
+    /** Opens the clock app with an alarm pre-filled (AlarmClock.ACTION_SET_ALARM). */
+    @Serializable
+    data class SetAlarm(val hour: Int, val minute: Int) : ResultAction
+
+    @Serializable
     data class Email(val address: String) : ResultAction
 
     @Serializable

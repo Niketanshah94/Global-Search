@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 interface SearchSource {
     val type: SourceType
     val kind: SourceKind
+
+    /** Every type this source can return, for prefix and shortcut scopes. Usually just [type]. */
+    val coversTypes: Set<SourceType> get() = setOf(type)
     val isEnabled: StateFlow<Boolean>
 
     /** Must respect its time budget and check coroutine cancellation inside loops. */

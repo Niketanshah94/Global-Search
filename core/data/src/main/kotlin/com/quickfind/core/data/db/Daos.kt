@@ -44,6 +44,10 @@ interface ResultPrefsDao {
     @Upsert suspend fun pin(entity: PinnedResultEntity)
     @Query("DELETE FROM pinned_results WHERE result_id = :resultId") suspend fun unpin(resultId: String)
     @Query("SELECT * FROM pinned_results ORDER BY pinned_at ASC") fun pinned(): Flow<List<PinnedResultEntity>>
+
+    @Upsert suspend fun setNickname(entity: NicknameEntity)
+    @Query("DELETE FROM nicknames WHERE result_id = :resultId") suspend fun removeNickname(resultId: String)
+    @Query("SELECT * FROM nicknames") fun nicknames(): Flow<List<NicknameEntity>>
 }
 
 @Dao

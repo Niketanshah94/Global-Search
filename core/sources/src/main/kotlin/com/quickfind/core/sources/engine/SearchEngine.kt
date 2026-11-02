@@ -7,7 +7,9 @@ import com.quickfind.core.data.results.ResultPrefsRepository
 import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.matching.NormalizedQuery
 import com.quickfind.core.matching.ranking.AssembledResults
+import com.quickfind.core.matching.instant.QueryPrefixes
 import com.quickfind.core.matching.ranking.ResultAssembler
+import com.quickfind.core.model.WebSearchEngine
 import com.quickfind.core.model.SearchResult
 import com.quickfind.core.model.SourceKind
 import com.quickfind.core.model.SourceType
@@ -73,15 +75,40 @@ class SearchEngine @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun results(requests: Flow<SearchRequest>): Flow<EngineResult> = requests.transformLatest { request ->
-        val query = NormalizedQuery.of(request.text)
+        val user = settings.settings.value
+        // Prefix shortcuts: "f report" (files only), "yt lofi" (YouTube search).
+        var text = request.text
+        var scopeTypes = request.scope
+        var forcedEngine: WebSearchEngine? = null
+        if (user.prefixesEnabled) {
+            QueryPrefixes.parse(text)?.let { parsed ->
+                when (val prefix = parsed.prefix) {
+                    is QueryPrefixes.Prefix.Scope -> if (scopeTypes == null) {
+                        scopeTypes = prefix.types
+                        text = parsed.rest
+                    }
+                    is QueryPrefixes.Prefix.Web -> {
+                        forcedEngine = prefix.engine
+                        text = parsed.rest
+                    }
+                }
+                Unit
+            }
+        }
+        val query = NormalizedQuery.of(text).withWebEngine(forcedEngine)
         if (query.isEmpty) {
             emit(EngineResult(request.text, AssembledResults.EMPTY, isComplete = true))
             return@transformLatest
         }
-        val active = sources.filter { s ->
-            s.isEnabled.value && (request.scope == null || s.type in request.scope || s.type == SourceType.WEB)
+        val scope = scopeTypes
+        val active = if (forcedEngine != null) {
+            sources.filter { it.type == SourceType.WEB }
+        } else {
+            sources.filter { s ->
+                s.isEnabled.value && (scope == null || s.coversTypes.any { it in scope } || s.type == SourceType.WEB)
+            }
         }
-        val user = settings.settings.value
+        val inScope: (SearchResult) -> Boolean = { r -> scope == null || r.type in scope || r.type == SourceType.WEB }
         val context = history.rankingContext(query.normalized, user.rankingMode, user.typeBias)
         val hidden = resultPrefs.hiddenIds.value
 
@@ -97,12 +124,13 @@ class SearchEngine @Inject constructor(
                 .map { source -> async(cpu) { safeSearch(source, query) } }
                 .awaitAll()
                 .flatten()
+                .filter(inScope)
 
             val fastAssembled = withContext(cpu) { ResultAssembler.assemble(fast, context, hidden) }
             emit(EngineResult(request.text, fastAssembled, isComplete = indexed.isEmpty()))
 
             if (indexed.isNotEmpty()) {
-                val all = fast + indexedJobs.awaitAll().flatten()
+                val all = fast + indexedJobs.awaitAll().flatten().filter(inScope)
                 val assembled = withContext(cpu) { ResultAssembler.assemble(all, context, hidden) }
                 emit(EngineResult(request.text, assembled, isComplete = true))
             }
@@ -126,7 +154,7 @@ class SearchEngine @Inject constructor(
     /** Learns from the user's pick (spec 4.7 historyBoost/frecency). */
     suspend fun recordLaunch(rawQuery: String, result: SearchResult) {
         // Instant results are recomputed from the query; learning them would only add noise.
-        if (result.type in setOf(SourceType.CALCULATOR, SourceType.WEB, SourceType.URL, SourceType.PHONE_NUMBER)) return
+        if (result.type in setOf(SourceType.CALCULATOR, SourceType.TOOL, SourceType.WEB, SourceType.URL, SourceType.PHONE_NUMBER)) return
         history.recordLaunch(NormalizedQuery.of(rawQuery).normalized, result.id)
     }
 

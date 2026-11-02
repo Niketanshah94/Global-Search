@@ -26,6 +26,9 @@ class InstalledApps @Inject constructor(@ApplicationContext private val context:
             return cachedWhatsApp
         }
 
+    val hasTelegram: Boolean get() = isInstalled(TELEGRAM)
+    val hasSignal: Boolean get() = isInstalled(SIGNAL)
+
     fun isInstalled(packageName: String): Boolean = try {
         context.packageManager.getPackageInfo(packageName, 0)
         true
@@ -35,5 +38,7 @@ class InstalledApps @Inject constructor(@ApplicationContext private val context:
 
     companion object {
         val WHATSAPP_PACKAGES = listOf("com.whatsapp", "com.whatsapp.w4b")
+        const val TELEGRAM = "org.telegram.messenger"
+        const val SIGNAL = "org.thoughtcrime.securesms"
     }
 }

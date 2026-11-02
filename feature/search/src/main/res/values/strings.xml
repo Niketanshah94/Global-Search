@@ -69,14 +69,35 @@
     <string name="short_play_store">Play Store</string>
     <string name="short_folder">Folder</string>
 
+    <string name="type_tool">Tool</string>
+    <string name="scope_settings">Settings</string>
+    <string name="action_telegram">Telegram %1$s</string>
+    <string name="action_signal">Signal %1$s</string>
+    <string name="action_navigate">Navigate</string>
+    <string name="action_start_timer">Start timer</string>
+    <string name="action_set_alarm">Set alarm</string>
+    <string name="short_telegram">Telegram</string>
+    <string name="short_signal">Signal</string>
+    <string name="short_navigate">Navigate</string>
+    <string name="short_timer">Timer</string>
+    <string name="short_alarm">Alarm</string>
+    <string name="action_nickname">Nickname</string>
+    <string name="nickname_title">Nickname for %1$s</string>
+    <string name="nickname_current">Currently “%1$s”</string>
+    <string name="nickname_hint">Type it in search to open this first</string>
+    <string name="save">Save</string>
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+
     <string name="greeting">What are you looking for?</string>
     <string name="greeting_sub">Apps, people, files, settings, quick maths. Just start typing.</string>
     <!-- Tapping a chip types it into the search field. Keep them short and universal. -->
     <string-array name="suggestions">
-        <item>wifi</item>
-        <item>bluetooth</item>
+        <item>timer 10 min</item>
+        <item>5 ft in cm</item>
+        <item>100 usd in inr</item>
         <item>2400*15%</item>
-        <item>battery</item>
-        <item>camera</item>
+        <item>wifi</item>
+        <item>yt lofi</item>
     </string-array>
 </resources>

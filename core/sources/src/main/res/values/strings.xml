@@ -5,6 +5,14 @@
     <string name="url_title">Open %1$s</string>
     <string name="web_search_title">Search %1$s for “%2$s”</string>
     <string name="web_engine_custom">the web</string>
+    <string name="unit_subtitle">%1$s %2$s · Tap to copy</string>
+    <string name="timer_title">Timer · %1$s</string>
+    <string name="timer_subtitle">Start in the Clock app</string>
+    <string name="alarm_title">Alarm · %1$s</string>
+    <string name="alarm_subtitle">Set in the Clock app</string>
+    <string name="email_title">Email %1$s</string>
+    <string name="maps_title">Open in Maps</string>
+    <string name="currency_subtitle">%1$s · ECB rate of %2$s · Tap to copy</string>
     <string name="storage_root">Internal storage</string>
 
     <!-- System settings shortcuts (spec 5.4) -->

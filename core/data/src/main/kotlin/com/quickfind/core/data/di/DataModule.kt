@@ -37,6 +37,7 @@ object DataProvidesModule {
     @Singleton
     fun database(@ApplicationContext context: Context): QuickFindDatabase =
         Room.databaseBuilder(context, QuickFindDatabase::class.java, QuickFindDatabase.NAME)
+            .addMigrations(QuickFindDatabase.MIGRATION_1_2)
             // The index is rebuildable and history is a convenience: never block startup on a migration.
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()

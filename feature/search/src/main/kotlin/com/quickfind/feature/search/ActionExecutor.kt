@@ -12,6 +12,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.UserManager
+import android.provider.AlarmClock
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -104,6 +105,39 @@ class ActionExecutor @Inject constructor(
                     openUrl(activity, url)
                 }
             }
+            is ResultAction.Telegram -> {
+                val digits = PhoneNumbers.digitsOnly(action.number)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tg://resolve?phone=$digits")).setPackage(InstalledApps.TELEGRAM)
+                try {
+                    activity.startActivity(intent)
+                } catch (_: ActivityNotFoundException) {
+                    openUrl(activity, "https://t.me/+$digits")
+                }
+            }
+            is ResultAction.Signal -> {
+                val url = "https://signal.me/#p/+" + PhoneNumbers.digitsOnly(action.number)
+                try {
+                    activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage(InstalledApps.SIGNAL))
+                } catch (_: ActivityNotFoundException) {
+                    openUrl(activity, url)
+                }
+            }
+            is ResultAction.Navigate -> try {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=" + Uri.encode(action.address))))
+            } catch (_: ActivityNotFoundException) {
+                openUrl(activity, "https://www.google.com/maps/search/?api=1&query=" + Uri.encode(action.address))
+            }
+            is ResultAction.SetTimer -> activity.startActivity(
+                Intent(AlarmClock.ACTION_SET_TIMER)
+                    .putExtra(AlarmClock.EXTRA_LENGTH, action.seconds)
+                    .putExtra(AlarmClock.EXTRA_SKIP_UI, false),
+            )
+            is ResultAction.SetAlarm -> activity.startActivity(
+                Intent(AlarmClock.ACTION_SET_ALARM)
+                    .putExtra(AlarmClock.EXTRA_HOUR, action.hour)
+                    .putExtra(AlarmClock.EXTRA_MINUTES, action.minute)
+                    .putExtra(AlarmClock.EXTRA_SKIP_UI, false),
+            )
             is ResultAction.Email -> activity.startActivity(
                 Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + Uri.encode(action.address))),
             )

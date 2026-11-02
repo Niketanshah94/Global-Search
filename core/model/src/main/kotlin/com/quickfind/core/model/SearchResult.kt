@@ -35,4 +35,8 @@ sealed interface ResultIcon {
 
     @Serializable
     data class Glyph(val type: SourceType) : ResultIcon
+
+    /** A short symbol drawn in a gradient tile, e.g. "⇄" for conversions or "₹" for currency. */
+    @Serializable
+    data class Symbol(val text: String) : ResultIcon
 }

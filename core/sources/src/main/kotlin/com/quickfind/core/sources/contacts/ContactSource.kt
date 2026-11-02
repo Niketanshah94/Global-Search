@@ -49,6 +49,7 @@ private class ContactEntry(
     val phones: List<String>,
     val emails: List<String>,
     val nicknames: List<String>,
+    val addresses: List<String>,
 ) {
     val normalizedName: NormalizedText = TextNormalizer.normalize(name)
     val normalizedNicknames: List<NormalizedText> = nicknames.map(TextNormalizer::normalize)
@@ -131,6 +132,7 @@ class ContactSource @Inject constructor(
             val phones = LinkedHashMap<String, String>()
             val emails = LinkedHashSet<String>()
             val nicknames = LinkedHashSet<String>()
+            val addresses = LinkedHashSet<String>()
         }
         val builders = LinkedHashMap<Long, Builder>()
         val projection = arrayOf(
@@ -146,8 +148,9 @@ class ContactSource @Inject constructor(
             CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
             CommonDataKinds.Email.CONTENT_ITEM_TYPE,
             CommonDataKinds.Nickname.CONTENT_ITEM_TYPE,
+            CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE,
         )
-        val selection = "${ContactsContract.Data.MIMETYPE} IN (?,?,?,?)"
+        val selection = "${ContactsContract.Data.MIMETYPE} IN (?,?,?,?,?)"
         context.contentResolver.query(ContactsContract.Data.CONTENT_URI, projection, selection, types, null)?.use { c ->
             val iId = c.getColumnIndexOrThrow(ContactsContract.Data.CONTACT_ID)
             val iLookup = c.getColumnIndexOrThrow(ContactsContract.Data.LOOKUP_KEY)
@@ -168,18 +171,27 @@ class ContactSource @Inject constructor(
                     CommonDataKinds.Phone.CONTENT_ITEM_TYPE -> b.phones.putIfAbsent(PhoneNumbers.digitsOnly(data).takeLast(10), data)
                     CommonDataKinds.Email.CONTENT_ITEM_TYPE -> b.emails += data
                     CommonDataKinds.Nickname.CONTENT_ITEM_TYPE -> b.nicknames += data
+                    // DATA1 of a postal row is the formatted address.
+                    CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE -> b.addresses += data.replace('\n', ' ')
                 }
             }
         }
         return builders.values.map {
-            ContactEntry(it.id, it.lookup, it.name, it.photo, it.phones.values.toList(), it.emails.toList(), it.nicknames.toList())
+            ContactEntry(
+                it.id, it.lookup, it.name, it.photo,
+                it.phones.values.toList(), it.emails.toList(), it.nicknames.toList(), it.addresses.toList(),
+            )
         }
     }
 
     override suspend fun search(query: NormalizedQuery, limit: Int): List<SearchResult> {
         val snapshot = entries
         if (snapshot.isEmpty()) return emptyList()
-        val whatsApp = installedApps.whatsAppPackage != null
+        val apps = MessagingApps(
+            whatsApp = installedApps.whatsAppPackage != null,
+            telegram = installedApps.hasTelegram,
+            signal = installedApps.hasSignal,
+        )
         val out = ArrayList<Pair<Int, SearchResult>>()
         for ((i, e) in snapshot.withIndex()) {
             if ((i and 63) == 0) currentCoroutineContext().ensureActive()
@@ -208,12 +220,14 @@ class ContactSource @Inject constructor(
                 }
             }
             if (score == Int.MIN_VALUE) continue
-            out += score to e.toResult(score, ranges, matchedPhone, whatsApp)
+            out += score to e.toResult(score, ranges, matchedPhone, apps)
         }
         return out.sortedByDescending { it.first }.take(limit).map { it.second }
     }
 
-    private fun ContactEntry.toResult(score: Int, ranges: List<IntRange>, matchedPhone: String?, whatsApp: Boolean): SearchResult {
+    private data class MessagingApps(val whatsApp: Boolean, val telegram: Boolean, val signal: Boolean)
+
+    private fun ContactEntry.toResult(score: Int, ranges: List<IntRange>, matchedPhone: String?, apps: MessagingApps): SearchResult {
         val phone = matchedPhone ?: phones.firstOrNull()
         val email = emails.firstOrNull()
         val contactUri = ContactsContract.Contacts.getLookupUri(id, lookupKey)
@@ -227,8 +241,11 @@ class ContactSource @Inject constructor(
         val secondary = buildList {
             if (phone != null) {
                 add(ResultAction.Sms(phone))
-                if (whatsApp) add(ResultAction.WhatsApp(phone))
+                if (apps.whatsApp) add(ResultAction.WhatsApp(phone))
+                if (apps.telegram) add(ResultAction.Telegram(phone))
+                if (apps.signal) add(ResultAction.Signal(phone))
             }
+            addresses.firstOrNull()?.let { add(ResultAction.Navigate(it)) }
             if (email != null && primary !is ResultAction.Email) add(ResultAction.Email(email))
             if (primary != open) add(open)
             // Extra numbers, so a contact with "Mobile" and "Work" can call either.

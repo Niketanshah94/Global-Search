@@ -25,7 +25,7 @@ Contacts and files each show an explanation dialog before the system permission 
 | Question | Answer for Phase 1 |
 |---|---|
 | Does the app collect or share user data? | No. Contacts, file names, app list and search history are processed on the device only. |
-| Is data encrypted in transit? | Not applicable: the app has no `INTERNET` permission in Phase 1. |
+| Is data encrypted in transit? | Yes. The only network request is an HTTPS download of public exchange rates from api.frankfurter.app, made when the user types a currency conversion. It sends no user data and can be turned off in Settings. |
 | Can users request deletion? | Yes, in-app: Settings → Privacy & data → Clear search history / Delete all index data. Uninstalling removes everything. |
 
 Update the form when Phase 3 adds cloud AI and billing.

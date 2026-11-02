@@ -17,7 +17,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -86,6 +91,7 @@ fun typeLabel(type: SourceType): String = stringResource(
         SourceType.FOLDER -> R.string.type_folder
         SourceType.SETTING -> R.string.type_setting
         SourceType.CALCULATOR -> R.string.type_calculator
+        SourceType.TOOL -> R.string.type_tool
         SourceType.PHONE_NUMBER -> R.string.type_phone
         SourceType.URL -> R.string.type_url
         SourceType.WEB -> R.string.type_web
@@ -102,6 +108,11 @@ fun actionLabel(action: ResultAction): String = when (action) {
     is ResultAction.Sms -> stringResource(R.string.action_sms, action.number)
     is ResultAction.WhatsApp -> stringResource(R.string.action_whatsapp, action.number)
     is ResultAction.Email -> stringResource(R.string.action_email, action.address)
+    is ResultAction.Telegram -> stringResource(R.string.action_telegram, action.number)
+    is ResultAction.Signal -> stringResource(R.string.action_signal, action.number)
+    is ResultAction.Navigate -> stringResource(R.string.action_navigate)
+    is ResultAction.SetTimer -> stringResource(R.string.action_start_timer)
+    is ResultAction.SetAlarm -> stringResource(R.string.action_set_alarm)
     is ResultAction.OpenContact -> stringResource(R.string.action_open_contact)
     is ResultAction.OpenFile -> stringResource(R.string.action_open)
     is ResultAction.ShareFile -> stringResource(R.string.action_share)
@@ -192,6 +203,8 @@ fun topHitQuickActions(result: SearchResult): List<ResultAction> = when (result.
 private fun allActions(result: SearchResult) = listOf(result.primaryAction) + result.secondaryActions
 
 private val WhatsAppGreen = Color(0xFF25D366)
+private val TelegramBlue = Color(0xFF2AABEE)
+private val SignalBlue = Color(0xFF3A76F0)
 
 /** The glyph for an action. WhatsApp is drawn as a green bubble with a phone, not the trademarked logo. */
 @Composable
@@ -202,6 +215,15 @@ fun ActionGlyph(action: ResultAction, modifier: Modifier = Modifier, tint: Color
             Icon(painterResource(UiR.drawable.ic_bubble_round), description, Modifier.fillMaxSize(), tint = WhatsAppGreen)
             Icon(Icons.Default.Call, null, Modifier.fillMaxSize(0.5f), tint = Color.White)
         }
+        is ResultAction.Telegram -> Box(modifier.clip(CircleShape).background(TelegramBlue), contentAlignment = Alignment.Center) {
+            Icon(Icons.AutoMirrored.Filled.Send, description, Modifier.fillMaxSize(0.55f), tint = Color.White)
+        }
+        is ResultAction.Signal -> Box(modifier, contentAlignment = Alignment.Center) {
+            Icon(painterResource(UiR.drawable.ic_bubble_round), description, Modifier.fillMaxSize(), tint = SignalBlue)
+        }
+        is ResultAction.Navigate -> Icon(Icons.Default.LocationOn, description, modifier, tint)
+        is ResultAction.SetTimer -> Icon(Icons.Default.PlayArrow, description, modifier, tint)
+        is ResultAction.SetAlarm -> Icon(Icons.Default.Notifications, description, modifier, tint)
         is ResultAction.Call -> Icon(Icons.Default.Call, description, modifier, tint)
         is ResultAction.Sms -> Icon(painterResource(UiR.drawable.ic_chat), description, modifier, tint)
         is ResultAction.Email -> Icon(Icons.Default.Email, description, modifier, tint)
@@ -239,6 +261,11 @@ fun shortActionLabel(action: ResultAction): String = stringResource(
         is ResultAction.Sms -> R.string.short_message
         is ResultAction.WhatsApp -> R.string.short_whatsapp
         is ResultAction.Email -> R.string.short_email
+        is ResultAction.Telegram -> R.string.short_telegram
+        is ResultAction.Signal -> R.string.short_signal
+        is ResultAction.Navigate -> R.string.short_navigate
+        is ResultAction.SetTimer -> R.string.short_timer
+        is ResultAction.SetAlarm -> R.string.short_alarm
         is ResultAction.OpenContact -> R.string.short_contact
         is ResultAction.AppDetails -> R.string.short_info
         is ResultAction.Uninstall -> R.string.action_uninstall
@@ -360,6 +387,7 @@ fun GlyphIcon(type: SourceType, modifier: Modifier = Modifier) {
             SourceType.FOLDER -> Icon(painterResource(UiR.drawable.ic_folder), null, m, tint)
             SourceType.SETTING -> Icon(Icons.Default.Settings, null, m, tint)
             SourceType.CALCULATOR -> Text("=", style = MaterialTheme.typography.titleLarge, color = tint)
+            SourceType.TOOL -> Icon(Icons.Default.Build, null, m, tint)
             SourceType.PHONE_NUMBER -> Icon(Icons.Default.Phone, null, m, tint)
             SourceType.URL -> Icon(painterResource(UiR.drawable.ic_globe), null, m, tint)
             SourceType.WEB -> Icon(Icons.Default.Search, null, m, tint)
@@ -373,7 +401,7 @@ private fun glyphColors(type: SourceType): List<Color> = when (type) {
     SourceType.CONTACT, SourceType.PHONE_NUMBER -> listOf(Aurora.Magenta, Aurora.Violet)
     SourceType.FILE, SourceType.FOLDER -> listOf(Aurora.Amber, Aurora.Magenta)
     SourceType.SETTING -> listOf(Aurora.Cyan, Aurora.Violet)
-    SourceType.CALCULATOR -> listOf(Aurora.Violet, Aurora.Cyan)
+    SourceType.CALCULATOR, SourceType.TOOL -> listOf(Aurora.Violet, Aurora.Cyan)
     SourceType.URL, SourceType.WEB, SourceType.APP -> listOf(Aurora.Violet, Aurora.Magenta)
 }
 
@@ -422,5 +450,11 @@ fun ResultIconView(result: SearchResult, loader: AppIconLoader, modifier: Modifi
             )
         }
         is ResultIcon.Glyph -> GlyphIcon(icon.type, modifier)
+        is ResultIcon.Symbol -> Box(
+            modifier = modifier.clip(RoundedCornerShape(30)).background(Brush.linearGradient(glyphColors(SourceType.TOOL))),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(icon.text, color = Color.White, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold), maxLines = 1)
+        }
     }
 }

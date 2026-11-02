@@ -39,6 +39,14 @@ data class PinnedResultEntity(
     @ColumnInfo(name = "pinned_at") val pinnedAt: Long,
 )
 
+/** A user-chosen nickname for a result ("ma" for Mom), with the result stored as JSON. */
+@Entity(tableName = "nicknames")
+data class NicknameEntity(
+    @PrimaryKey @ColumnInfo(name = "result_id") val resultId: String,
+    val nickname: String,
+    val payload: String,
+)
+
 enum class FileOrigin { MEDIASTORE, WALK, SAF, DERIVED }
 
 /**

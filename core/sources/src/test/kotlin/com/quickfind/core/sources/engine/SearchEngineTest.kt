@@ -69,6 +69,9 @@ class SearchEngineTest {
         override suspend fun unhide(resultId: String) { hiddenIds.value -= resultId }
         override suspend fun pin(result: SearchResult) = Unit
         override suspend fun unpin(resultId: String) = Unit
+        override val nicknames = MutableStateFlow(emptyMap<String, SearchResult>())
+        override suspend fun setNickname(result: SearchResult, nickname: String) { nicknames.value += (nickname to result) }
+        override suspend fun removeNickname(resultId: String) { nicknames.value = nicknames.value.filterValues { it.id != resultId } }
     }
 
     private class FakeSettings : SettingsRepository {
@@ -161,6 +164,25 @@ class SearchEngineTest {
         val d = StandardTestDispatcher(testScheduler)
         engine(setOf(apps), dispatcher = d).results(flowOf(SearchRequest("  "))).test {
             assertTrue(awaitItem().results.isEmpty)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun scopePrefixLimitsToFiles() = runTest {
+        val d = StandardTestDispatcher(testScheduler)
+        engine(setOf(apps, files), dispatcher = d).results(flowOf(SearchRequest("f cam"))).test {
+            assertTrue(awaitItem().results.isEmpty)
+            assertEquals("camera_manual.pdf", awaitItem().results.topHit!!.result.title)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun unknownPrefixIsPlainText() = runTest {
+        val d = StandardTestDispatcher(testScheduler)
+        engine(setOf(apps), dispatcher = d).results(flowOf(SearchRequest("wh"))).test {
+            assertEquals("WhatsApp", awaitItem().results.topHit!!.result.title)
             awaitComplete()
         }
     }

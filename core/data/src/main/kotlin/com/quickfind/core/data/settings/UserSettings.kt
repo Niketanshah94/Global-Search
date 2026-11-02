@@ -22,6 +22,10 @@ data class UserSettings(
 
     // Web
     val searchEngine: WebSearchEngine = WebSearchEngine.GOOGLE,
+    /** "f ", "c ", "yt " … shortcuts at the start of a query. */
+    val prefixesEnabled: Boolean = true,
+    /** Download public exchange rates when a currency query is typed (the only network use). */
+    val currencyEnabled: Boolean = true,
     val customSearchTemplate: String = "",
 
     // Look and behaviour
@@ -50,7 +54,7 @@ data class UserSettings(
         SourceType.CONTACT -> contactsEnabled
         SourceType.FILE, SourceType.FOLDER -> filesEnabled
         SourceType.SETTING -> settingsEnabled
-        SourceType.CALCULATOR -> calculatorEnabled
+        SourceType.CALCULATOR, SourceType.TOOL -> calculatorEnabled
         SourceType.WEB, SourceType.URL -> webEnabled
         SourceType.PHONE_NUMBER -> true
     }

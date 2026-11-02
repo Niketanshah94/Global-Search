@@ -72,7 +72,8 @@ All ranking constants live in `core/matching/.../MatchWeights.kt` and `ranking/R
 
 The app works with **no permissions**: apps, settings, calculator and web search need none.
 Contacts, media and full file access are requested only when the user turns those sources on, each
-after an explanation. There is no `INTERNET` permission in Phase 1. See `docs/PLAY_STORE.md` for
+after an explanation. The `INTERNET` permission is used only to download public exchange rates for
+currency conversion (no user data is sent; Settings → Currency conversion turns it off). See `docs/PLAY_STORE.md` for
 the `MANAGE_EXTERNAL_STORAGE` declaration and the Data safety answers.
 
 ## Known gaps and decisions to confirm

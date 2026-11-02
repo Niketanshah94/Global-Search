@@ -31,6 +31,7 @@ import com.quickfind.core.sources.apps.AppIconLoader
 import com.quickfind.core.sources.engine.SearchEngine
 import com.quickfind.core.ui.QuickFindTheme
 import com.quickfind.core.ui.ThemePreference
+import com.quickfind.feature.search.ui.NicknameDialog
 import com.quickfind.feature.search.ui.ResultActionSheet
 import com.quickfind.feature.search.ui.ResultIconView
 import com.quickfind.feature.search.ui.SearchActions
@@ -77,6 +78,7 @@ class SearchActivity : ComponentActivity() {
             val keyboard = LocalSoftwareKeyboardController.current
             val view = LocalView.current
             var sheetFor by remember { mutableStateOf<SearchResult?>(null) }
+            var nicknameFor by remember { mutableStateOf<SearchResult?>(null) }
 
             LaunchedEffect(focusTick) {
                 // requestFocus throws if the field is not attached yet; it will be on the next tick.
@@ -141,6 +143,22 @@ class SearchActivity : ComponentActivity() {
                             viewModel.hide(result)
                         },
                         onDismiss = { sheetFor = null },
+                        nickname = state.nicknames[result.id],
+                        onEditNickname = {
+                            sheetFor = null
+                            nicknameFor = result
+                        },
+                    )
+                }
+                nicknameFor?.let { result ->
+                    NicknameDialog(
+                        result = result,
+                        current = state.nicknames[result.id],
+                        onSave = { nick ->
+                            nicknameFor = null
+                            viewModel.setNickname(result, nick)
+                        },
+                        onDismiss = { nicknameFor = null },
                     )
                 }
             }
@@ -220,6 +238,7 @@ class SearchActivity : ComponentActivity() {
     private companion object {
         val INSTANT_TYPES = setOf(
             com.quickfind.core.model.SourceType.CALCULATOR,
+            com.quickfind.core.model.SourceType.TOOL,
             com.quickfind.core.model.SourceType.WEB,
             com.quickfind.core.model.SourceType.URL,
             com.quickfind.core.model.SourceType.PHONE_NUMBER,

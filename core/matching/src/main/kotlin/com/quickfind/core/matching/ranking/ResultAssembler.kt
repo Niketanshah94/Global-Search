@@ -22,7 +22,7 @@ data class AssembledResults(
 /**
  * Ranks, de-duplicates and groups results (spec 4.7 "Display order").
  *
- * - The calculator always wins the top hit when it has an answer.
+ * - The calculator and other instant tools always win the top hit when they have an answer.
  * - Web search is only the top hit when nothing else matched.
  * - The top hit is removed from its section so it is not shown twice.
  */
@@ -47,7 +47,8 @@ object ResultAssembler {
             compareByDescending<RankedResult> { it.finalScore }.thenBy { it.result.title.lowercase() },
         )
 
-        val topHit = ordered.firstOrNull { it.result.type == SourceType.CALCULATOR }
+        // Answers computed from the query (calculator, conversions, timers) are what the user asked for.
+        val topHit = ordered.firstOrNull { it.result.type == SourceType.CALCULATOR || it.result.type == SourceType.TOOL }
             ?: ordered.firstOrNull { it.result.type != SourceType.WEB }
             ?: ordered.first()
 

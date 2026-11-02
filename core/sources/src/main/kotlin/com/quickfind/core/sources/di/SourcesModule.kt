@@ -1,6 +1,10 @@
 package com.quickfind.core.sources.di
 
+import com.quickfind.core.sources.NicknameSource
 import com.quickfind.core.sources.SearchSource
+import com.quickfind.core.sources.instant.CurrencySource
+import com.quickfind.core.sources.instant.SmartPasteSource
+import com.quickfind.core.sources.instant.ToolSource
 import com.quickfind.core.sources.apps.AppSource
 import com.quickfind.core.sources.contacts.ContactSource
 import com.quickfind.core.sources.files.FileSource
@@ -27,4 +31,8 @@ abstract class SourcesModule {
     @Binds @IntoSet abstract fun phone(s: PhoneNumberSource): SearchSource
     @Binds @IntoSet abstract fun url(s: UrlSource): SearchSource
     @Binds @IntoSet abstract fun web(s: WebSearchSource): SearchSource
+    @Binds @IntoSet abstract fun tools(s: ToolSource): SearchSource
+    @Binds @IntoSet abstract fun currency(s: CurrencySource): SearchSource
+    @Binds @IntoSet abstract fun smartPaste(s: SmartPasteSource): SearchSource
+    @Binds @IntoSet abstract fun nicknames(s: NicknameSource): SearchSource
 }

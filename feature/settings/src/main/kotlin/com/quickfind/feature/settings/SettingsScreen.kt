@@ -311,6 +311,16 @@ private fun LazyListScope.mainPage(
             s.rankingMode == RankingMode.SMART,
         ) { on -> viewModel.update { it.copy(rankingMode = if (on) RankingMode.SMART else RankingMode.MATCH_ONLY) } }
     }
+    item {
+        SwitchRow(stringResource(R.string.prefixes), stringResource(R.string.prefixes_summary), s.prefixesEnabled) { on ->
+            viewModel.update { it.copy(prefixesEnabled = on) }
+        }
+    }
+    item {
+        SwitchRow(stringResource(R.string.currency), stringResource(R.string.currency_summary), s.currencyEnabled) { on ->
+            viewModel.update { it.copy(currencyEnabled = on) }
+        }
+    }
     item { SwitchRow(stringResource(R.string.clear_on_reopen), null, s.clearQueryOnReopen) { on -> viewModel.update { it.copy(clearQueryOnReopen = on) } } }
     item { SwitchRow(stringResource(R.string.direct_calling), stringResource(R.string.direct_calling_summary), s.directCalling, onChange = onDirectCalling) }
 

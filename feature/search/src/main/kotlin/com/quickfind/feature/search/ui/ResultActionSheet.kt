@@ -5,13 +5,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +37,8 @@ fun ResultActionSheet(
     onTogglePin: () -> Unit,
     onHide: () -> Unit,
     onDismiss: () -> Unit,
+    nickname: String? = null,
+    onEditNickname: (() -> Unit)? = null,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(Modifier.navigationBarsPadding().padding(bottom = 8.dp)) {
@@ -47,6 +56,15 @@ fun ResultActionSheet(
             }
             if (showPinAndHide) {
                 HorizontalDivider()
+                if (onEditNickname != null) {
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.action_nickname)) },
+                        supportingContent = {
+                            Text(if (nickname != null) stringResource(R.string.nickname_current, nickname) else stringResource(R.string.nickname_hint))
+                        },
+                        modifier = Modifier.clickable(onClick = onEditNickname),
+                    )
+                }
                 ListItem(
                     headlineContent = { Text(stringResource(if (isPinned) R.string.action_unpin else R.string.action_pin)) },
                     modifier = Modifier.clickable(onClick = onTogglePin),
@@ -59,4 +77,31 @@ fun ResultActionSheet(
             }
         }
     }
+}
+
+/** "Give this result a nickname": typing the nickname later opens it first. */
+@Composable
+fun NicknameDialog(result: SearchResult, current: String?, onSave: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by remember { mutableStateOf(current.orEmpty()) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.nickname_title, result.title)) },
+        text = {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it.take(30) },
+                singleLine = true,
+                label = { Text(stringResource(R.string.action_nickname)) },
+                supportingText = { Text(stringResource(R.string.nickname_hint)) },
+            )
+        },
+        confirmButton = { TextButton(onClick = { onSave(text.trim()) }) { Text(stringResource(R.string.save)) } },
+        dismissButton = {
+            if (current != null) {
+                TextButton(onClick = { onSave("") }) { Text(stringResource(R.string.remove)) }
+            } else {
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+            }
+        },
+    )
 }

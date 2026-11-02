@@ -12,6 +12,26 @@ object QueryDetectors {
         RegexOption.IGNORE_CASE,
     )
 
+    private val EMAIL = Regex("""^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,24}$""")
+    private val PIN_CODE = Regex("""\b\d{5,6}\b""")
+    private val STREET_WORDS = Regex(
+        """\b(road|rd|street|st|avenue|ave|lane|ln|nagar|marg|sector|colony|society|floor|flat|building|bldg|near|opp|chowk|block)\b""",
+        RegexOption.IGNORE_CASE,
+    )
+
+    fun looksLikeEmail(query: String): Boolean = EMAIL.matches(query.trim())
+
+    /**
+     * A pasted postal address: several words, a comma, and either a PIN/ZIP code or a street word.
+     * Kept strict so ordinary searches never offer "Open in Maps".
+     */
+    fun looksLikeAddress(query: String): Boolean {
+        val q = query.trim()
+        if (q.length < 12 || !q.contains(',')) return false
+        if (q.split(Regex("\\s+")).size < 3) return false
+        return PIN_CODE.containsMatchIn(q) || STREET_WORDS.containsMatchIn(q)
+    }
+
     /** "+91 98765 43210", "9876543210", "(555) 123-4567". Needs 6 to 15 digits. */
     fun looksLikePhoneNumber(query: String): Boolean {
         val q = query.trim()

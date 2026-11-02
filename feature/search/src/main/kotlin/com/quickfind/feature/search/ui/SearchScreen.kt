@@ -282,6 +282,7 @@ private fun scopeLabel(scope: SearchScope): String = stringResource(
         SearchScope.APPS -> R.string.scope_apps
         SearchScope.CONTACTS -> R.string.scope_contacts
         SearchScope.FILES -> R.string.scope_files
+        SearchScope.SETTINGS -> R.string.scope_settings
     },
 )
 

@@ -4,6 +4,18 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Added — Sprint A
+- Unit converter (length, weight, temperature, data, volume, speed), offline: "5 ft in cm", "30 c to f", "10 km".
+- Currency converter: "100 usd in inr", "$50", "€20 to inr", using European Central Bank rates from frankfurter.app, cached 12 hours. Adds the `INTERNET` permission; nothing typed is sent, and it can be turned off in Settings.
+- Timers and alarms from text: "timer 10 min", "timer 1h 30m", "alarm 6:30", "wake me at 7am" (opens the Clock app pre-filled).
+- Search shortcuts: "f ", "c ", "a ", "s " restrict to files, contacts, apps or settings (shown as a chip); "yt ", "g ", "ddg ", "bing ", "pplx ", "play " search that site.
+- Nicknames: long-press a result → Nickname; typing it later puts that result first.
+- Contacts: Telegram and Signal buttons when installed, and Navigate for saved addresses.
+- Smart paste: email addresses offer "Email", postal addresses offer "Open in Maps".
+
+### Fixed
+- The cursor jumped back one character while typing, and typing lagged by a frame (the field now reads its text from snapshot state).
+
 ### Changed — "Aurora" design
 - New look for the search overlay: drifting aurora gradient behind a frosted-glass panel, a search pill with an animated gradient ring that spins faster while results load, a gradient greeting with one-tap suggestion chips, results grouped in glass cards with item animations, a glowing top-hit card and gradient icon tiles.
 - Violet/magenta/cyan brand palette for light and dark; wallpaper colours (dynamic color) are now off by default and can be turned back on in Settings.

@@ -11,6 +11,8 @@ enum class SourceType {
     FOLDER,
     SETTING,
     CALCULATOR,
+    /** Instant tools: unit and currency conversion, timers, alarms, email and map shortcuts. */
+    TOOL,
     PHONE_NUMBER,
     URL,
     WEB,
@@ -34,7 +36,7 @@ enum class ResultSection(val types: Set<SourceType>) {
     CONTACTS(setOf(SourceType.CONTACT, SourceType.PHONE_NUMBER)),
     FILES(setOf(SourceType.FILE, SourceType.FOLDER)),
     SETTINGS(setOf(SourceType.SETTING)),
-    WEB(setOf(SourceType.URL, SourceType.WEB, SourceType.CALCULATOR)),
+    WEB(setOf(SourceType.URL, SourceType.WEB, SourceType.CALCULATOR, SourceType.TOOL)),
     ;
 
     companion object {

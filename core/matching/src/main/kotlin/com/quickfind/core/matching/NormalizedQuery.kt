@@ -1,5 +1,7 @@
 package com.quickfind.core.matching
 
+import com.quickfind.core.model.WebSearchEngine
+
 /**
  * A user query prepared once per keystroke and shared by every source.
  *
@@ -13,7 +15,12 @@ class NormalizedQuery private constructor(
     val normalized: String,
     val tokens: List<String>,
     val digits: String,
+    /** Set by a web prefix such as "yt ": the web result uses this engine instead of the default. */
+    val webEngine: WebSearchEngine? = null,
 ) {
+    fun withWebEngine(engine: WebSearchEngine?): NormalizedQuery =
+        NormalizedQuery(raw, normalized, tokens, digits, engine)
+
     val isEmpty: Boolean get() = tokens.isEmpty()
 
     /** True when the query is mostly digits, e.g. "98765" or "+91 98765". */

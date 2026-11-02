@@ -31,6 +31,10 @@
     <string name="engine_template_hint" formatted="false">Must start with https:// and contain %s where the query goes</string>
     <string name="ranking_learn">Learn from what I open</string>
     <string name="ranking_learn_summary">Boosts results you picked before. History stays on this phone.</string>
+    <string name="prefixes">Search shortcuts</string>
+    <string name="prefixes_summary">Start with f (files), c (contacts), a (apps), s (settings), yt, g, ddg or play</string>
+    <string name="currency">Currency conversion</string>
+    <string name="currency_summary">Downloads public exchange rates when you type an amount like “100 usd”. Nothing you type is sent.</string>
     <string name="clear_on_reopen">Clear the search when reopened</string>
     <string name="direct_calling">Call directly</string>
     <string name="direct_calling_summary">Start calls without opening the dialer first (needs phone permission)</string>
@@ -101,7 +105,7 @@
     <string name="pro_summary">Coming soon</string>
     <string name="about_title">About</string>
     <string name="version">Version %1$s</string>
-    <string name="about_privacy">QuickFind searches your phone on your phone. It has no internet permission in this version: nothing you type or index leaves the device.</string>
+    <string name="about_privacy">QuickFind searches your phone on your phone. Nothing you type or index leaves the device. The only network request downloads public exchange rates (European Central Bank, via frankfurter.app) when you convert a currency, and you can turn that off.</string>
     <string name="licenses">Open-source licenses</string>
 
     <string name="disclosure_contacts_title">Search your contacts?</string>

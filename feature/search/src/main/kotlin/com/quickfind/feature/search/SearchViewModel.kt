@@ -9,6 +9,7 @@ import com.quickfind.core.data.history.HistoryRepository
 import com.quickfind.core.data.results.ResultPrefsRepository
 import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.data.settings.UserSettings
+import com.quickfind.core.matching.instant.QueryPrefixes
 import com.quickfind.core.matching.ranking.AssembledResults
 import com.quickfind.core.model.ResultSection
 import com.quickfind.core.model.SearchResult
@@ -53,8 +54,10 @@ class SearchViewModel @Inject constructor(
         .results(combine(query, scope) { q, s -> SearchRequest(q, s?.types) })
         .stateIn(viewModelScope, SharingStarted.Eagerly, EngineResult("", AssembledResults.EMPTY, isComplete = true))
 
-    private val emptyUi = combine(emptyContent, resultPrefs.pinned, clipboard) { content, pinned, clip ->
-        EmptyUi(pinned = pinned, recentApps = content.recentApps, recentFiles = content.recentFiles, clipboardAvailable = clip)
+    /** Empty-screen content plus result id -> nickname, so the sheet updates as soon as one is set. */
+    private val emptyUi = combine(emptyContent, resultPrefs.pinned, clipboard, resultPrefs.nicknames) { content, pinned, clip, nicks ->
+        EmptyUi(pinned = pinned, recentApps = content.recentApps, recentFiles = content.recentFiles, clipboardAvailable = clip) to
+            nicks.entries.associate { (nick, r) -> r.id to nick }
     }
 
     val uiState: StateFlow<SearchUiState> = combine(
@@ -63,7 +66,8 @@ class SearchViewModel @Inject constructor(
         engineResults,
         expanded,
         emptyUi,
-    ) { q, s, results, open, empty ->
+    ) { q, s, results, open, emptyAndNicks ->
+        val (empty, nicknames) = emptyAndNicks
         val showingCurrent = results.query == q
         val assembled = results.results
         SearchUiState(
@@ -79,10 +83,25 @@ class SearchViewModel @Inject constructor(
             isSearching = q.isNotBlank() && (!showingCurrent || !results.isComplete),
             empty = empty,
             pinnedIds = empty.pinned.mapTo(HashSet()) { it.id },
+            nicknames = nicknames,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchUiState())
 
     fun onQueryChange(text: String) {
+        // "f " / "c " / "a " / "s " at the start turns into a scope chip, like a filter.
+        if (scope.value == null && settingsRepository.settings.value.prefixesEnabled) {
+            val parsed = QueryPrefixes.parse(text)
+            val prefix = parsed?.prefix
+            if (parsed != null && prefix is QueryPrefixes.Prefix.Scope) {
+                SearchScope.entries.firstOrNull { it.types == prefix.types }?.let { matched ->
+                    scope.value = matched
+                    queryText = parsed.rest
+                    query.value = parsed.rest
+                    expanded.value = emptySet()
+                    return
+                }
+            }
+        }
         queryText = text
         query.value = text
         expanded.value = emptySet()
@@ -141,6 +160,14 @@ class SearchViewModel @Inject constructor(
     fun togglePin(result: SearchResult) {
         viewModelScope.launch {
             if (result.id in uiState.value.pinnedIds) resultPrefs.unpin(result.id) else resultPrefs.pin(result)
+        }
+    }
+
+    fun setNickname(result: SearchResult, nickname: String) {
+        viewModelScope.launch {
+            // Remove the old one first so a result never answers to two nicknames.
+            resultPrefs.removeNickname(result.id)
+            if (nickname.isNotBlank()) resultPrefs.setNickname(result, nickname)
         }
     }
 

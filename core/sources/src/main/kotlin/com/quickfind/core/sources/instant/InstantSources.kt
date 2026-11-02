@@ -128,11 +128,12 @@ class WebSearchSource @Inject constructor(
         val text = query.raw.trim()
         if (text.isEmpty()) return emptyList()
         val s = settings.settings.value
-        val url = QueryDetectors.webSearchUrl(s.searchEngine, text, s.customSearchTemplate)
-        val engineName = if (s.searchEngine == com.quickfind.core.model.WebSearchEngine.CUSTOM) {
+        val engine = query.webEngine ?: s.searchEngine
+        val url = QueryDetectors.webSearchUrl(engine, text, s.customSearchTemplate)
+        val engineName = if (engine == com.quickfind.core.model.WebSearchEngine.CUSTOM) {
             context.getString(R.string.web_engine_custom)
         } else {
-            s.searchEngine.displayName
+            engine.displayName
         }
         return listOf(
             SearchResult(
@@ -140,7 +141,8 @@ class WebSearchSource @Inject constructor(
                 type = type,
                 title = context.getString(R.string.web_search_title, engineName, text),
                 subtitle = null,
-                matchScore = 0,
+                // A "yt " prefix means the user wants this result first.
+                matchScore = if (query.webEngine != null) 2000 else 0,
                 matchedRanges = emptyList(),
                 primaryAction = ResultAction.OpenUrl(url),
             ),
