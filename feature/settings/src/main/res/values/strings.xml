@@ -152,7 +152,7 @@
     <string name="access_notifications_why">Search recent notifications and copy OTPs. Kept 7 days on this phone.</string>
     <string name="access_page_footer">You can change any of these later in Settings → Permissions.</string>
     <string name="access_allow">Allow</string>
-    <string name="access_allowed">Allowed ✓</string>
+    <string name="access_allowed">Allowed</string>
     <string name="access_allow_continue">Allow &amp; continue</string>
     <string name="replay_intro">Show intro again</string>
     <string name="onboarding_start">Start searching</string>
@@ -161,7 +161,7 @@
         <item>wh|WhatsApp</item>
         <item>100 usd in inr|live rate in ₹</item>
         <item>rahul|Call · Message · WhatsApp</item>
-        <item>timer 10 min|⏱ Timer set</item>
+        <item>timer 10 min|Timer · 10 min</item>
         <item>payment|PhonePe · GPay</item>
     </string-array>
     <string name="onboarding_3_text">Make QuickFind your default assistant app to open search with a long-press on Home or a corner swipe. You can also use the widget or the Quick Settings tile.</string>

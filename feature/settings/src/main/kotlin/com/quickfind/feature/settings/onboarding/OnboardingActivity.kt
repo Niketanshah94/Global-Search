@@ -43,6 +43,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import com.quickfind.core.ui.R as UiR
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -212,7 +225,7 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                 ) {
                     when (page) {
                         0 -> {
-                            SearchOrb(animated = !reducedMotion)
+                            HeroOrb(rememberVectorPainter(Icons.Default.Search), animated = !reducedMotion)
                             GradientTitle(stringResource(R.string.onboarding_1_title))
                             Body(stringResource(R.string.onboarding_1_text))
                             DemoSearchBar(animated = !reducedMotion)
@@ -223,18 +236,20 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                             }
                         }
                         PAGE_PRIVACY -> {
-                            Text("🔒", style = MaterialTheme.typography.displayMedium)
+                            HeroOrb(painterResource(UiR.drawable.ic_shield), animated = !reducedMotion, size = 112.dp)
                             GradientTitle(stringResource(R.string.privacy_page_title))
-                            PrivacyPoint("📱", stringResource(R.string.privacy_point_device_title), stringResource(R.string.privacy_point_device_text))
-                            PrivacyPoint("👁", stringResource(R.string.privacy_point_names_title), stringResource(R.string.privacy_point_names_text))
-                            PrivacyPoint("🚫", stringResource(R.string.privacy_point_nothing_sent_title), stringResource(R.string.privacy_point_nothing_sent_text))
-                            PrivacyPoint("🎛", stringResource(R.string.privacy_point_control_title), stringResource(R.string.privacy_point_control_text))
+                            PrivacyPoint(painterResource(UiR.drawable.ic_smartphone), listOf(Aurora.Violet, Aurora.Cyan), stringResource(R.string.privacy_point_device_title), stringResource(R.string.privacy_point_device_text))
+                            PrivacyPoint(painterResource(UiR.drawable.ic_visibility), listOf(Aurora.Cyan, Aurora.Violet), stringResource(R.string.privacy_point_names_title), stringResource(R.string.privacy_point_names_text))
+                            PrivacyPoint(painterResource(UiR.drawable.ic_cloud_off), listOf(Aurora.Magenta, Aurora.Violet), stringResource(R.string.privacy_point_nothing_sent_title), stringResource(R.string.privacy_point_nothing_sent_text))
+                            PrivacyPoint(painterResource(UiR.drawable.ic_tune), listOf(Aurora.Amber, Aurora.Magenta), stringResource(R.string.privacy_point_control_title), stringResource(R.string.privacy_point_control_text))
                         }
                         PAGE_ACCESS -> {
+                            HeroOrb(painterResource(UiR.drawable.ic_key), animated = !reducedMotion, size = 96.dp)
                             GradientTitle(stringResource(R.string.access_page_title))
                             Body(stringResource(R.string.access_page_text))
                             PermissionCard(
-                                emoji = "👤",
+                                icon = rememberVectorPainter(Icons.Default.Person),
+                                colors = listOf(Aurora.Magenta, Aurora.Violet),
                                 title = stringResource(R.string.source_contacts),
                                 why = stringResource(R.string.access_contacts_why),
                                 granted = contactsGranted && s.contactsEnabled,
@@ -242,7 +257,8 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                                 if (contactsGranted) viewModel.update { it.copy(contactsEnabled = true) } else contactsLauncher.launch(Manifest.permission.READ_CONTACTS)
                             }
                             PermissionCard(
-                                emoji = "🗂",
+                                icon = painterResource(UiR.drawable.ic_folder),
+                                colors = listOf(Aurora.Amber, Aurora.Magenta),
                                 title = stringResource(R.string.source_files),
                                 why = stringResource(R.string.access_files_why),
                                 granted = mediaGranted && s.filesEnabled,
@@ -250,7 +266,8 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                                 if (mediaGranted) viewModel.enableFiles() else mediaLauncher.launch(FilePermissions.mediaPermissions())
                             }
                             PermissionCard(
-                                emoji = "📅",
+                                icon = rememberVectorPainter(Icons.Default.DateRange),
+                                colors = listOf(Aurora.Cyan, Aurora.Violet),
                                 title = stringResource(R.string.source_calendar),
                                 why = stringResource(R.string.access_calendar_why),
                                 granted = calendarGranted && s.calendarEnabled,
@@ -258,7 +275,8 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                                 if (calendarGranted) viewModel.update { it.copy(calendarEnabled = true) } else calendarLauncher.launch(Manifest.permission.READ_CALENDAR)
                             }
                             PermissionCard(
-                                emoji = "🔑",
+                                icon = painterResource(UiR.drawable.ic_key),
+                                colors = listOf(Aurora.Violet, Aurora.Cyan),
                                 title = stringResource(R.string.source_notifications),
                                 why = stringResource(R.string.access_notifications_why),
                                 granted = notificationAccess && s.notificationsEnabled,
@@ -274,19 +292,21 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                             )
                         }
                         else -> {
+                            HeroOrb(painterResource(UiR.drawable.ic_sparkle), animated = !reducedMotion, size = 112.dp)
                             GradientTitle(stringResource(R.string.onboarding_3_title))
                             Body(stringResource(R.string.onboarding_3_text))
                             EntryCard(
-                                emoji = "✦",
+                                icon = painterResource(UiR.drawable.ic_sparkle),
+                                colors = listOf(Aurora.Violet, Aurora.Magenta),
                                 title = stringResource(if (isAssistant) R.string.set_assistant_done else R.string.set_assistant),
                                 text = stringResource(R.string.set_assistant_summary),
                                 enabled = !isAssistant,
                                 onClick = { (context as? ComponentActivity)?.let(SystemLinks::openAssistantSettings) },
                             )
-                            EntryCard("▭", stringResource(R.string.add_widget), stringResource(R.string.add_widget_summary), SystemLinks.canPinWidget(context)) {
+                            EntryCard(painterResource(UiR.drawable.ic_widgets), listOf(Aurora.Cyan, Aurora.Violet), stringResource(R.string.add_widget), stringResource(R.string.add_widget_summary), SystemLinks.canPinWidget(context)) {
                                 SystemLinks.requestPinWidget(context)
                             }
-                            EntryCard("⚡", stringResource(R.string.onboarding_tile_title), stringResource(R.string.onboarding_tile_text), enabled = false) {}
+                            EntryCard(painterResource(UiR.drawable.ic_toggle), listOf(Aurora.Amber, Aurora.Magenta), stringResource(R.string.onboarding_tile_title), stringResource(R.string.onboarding_tile_text), enabled = false) {}
                         }
                     }
                 }
@@ -350,13 +370,13 @@ private fun PageDots(count: Int, current: Int) {
     }
 }
 
-/** The hero: a glowing ring with a breathing search glyph inside. */
+/** The hero: a glowing ring with a breathing gradient icon inside. */
 @Composable
-private fun SearchOrb(animated: Boolean) {
+private fun HeroOrb(icon: Painter, animated: Boolean, size: Dp = 150.dp) {
     val scale = if (animated) {
         val t = rememberInfiniteTransition(label = "orb")
         t.animateFloat(
-            initialValue = 0.94f,
+            initialValue = 0.95f,
             targetValue = 1.04f,
             animationSpec = infiniteRepeatable(tween(1_800), RepeatMode.Reverse),
             label = "orb-scale",
@@ -369,14 +389,24 @@ private fun SearchOrb(animated: Boolean) {
         borderWidth = 4.dp,
         animated = animated,
         containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-        modifier = Modifier.size(150.dp).scale(scale),
+        modifier = Modifier.size(size).scale(scale),
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            // Paint the icon with the aurora gradient instead of a flat tint.
             Icon(
-                Icons.Default.Search,
+                painter = icon,
                 contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                tint = MaterialTheme.colorScheme.primary,
+                tint = Color.Unspecified,
+                modifier = Modifier
+                    .size(size * 0.42f)
+                    .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                    .drawWithCache {
+                        val brush = Brush.linearGradient(listOf(Aurora.Violet, Aurora.Magenta, Aurora.Cyan))
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(brush, blendMode = BlendMode.SrcIn)
+                        }
+                    },
             )
         }
     }
@@ -428,7 +458,7 @@ private fun DemoSearchBar(animated: Boolean) {
 }
 
 @Composable
-private fun SourceCard(emoji: String, title: String, text: String, checked: Boolean, onChange: (Boolean) -> Unit) {
+private fun SourceCard(icon: Painter, colors: List<Color>, title: String, text: String, checked: Boolean, onChange: (Boolean) -> Unit) {
     Surface(
         shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
@@ -439,7 +469,7 @@ private fun SourceCard(emoji: String, title: String, text: String, checked: Bool
             .toggleable(value = checked, role = Role.Switch, onValueChange = onChange),
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            EmojiTile(emoji)
+            IconTile(icon, colors)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
@@ -452,7 +482,7 @@ private fun SourceCard(emoji: String, title: String, text: String, checked: Bool
 }
 
 @Composable
-private fun EntryCard(emoji: String, title: String, text: String, enabled: Boolean, onClick: () -> Unit) {
+private fun EntryCard(icon: Painter, colors: List<Color>, title: String, text: String, enabled: Boolean, onClick: () -> Unit) {
     Surface(
         shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
@@ -461,7 +491,7 @@ private fun EntryCard(emoji: String, title: String, text: String, enabled: Boole
         modifier = Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onClick),
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            EmojiTile(emoji)
+            IconTile(icon, colors)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
@@ -471,13 +501,18 @@ private fun EntryCard(emoji: String, title: String, text: String, enabled: Boole
     }
 }
 
+/** A white icon on a soft gradient squircle, with a faint glow behind it. */
 @Composable
-private fun EmojiTile(emoji: String) {
+private fun IconTile(icon: Painter, colors: List<Color>) {
     Box(
-        Modifier.size(44.dp).clip(RoundedCornerShape(30)).background(Brush.linearGradient(listOf(Aurora.Violet, Aurora.Magenta))),
+        Modifier
+            .size(48.dp)
+            .shadow(10.dp, RoundedCornerShape(30), ambientColor = colors.first(), spotColor = colors.first())
+            .clip(RoundedCornerShape(30))
+            .background(Brush.linearGradient(colors)),
         contentAlignment = Alignment.Center,
     ) {
-        Text(emoji, style = MaterialTheme.typography.titleMedium, color = Color.White)
+        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
     }
 }
 
@@ -523,9 +558,9 @@ private const val PAGE_PRIVACY = 1
 private const val PAGE_ACCESS = 2
 
 @Composable
-private fun PrivacyPoint(emoji: String, title: String, text: String) {
+private fun PrivacyPoint(icon: Painter, colors: List<Color>, title: String, text: String) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-        EmojiTile(emoji)
+        IconTile(icon, colors)
         Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
@@ -536,7 +571,7 @@ private fun PrivacyPoint(emoji: String, title: String, text: String) {
 
 /** One permission: what it is for, and an Allow button that turns into "Allowed ✓". */
 @Composable
-private fun PermissionCard(emoji: String, title: String, why: String, granted: Boolean, onAllow: () -> Unit) {
+private fun PermissionCard(icon: Painter, colors: List<Color>, title: String, why: String, granted: Boolean, onAllow: () -> Unit) {
     Surface(
         shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
@@ -545,7 +580,7 @@ private fun PermissionCard(emoji: String, title: String, why: String, granted: B
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            EmojiTile(emoji)
+            IconTile(icon, colors)
             Spacer(Modifier.width(14.dp))
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
@@ -553,11 +588,20 @@ private fun PermissionCard(emoji: String, title: String, why: String, granted: B
             }
             Spacer(Modifier.width(8.dp))
             if (granted) {
-                Text(
-                    stringResource(R.string.access_allowed),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.tertiary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        stringResource(R.string.access_allowed),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.tertiary,
+                    )
+                }
             } else {
                 FilledTonalButton(onClick = onAllow, shape = CircleShape) { Text(stringResource(R.string.access_allow)) }
             }

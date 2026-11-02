@@ -72,6 +72,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -83,6 +84,7 @@ import com.quickfind.core.model.ResultAction
 import com.quickfind.core.model.ResultSection
 import com.quickfind.core.model.SearchResult
 import com.quickfind.feature.search.R
+import com.quickfind.core.ui.R as UiR
 import com.quickfind.feature.search.SearchScope
 import com.quickfind.feature.search.SearchUiState
 
@@ -367,7 +369,7 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
             AssistChip(
                 onClick = { actions.onCopy(otp.code) },
                 label = { Text(stringResource(R.string.copy_otp, otp.code, otp.source), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                leadingIcon = { Text("🔑") },
+                leadingIcon = { Icon(painterResource(UiR.drawable.ic_key), null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.primary) },
                 shape = CircleShape,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).animateItem(),
             )
@@ -379,7 +381,7 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
                 AssistChip(
                     onClick = actions::onPasteClipboard,
                     label = { Text(stringResource(R.string.paste_clipboard)) },
-                    leadingIcon = { Text("✦", color = MaterialTheme.colorScheme.secondary) },
+                    leadingIcon = { Icon(painterResource(UiR.drawable.ic_sparkle), null, Modifier.size(18.dp), tint = MaterialTheme.colorScheme.secondary) },
                     shape = CircleShape,
                 )
                 IconButton(onClick = actions::onDismissClipboard) {
