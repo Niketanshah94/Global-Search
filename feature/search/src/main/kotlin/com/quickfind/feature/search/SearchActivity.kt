@@ -107,6 +107,7 @@ class SearchActivity : ComponentActivity() {
                         }
                         override fun onAction(result: SearchResult, action: ResultAction) = perform(result, action, view)
                         override fun onToggleSection(section: ResultSection) = viewModel.toggleSection(section)
+                        override fun onFilter(section: ResultSection?) = viewModel.setFilter(section)
                         override fun onClearScope() = viewModel.setScope(null)
                         override fun onPasteClipboard() = paste()
                         override fun onCopy(text: String) {

@@ -45,6 +45,8 @@ class SearchViewModel @Inject constructor(
         private set
     private val scope = MutableStateFlow<SearchScope?>(null)
     private val expanded = MutableStateFlow<Set<ResultSection>>(emptySet())
+    private val filter = MutableStateFlow<ResultSection?>(null)
+    private val view = combine(expanded, filter) { e, f -> e to f }
     private val emptyContent = MutableStateFlow(EmptyStateContent(emptyList(), emptyList(), emptyList()))
     private val clipboard = MutableStateFlow(false)
 
@@ -70,26 +72,40 @@ class SearchViewModel @Inject constructor(
         query,
         scope,
         engineResults,
-        expanded,
+        view,
         emptyUi,
-    ) { q, s, results, open, emptyAndNicks ->
+    ) { q, s, results, openAndFilter, emptyAndNicks ->
+        val (open, chosen) = openAndFilter
         val (empty, nicknames) = emptyAndNicks
         val showingCurrent = results.query == q
         val assembled = results.results
+        val top = assembled.topHit?.result
+        val counts = ResultSection.entries.mapNotNull { section ->
+            val n = (assembled.sections.firstOrNull { it.section == section }?.items?.size ?: 0) +
+                (if (top != null && ResultSection.of(top.type) == section) 1 else 0)
+            if (n > 0) section to n else null
+        }
+        // A chip that no longer has results falls back to "All".
+        val active = chosen?.takeIf { c -> counts.any { it.first == c } }
         SearchUiState(
             query = q,
             scope = s,
-            topHit = assembled.topHit?.result,
-            sections = assembled.sections.map { sec ->
-                val isOpen = sec.section in open
-                val items = sec.items.map { it.result }
-                val visible = if (isOpen) items else items.take(SECTION_SIZE)
-                SectionUi(sec.section, visible, items.size - visible.size, isOpen)
-            },
+            topHit = if (active == null || (top != null && ResultSection.of(top.type) == active)) top else null,
+            sections = assembled.sections
+                .filter { active == null || it.section == active }
+                .map { sec ->
+                    // With a chip selected, show every result of that kind.
+                    val isOpen = sec.section in open || active != null
+                    val items = sec.items.map { it.result }
+                    val visible = if (isOpen) items else items.take(SECTION_SIZE)
+                    SectionUi(sec.section, visible, items.size - visible.size, isOpen)
+                },
             isSearching = q.isNotBlank() && (!showingCurrent || !results.isComplete),
             empty = empty,
             pinnedIds = empty.pinned.mapTo(HashSet()) { it.id },
             nicknames = nicknames,
+            filter = active,
+            counts = counts,
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchUiState())
 
@@ -111,6 +127,7 @@ class SearchViewModel @Inject constructor(
         queryText = text
         query.value = text
         expanded.value = emptySet()
+        filter.value = null
     }
 
     fun setScope(newScope: SearchScope?) {
@@ -120,8 +137,13 @@ class SearchViewModel @Inject constructor(
     fun clear() {
         queryText = ""
         query.value = ""
+        filter.value = null
         scope.value = null
         expanded.value = emptySet()
+    }
+
+    fun setFilter(section: ResultSection?) {
+        filter.value = section
     }
 
     fun toggleSection(section: ResultSection) {

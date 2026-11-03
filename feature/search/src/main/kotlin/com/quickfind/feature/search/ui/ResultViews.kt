@@ -3,6 +3,7 @@ package com.quickfind.feature.search.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,6 +42,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,6 +63,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.quickfind.core.model.ResultAction
 import com.quickfind.core.model.ResultIcon
@@ -67,7 +71,6 @@ import com.quickfind.core.model.SearchResult
 import com.quickfind.core.model.SourceType
 import com.quickfind.core.sources.apps.AppIconLoader
 import com.quickfind.core.ui.Aurora
-import com.quickfind.core.ui.GlowBorderBox
 import com.quickfind.feature.search.R
 import com.quickfind.core.ui.R as UiR
 
@@ -139,8 +142,11 @@ fun ResultRow(
     icon: IconContent,
     modifier: Modifier = Modifier,
     onAction: ((ResultAction) -> Unit)? = null,
+    /** "Contact", "App"…: shown before the subtitle, e.g. "Contact · +91 98765 43210". */
+    typePrefix: String? = null,
 ) {
     val quick = if (onAction != null) rowQuickActions(result) else emptyList()
+    val subtitle = listOfNotNull(typePrefix, result.subtitle).joinToString(" · ").ifEmpty { null }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -151,19 +157,19 @@ fun ResultRow(
                 onLongClick = onLongClick,
             )
             .semantics(mergeDescendants = true) {}
-            .padding(horizontal = 16.dp, vertical = 10.dp),
+            .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        icon(result, Modifier.size(40.dp))
+        icon(result, Modifier.size(42.dp))
         Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
             Text(
                 text = highlighted(result.title, result.matchedRanges),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            result.subtitle?.let {
+            subtitle?.let {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodySmall,
@@ -286,7 +292,10 @@ fun shortActionLabel(action: ResultAction): String = stringResource(
     },
 )
 
-/** The single best result; Enter opens it (spec 4.7). */
+/**
+ * The single best result, drawn as a dark card right above the search bar (Enter opens it).
+ * Its actions are big labelled tiles so they are easy to hit with a thumb.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TopHitCard(
@@ -296,28 +305,17 @@ fun TopHitCard(
     onAction: (ResultAction) -> Unit,
     icon: IconContent,
     modifier: Modifier = Modifier,
-    reducedMotion: Boolean = false,
 ) {
-    GlowBorderBox(
-        shape = RoundedCornerShape(28.dp),
-        animated = !reducedMotion,
-        containerColor = MaterialTheme.colorScheme.surface,
-        modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp),
+    val container = MaterialTheme.colorScheme.inverseSurface
+    val content = MaterialTheme.colorScheme.inverseOnSurface
+    val accent = MaterialTheme.colorScheme.inversePrimary
+    Surface(
+        shape = RoundedCornerShape(26.dp),
+        color = container,
+        contentColor = content,
+        shadowElevation = 4.dp,
+        modifier = modifier.fillMaxWidth(),
     ) {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                // Soft aurora wash behind the top hit.
-                .background(
-                    Brush.linearGradient(
-                        listOf(
-                            Aurora.Violet.copy(alpha = 0.18f),
-                            Aurora.Magenta.copy(alpha = 0.10f),
-                            Aurora.Cyan.copy(alpha = 0.14f),
-                        ),
-                    ),
-                ),
-        ) {
         Column(
             Modifier
                 .combinedClickable(
@@ -329,26 +327,17 @@ fun TopHitCard(
                 .padding(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.semantics(mergeDescendants = true) {}) {
-                icon(result, Modifier.size(56.dp))
-                Spacer(Modifier.width(16.dp))
+                icon(result, Modifier.size(52.dp))
+                Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painterResource(UiR.drawable.ic_sparkle),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(14.dp),
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = stringResource(R.string.top_hit),
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
                     Text(
-                        text = highlighted(result.title, result.matchedRanges),
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                        text = stringResource(R.string.top_hit).uppercase(),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                        color = accent,
+                    )
+                    Text(
+                        text = highlightedWith(result.title, result.matchedRanges, accent),
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -356,7 +345,7 @@ fun TopHitCard(
                         Text(
                             it,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = content.copy(alpha = 0.7f),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -365,27 +354,43 @@ fun TopHitCard(
             }
             val quick = topHitQuickActions(result)
             if (quick.isNotEmpty()) {
-                Row(
-                    Modifier.fillMaxWidth().padding(top = 14.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
+                Row(Modifier.fillMaxWidth().padding(top = 14.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     quick.forEach { action ->
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                            QuickActionButton(action, size = 48.dp) { onAction(action) }
+                        val whatsApp = action is ResultAction.WhatsApp
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(if (whatsApp) WhatsAppTile else content.copy(alpha = 0.10f))
+                                .clickable(onClickLabel = actionLabel(action)) { onAction(action) }
+                                .padding(vertical = 12.dp, horizontal = 4.dp),
+                        ) {
+                            ActionGlyph(action, Modifier.size(22.dp), tint = content)
+                            Spacer(Modifier.height(6.dp))
                             Text(
                                 shortActionLabel(action),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = if (whatsApp) WhatsAppLabel else content,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.padding(top = 4.dp),
                             )
                         }
                     }
                 }
             }
         }
-        }
+    }
+}
+
+private val WhatsAppTile = Color(0xFF1F3D2C)
+private val WhatsAppLabel = Color(0xFF9FF0BD)
+
+@Composable
+private fun highlightedWith(text: String, ranges: List<IntRange>, color: Color): AnnotatedString = buildAnnotatedString {
+    append(text)
+    for (r in ranges) {
+        if (r.first >= 0 && r.last < text.length && r.first <= r.last) addStyle(SpanStyle(color = color), r.first, r.last + 1)
     }
 }
 

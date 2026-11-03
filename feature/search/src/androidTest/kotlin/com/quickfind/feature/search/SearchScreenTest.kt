@@ -41,6 +41,7 @@ class SearchScreenTest {
         override fun onResultLongClick(result: SearchResult) { events += "long:${result.title}" }
         override fun onAction(result: SearchResult, action: ResultAction) { events += "action" }
         override fun onToggleSection(section: ResultSection) { events += "toggle:$section" }
+        override fun onFilter(section: ResultSection?) { events += "filter:$section" }
         override fun onClearScope() { events += "clearScope" }
         override fun onPasteClipboard() { events += "paste" }
         override fun onCopy(text: String) { events += "copy:$text" }
@@ -55,7 +56,7 @@ class SearchScreenTest {
                 SearchScreen(
                     queryText = state.query,
                     state = state,
-                    barAtBottom = false,
+                    barAtBottom = true,
                     actions = recorder,
                     focusRequester = remember { FocusRequester() },
                     icon = { _, m -> Box(m) },
@@ -65,19 +66,20 @@ class SearchScreenTest {
     }
 
     @Test
-    fun showsTopHitAndSectionsAndShowMore() {
+    fun showsTopHitResultsAndFilterChips() {
         val state = SearchUiState(
             query = "wh",
             topHit = app("WhatsApp"),
-            sections = listOf(SectionUi(ResultSection.APPS, listOf(app("Weather")), moreCount = 3, expanded = false)),
+            sections = listOf(SectionUi(ResultSection.APPS, listOf(app("Weather")), moreCount = 0, expanded = false)),
+            counts = listOf(ResultSection.APPS to 2, ResultSection.WEB to 1),
         )
         val r = Recorder()
         setContent(state, r)
         rule.onNodeWithTag(SearchTestTags.TOP_HIT).assertIsDisplayed()
         rule.onNodeWithText("WhatsApp").assertIsDisplayed()
         rule.onNodeWithText("Weather").performClick()
-        rule.onNodeWithText("Show 3 more").performClick()
-        assertEquals(listOf("click:Weather", "toggle:APPS"), r.events)
+        rule.onNodeWithText("Apps 2").performClick()
+        assertEquals(listOf("click:Weather", "filter:APPS"), r.events)
     }
 
     @Test

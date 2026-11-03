@@ -14,6 +14,59 @@ import androidx.compose.ui.platform.LocalContext
 /** Mirrors core:data ThemeMode without depending on it. */
 enum class ThemePreference { SYSTEM, LIGHT, DARK }
 
+// "Thumb Zone" palette: warm paper background, white cards, ink-black, one orange accent.
+private val LightColors = lightColorScheme(
+    primary = Color(0xFFD9622B),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFF7DCC8),
+    onPrimaryContainer = Color(0xFF3A1A06),
+    secondary = Color(0xFF4B443A),
+    onSecondary = Color.White,
+    secondaryContainer = Color(0xFFEBE5DC),
+    onSecondaryContainer = Color(0xFF1D1A16),
+    tertiary = Color(0xFF2E7D4F),
+    tertiaryContainer = Color(0xFFD3F0DD),
+    onTertiaryContainer = Color(0xFF0B2A17),
+    background = Color(0xFFF6F3EE),
+    onBackground = Color(0xFF1D1A16),
+    surface = Color(0xFFFFFFFF),
+    onSurface = Color(0xFF1D1A16),
+    surfaceVariant = Color(0xFFEBE5DC),
+    onSurfaceVariant = Color(0xFF7A7266),
+    outlineVariant = Color(0xFFDDD5C9),
+    inverseSurface = Color(0xFF1D1A16),
+    inverseOnSurface = Color(0xFFF6F3EE),
+    inversePrimary = Color(0xFFF7C59F),
+)
+
+private val DarkColors = darkColorScheme(
+    primary = Color(0xFFF7A46B),
+    onPrimary = Color(0xFF3A1A06),
+    primaryContainer = Color(0xFF5A2E12),
+    onPrimaryContainer = Color(0xFFF7DCC8),
+    secondary = Color(0xFFD8CFC2),
+    onSecondary = Color(0xFF1D1A16),
+    secondaryContainer = Color(0xFF2E2A24),
+    onSecondaryContainer = Color(0xFFF3EEE6),
+    tertiary = Color(0xFF8FD9AB),
+    tertiaryContainer = Color(0xFF1F3D2C),
+    onTertiaryContainer = Color(0xFFD3F0DD),
+    background = Color(0xFF14120F),
+    onBackground = Color(0xFFF3EEE6),
+    surface = Color(0xFF211E1A),
+    onSurface = Color(0xFFF3EEE6),
+    surfaceVariant = Color(0xFF2E2A24),
+    onSurfaceVariant = Color(0xFFB5AC9F),
+    outlineVariant = Color(0xFF3A352E),
+    // In dark mode the top hit flips to a light card so it still stands out.
+    inverseSurface = Color(0xFFF3EEE6),
+    inverseOnSurface = Color(0xFF1D1A16),
+    inversePrimary = Color(0xFFD9622B),
+)
+
+/** Mirrors core:data ThemeMode without depending on it. */
+enum class ThemePreference { SYSTEM, LIGHT, DARK }
+
 // "Aurora" brand palette: deep violet with magenta and cyan accents.
 private val LightColors = lightColorScheme(
     primary = Color(0xFF6A3DF0),

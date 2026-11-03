@@ -88,7 +88,9 @@ class DataStoreSettingsRepository @Inject constructor(
         val notifications = booleanPreferencesKey("source_notifications")
         val semantic = booleanPreferencesKey("semantic_enabled")
         val currency = booleanPreferencesKey("currency_enabled")
-        val barPosition = stringPreferencesKey("search_bar_position")
+        // v2: the Thumb Zone redesign made "bottom" the default; a new key lets it apply to
+        // everyone once, instead of keeping the old stored "top".
+        val barPosition = stringPreferencesKey("search_bar_position_v2")
         val theme = stringPreferencesKey("theme_mode")
         val dynamicColor = booleanPreferencesKey("dynamic_color")
         val clearOnReopen = booleanPreferencesKey("clear_query_on_reopen")

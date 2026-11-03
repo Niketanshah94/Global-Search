@@ -48,6 +48,10 @@ data class SearchUiState(
     val pinnedIds: Set<String> = emptySet(),
     /** Result id -> the nickname the user gave it. */
     val nicknames: Map<String, String> = emptyMap(),
+    /** Filter chip selection; null means "All". */
+    val filter: ResultSection? = null,
+    /** Results per section (top hit included), for the filter chips. */
+    val counts: List<Pair<ResultSection, Int>> = emptyList(),
 ) {
     val hasQuery: Boolean get() = query.isNotBlank()
     val noResults: Boolean get() = hasQuery && !isSearching && topHit == null && sections.isEmpty()

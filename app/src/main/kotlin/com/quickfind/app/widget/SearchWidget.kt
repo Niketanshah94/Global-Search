@@ -63,7 +63,7 @@ class SearchWidget : GlanceAppWidget() {
             Image(
                 provider = ImageProvider(R.drawable.ic_widget_search),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(ColorProvider(Color.White)),
+                colorFilter = ColorFilter.tint(ColorProvider(Color(0xFFF7A46B))),
                 modifier = GlanceModifier.size(24.dp),
             )
             Spacer(GlanceModifier.width(12.dp))

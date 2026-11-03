@@ -169,4 +169,18 @@ class SearchViewModelTest {
         vm.setNickname(whatsapp, "chat")
         assertEquals("chat", vm.uiState.value.nicknames[whatsapp.id])
     }
+
+    @Test
+    fun filterChipsCountAndFilter() = runTest(dispatcher) {
+        val vm = vm()
+        vm.onQueryChange("w")
+        val apps = vm.uiState.value.counts.first { it.first == ResultSection.APPS }
+        assertEquals(6, apps.second)
+        vm.setFilter(ResultSection.APPS)
+        val s = vm.uiState.value
+        assertEquals(ResultSection.APPS, s.filter)
+        assertEquals(0, s.sections.single().moreCount)
+        vm.onQueryChange("wh")
+        assertEquals(null, vm.uiState.value.filter)
+    }
 }

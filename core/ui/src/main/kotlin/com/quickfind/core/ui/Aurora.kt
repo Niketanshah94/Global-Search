@@ -32,12 +32,15 @@ import androidx.compose.ui.unit.dp
 import kotlin.math.cos
 import kotlin.math.sin
 
-/** The brand gradient: violet → magenta → amber → cyan, the "aurora". */
+/**
+ * Brand accent colours. Names are historical (the first design was "Aurora"); the values are
+ * the warm Thumb Zone set: orange, rose, saffron and teal.
+ */
 object Aurora {
-    val Violet = Color(0xFF7C4DFF)
-    val Magenta = Color(0xFFFF4FD8)
-    val Amber = Color(0xFFFFB547)
-    val Cyan = Color(0xFF22D3EE)
+    val Violet = Color(0xFFE8743B)
+    val Magenta = Color(0xFFD9485F)
+    val Amber = Color(0xFFF2B54A)
+    val Cyan = Color(0xFF3A9D8F)
 
     /** Closed loop (first colour repeated) so sweep gradients have no seam. */
     val ring = listOf(Violet, Magenta, Amber, Cyan, Violet)

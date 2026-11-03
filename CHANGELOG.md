@@ -4,6 +4,14 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Changed — "Thumb Zone" design
+- New warm palette (paper background, white cards, ink text, orange accent) with a matching warm dark mode; replaces the violet Aurora look across search, intro, widget and app icon.
+- Search bar is now at the bottom by default, above the keyboard; results stack upward so the top hit is right under the thumb (top position is still available in Settings).
+- Top hit is a dark card with large labelled action tiles (Call, SMS, WhatsApp…); WhatsApp in green.
+- Filter chips above the bar ("All · Contacts 3 · Apps 1 · Files 2 · Web"); a chip shows every result of that kind.
+- Each result is its own white card with "Type · detail" subtitles; the bar shows what Enter will do ("↵ Call").
+- Empty screen: OTP and paste pills, "Try" suggestion chips and a recent-apps card, all anchored above the bar.
+
 ### Changed — intro screens
 - Emoji replaced with vector icons: gradient-filled hero orbs (search, shield, key, sparkle), white icons on glowing gradient tiles for every privacy point, permission and entry point, and a check badge for allowed permissions. The OTP and paste chips and the "Top hit" label use icons too.
 - Permissions are now asked during the intro: a "Your phone. Your data." screen explains privacy in four short points, then an "Allow access" screen gives each permission (contacts, files, calendar, notifications) a one-line reason and an Allow button, with "Allow & continue" to grant all at once and "Not now" to skip. Settings → About → Show intro again replays it.
