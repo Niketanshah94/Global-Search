@@ -1,9 +1,9 @@
-# QuickFind
+# FindPal
 
 An Android app that finds anything on your phone from one search bar: apps, contacts, files,
 folders and system settings, plus a calculator and web search. Everything runs on the device.
 
-"QuickFind" is a working name; check trademark and Play availability before release.
+FindPal (Play Store ID `com.findpal.app`). Check trademark registers before launch.
 
 This repository currently implements **Phase 0 (project setup) and Phase 1 (free MVP)** of the
 build specification. Phases 2–4 (on-device AI, Pro/cloud AI, launcher mode) are not started.
@@ -89,6 +89,6 @@ the `MANAGE_EXTERNAL_STORAGE` declaration and the Data safety answers.
 - `core:ui` is an extra module so the two feature modules can share the theme.
 - The Baseline Profile in `app/src/main/baseline-prof.txt` is hand-written; replace it with a
   generated one (command above) before release.
-- Open decisions from spec 19: final name and package (`com.quickfind.app` is a placeholder;
-  update it in `app/build.gradle.kts` and `app/src/main/res/xml/shortcuts.xml`), default search
-  engine and region.
+- Brand: **FindPal**, Play Store ID `com.findpal.app`. Kotlin packages keep the internal
+  `com.quickfind.*` namespace. Store listing text: `docs/store/`. Brand assets: `docs/brand/`.
+- Still open from spec 19: default search engine and region; trademark check for "FindPal".

@@ -6,10 +6,10 @@ Declare the core use case as **"On-device file search"** in Play Console → App
 
 Suggested justification:
 
-> QuickFind is a universal search app. When the user turns on "Full file search" it reads file
+> FindPal is a universal search app. When the user turns on "Full file search" it reads file
 > and folder names across shared storage to build a search index that stays on the device, so the
 > user can find documents, downloads and other non-media files by name. File contents are not read
-> and nothing is uploaded. The permission is optional: without it QuickFind searches media files and
+> and nothing is uploaded. The permission is optional: without it FindPal searches media files and
 > any folders the user picks through the system folder picker.
 
 The in-app explanation shown before the system screen is `disclosure_all_files_text` in
@@ -17,7 +17,7 @@ The in-app explanation shown before the system screen is `disclosure_all_files_t
 
 ## Notification listener
 
-QuickFind declares a `NotificationListenerService` for the optional "Notifications & OTP" source.
+FindPal declares a `NotificationListenerService` for the optional "Notifications & OTP" source.
 Notification content is stored on the device for 7 days and never uploaded. The in-app explanation
 (`disclosure_notifications_text`) is shown before the system "Notification access" screen. Declare
 this in the Data safety form as data processed on device, not collected.

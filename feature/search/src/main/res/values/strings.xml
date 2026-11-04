@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_hint">Search apps, contacts, files…</string>
-    <string name="open_settings">QuickFind settings</string>
+    <string name="open_settings">FindPal settings</string>
     <string name="clear_query">Clear search</string>
     <string name="clear_scope">Search everything</string>
     <string name="top_hit">Top hit · press Enter</string>
@@ -15,7 +15,7 @@
     <string name="work_profile">Work profile</string>
     <string name="navigate_up">Back</string>
     <string name="folder_empty">This folder has no indexed files.</string>
-    <string name="clip_label">QuickFind</string>
+    <string name="clip_label">FindPal</string>
     <string name="copied">Copied</string>
     <string name="error_no_app">No app can open this</string>
     <string name="error_cannot_open">Couldn’t open this</string>

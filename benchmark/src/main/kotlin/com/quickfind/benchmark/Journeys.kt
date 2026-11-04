@@ -4,7 +4,7 @@ import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 
-const val TARGET_PACKAGE = "com.quickfind.app"
+const val TARGET_PACKAGE = "com.findpal.app"
 
 /** First launch shows onboarding on top of search; skip it so journeys measure search. */
 fun MacrobenchmarkScope.skipOnboardingIfShown() {

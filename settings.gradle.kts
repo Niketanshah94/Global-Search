@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "QuickFind"
+rootProject.name = "FindPal"
 
 include(":app")
 include(":core:model")

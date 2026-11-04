@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings_title">Settings</string>
-    <string name="app_name_settings">QuickFind</string>
+    <string name="app_name_settings">FindPal</string>
     <string name="back">Back</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
@@ -29,9 +29,9 @@
     <string name="source_semantic">Search by meaning (beta)</string>
     <string name="source_semantic_summary">“payment” finds PhonePe, “taxi” finds Uber. Runs on your phone.</string>
     <string name="disclosure_notifications_title">Search your notifications?</string>
-    <string name="disclosure_notifications_text">QuickFind will keep the title and text of new notifications for 7 days so you can search them and copy one-time codes. They stay on this phone and are never uploaded. On the next screen, allow Notification access for QuickFind.</string>
+    <string name="disclosure_notifications_text">FindPal will keep the title and text of new notifications for 7 days so you can search them and copy one-time codes. They stay on this phone and are never uploaded. On the next screen, allow Notification access for FindPal.</string>
     <string name="clear_notifications">Clear notification history</string>
-    <string name="clear_notifications_summary">Delete the notifications QuickFind has kept</string>
+    <string name="clear_notifications_summary">Delete the notifications FindPal has kept</string>
     <string name="clear_notifications_confirm">Delete all saved notifications?</string>
     <string name="source_calculator">Calculator</string>
     <string name="source_web">Web search &amp; websites</string>
@@ -68,14 +68,14 @@
     <string name="add_widget_summary">A search bar on your home screen</string>
     <string name="set_assistant">Set as default assistant</string>
     <string name="set_assistant_summary">Open search with a long-press on Home or a corner swipe</string>
-    <string name="set_assistant_done">QuickFind is your assistant app</string>
+    <string name="set_assistant_done">FindPal is your assistant app</string>
     <string name="persistent_notification">Search notification</string>
     <string name="persistent_notification_summary">A quiet notification that opens search</string>
 
     <string name="section_more">More</string>
     <string name="permissions_title">Permissions</string>
-    <string name="permissions_summary">See and change what QuickFind can access</string>
-    <string name="permissions_intro">QuickFind works with no permissions at all. Each one below only adds a search source.</string>
+    <string name="permissions_summary">See and change what FindPal can access</string>
+    <string name="permissions_intro">FindPal works with no permissions at all. Each one below only adds a search source.</string>
     <string name="perm_contacts">Contacts</string>
     <string name="perm_media">Photos, videos &amp; audio</string>
     <string name="perm_all_files">All files access (full file search)</string>
@@ -88,7 +88,7 @@
 
     <string name="privacy_title">Privacy &amp; data</string>
     <string name="privacy_summary">Indexing, excluded folders, history</string>
-    <string name="privacy_intro">Everything QuickFind indexes stays in private storage on this phone and is never uploaded. The index is excluded from backups.</string>
+    <string name="privacy_intro">Everything FindPal indexes stays in private storage on this phone and is never uploaded. The index is excluded from backups.</string>
     <string name="section_index">File index</string>
     <string name="indexed_files">%1$d files indexed</string>
     <string name="pause_indexing">Pause indexing</string>
@@ -113,19 +113,19 @@
     <string name="delete_index_summary">Removes the file index; it rebuilds while files search is on</string>
     <string name="delete_index_confirm">Delete the file index from this phone?</string>
 
-    <string name="pro_title">QuickFind Pro</string>
+    <string name="pro_title">FindPal Pro</string>
     <string name="pro_summary">Coming soon</string>
     <string name="about_title">About</string>
     <string name="version">Version %1$s</string>
-    <string name="about_privacy">QuickFind searches your phone on your phone. Nothing you type or index leaves the device. The only network request downloads public exchange rates (European Central Bank, via frankfurter.app) when you convert a currency, and you can turn that off.</string>
+    <string name="about_privacy">FindPal searches your phone on your phone. Nothing you type or index leaves the device. The only network request downloads public exchange rates (European Central Bank, via frankfurter.app) when you convert a currency, and you can turn that off.</string>
     <string name="licenses">Open-source licenses</string>
 
     <string name="disclosure_contacts_title">Search your contacts?</string>
-    <string name="disclosure_contacts_text">QuickFind reads your contacts to find them by name or number. They are kept on this phone and never uploaded.</string>
+    <string name="disclosure_contacts_text">FindPal reads your contacts to find them by name or number. They are kept on this phone and never uploaded.</string>
     <string name="disclosure_files_title">Search your files?</string>
-    <string name="disclosure_files_text">QuickFind reads file names and folders to build a search index on this phone. File contents are not read and nothing is uploaded.</string>
+    <string name="disclosure_files_text">FindPal reads file names and folders to build a search index on this phone. File contents are not read and nothing is uploaded.</string>
     <string name="disclosure_all_files_title">Turn on full file search?</string>
-    <string name="disclosure_all_files_text">To find documents, downloads and other non-media files anywhere on your phone, Android needs you to allow “All files access” for QuickFind on the next screen. QuickFind only reads names and folders to build a search index that never leaves this phone.</string>
+    <string name="disclosure_all_files_text">To find documents, downloads and other non-media files anywhere on your phone, Android needs you to allow “All files access” for FindPal on the next screen. FindPal only reads names and folders to build a search index that never leaves this phone.</string>
 
     <string name="onboarding_1_title">Find anything.\nInstantly.</string>
     <string name="onboarding_1_text">Apps, contacts, files, settings and quick sums, from one search bar. Type two or three letters and press Enter.</string>
@@ -164,5 +164,5 @@
         <item>timer 10 min|Timer · 10 min</item>
         <item>payment|PhonePe · GPay</item>
     </string-array>
-    <string name="onboarding_3_text">Make QuickFind your default assistant app to open search with a long-press on Home or a corner swipe. You can also use the widget or the Quick Settings tile.</string>
+    <string name="onboarding_3_text">Make FindPal your default assistant app to open search with a long-press on Home or a corner swipe. You can also use the widget or the Quick Settings tile.</string>
 </resources>

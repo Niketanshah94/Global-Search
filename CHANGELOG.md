@@ -4,6 +4,9 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Changed — brand
+- Renamed to **FindPal**: app name, widget, settings, intro and privacy texts; Play Store ID `com.findpal.app` (installs alongside older test builds, which can be uninstalled). Store listing text in `docs/store/`, brand assets in `docs/brand/`.
+
 ### Changed — "Thumb Zone" design
 - New warm palette (paper background, white cards, ink text, orange accent) with a matching warm dark mode; replaces the violet Aurora look across search, intro, widget and app icon.
 - Search bar is now at the bottom by default, above the keyboard; results stack upward so the top hit is right under the thumb (top position is still available in Settings).

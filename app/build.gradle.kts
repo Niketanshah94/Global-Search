@@ -8,12 +8,13 @@ plugins {
 }
 
 android {
-    // Placeholder name and package (spec 19: owner to confirm before release).
+    // Brand: FindPal. The Kotlin namespace stays com.quickfind.* (internal only); the Play
+    // Store ID is applicationId below.
     namespace = "com.quickfind.app"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.quickfind.app"
+        applicationId = "com.findpal.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
