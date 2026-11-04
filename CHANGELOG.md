@@ -4,6 +4,17 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 
 ## [Unreleased] — Phase 1 MVP
 
+### Changed — FindPal look and live Pal
+- Brand colours from the website are the new default (dark Night, cocoa cards, cream and Pal Orange; the top hit is a cream card). Light and System themes stay in Settings; a new settings key applies dark once to existing installs.
+- Pal is now drawn live in Compose: it floats, blinks, waves and glances around. In the search header it reacts to you: glances at your results while you type, sweats while results load, cheers with a hop on a new top hit, and frets when nothing matches.
+- Empty screen shows "N things found today · about M min saved", counted from your own launches on the phone.
+- Intro uses the brand's cream pill button with a 3D edge; speech bubbles pop in.
+
+### Added — animated widgets
+- Search-bar widget (4×1): Pal's face changes expression (glance, blink, star eyes) while tips slide by ("Try “timer 10 min”", "Type “rahul”, find “राहुल”"…).
+- New Pal widget (2×2): Pal cycles moods with a bounce under rotating speech bubbles.
+- Both use RemoteViews ViewFlipper (the animation launchers support) and open search on tap; Glance is no longer used.
+
 ### Added — website
 - `website/`: FindPal landing page in the brand style (Pal mascot, cream scalloped sections): animated phone demo, time-saved calculator, iPhone vs Android vs FindPal comparison, features, Made for India, privacy, pricing (Free; Pro coming soon), FAQ.
 

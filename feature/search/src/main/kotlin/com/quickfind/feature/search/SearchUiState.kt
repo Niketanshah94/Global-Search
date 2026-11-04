@@ -31,6 +31,7 @@ data class EmptyUi(
     val clipboardAvailable: Boolean = false,
     /** A one-time code from the last 10 minutes of notifications. */
     val otp: OtpUi? = null,
+    val foundToday: Int = 0,
 )
 
 @Immutable

@@ -36,7 +36,8 @@ data class UserSettings(
     // Look and behaviour
     // Thumb Zone: the bar sits above the keyboard and results grow upward.
     val searchBarPosition: SearchBarPosition = SearchBarPosition.BOTTOM,
-    val themeMode: ThemeMode = ThemeMode.SYSTEM,
+    // The FindPal brand look is dark; Light and System remain available in Settings.
+    val themeMode: ThemeMode = ThemeMode.DARK,
     // Off by default so the Aurora palette shows; users can switch to wallpaper colours.
     val dynamicColor: Boolean = false,
     val clearQueryOnReopen: Boolean = true,

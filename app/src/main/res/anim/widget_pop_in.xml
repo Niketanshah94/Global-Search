@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pal changes expression with a little bounce. -->
+<set xmlns:android="http://schemas.android.com/apk/res/android" android:duration="420" android:interpolator="@android:anim/overshoot_interpolator">
+    <scale android:fromXScale="0.82" android:fromYScale="0.82" android:pivotX="50%" android:pivotY="60%" android:toXScale="1" android:toYScale="1" />
+    <alpha android:duration="180" android:fromAlpha="0" android:toAlpha="1" />
+</set>

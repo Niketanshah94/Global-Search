@@ -64,6 +64,7 @@ class SearchViewModel @Inject constructor(
             recentFiles = content.recentFiles,
             clipboardAvailable = clip,
             otp = content.otp?.let { OtpUi(it.code, it.source) },
+            foundToday = content.foundToday,
         ) to
             nicks.entries.associate { (nick, r) -> r.id to nick }
     }

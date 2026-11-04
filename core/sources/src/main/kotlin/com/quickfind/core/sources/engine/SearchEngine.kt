@@ -46,6 +46,8 @@ data class EmptyStateContent(
     val recentApps: List<SearchResult>,
     val recentFiles: List<SearchResult>,
     val otp: OtpProvider.Code? = null,
+    /** Results opened since local midnight. */
+    val foundToday: Int = 0,
 )
 
 /**
@@ -151,7 +153,17 @@ class SearchEngine @Inject constructor(
         val recentFiles = enabled.flatMap { runCatching { it.recent(RECENT_FILES) }.getOrDefault(emptyList()) }
             .filter { it.id !in hidden }
         val otp = sources.filterIsInstance<OtpProvider>().firstNotNullOfOrNull { it.latestOtp() }
-        return EmptyStateContent(pinned = emptyList(), recentApps = recentApps, recentFiles = recentFiles, otp = otp)
+        val midnight = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, 0); set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0); set(java.util.Calendar.MILLISECOND, 0)
+        }.timeInMillis
+        return EmptyStateContent(
+            pinned = emptyList(),
+            recentApps = recentApps,
+            recentFiles = recentFiles,
+            otp = otp,
+            foundToday = history.launchesSince(midnight),
+        )
     }
 
     /** Learns from the user's pick (spec 4.7 historyBoost/frecency). */

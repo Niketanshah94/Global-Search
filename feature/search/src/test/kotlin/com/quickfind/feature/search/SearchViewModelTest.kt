@@ -58,6 +58,7 @@ class SearchViewModelTest {
             RankingContext(Ranker.historyBoosts(normalizedQuery, picks), emptyMap(), typeBias, mode)
         override suspend fun recordLaunch(normalizedQuery: String, resultId: String) { picks += QueryPick(normalizedQuery, resultId, System.nanoTime()) }
         override suspend fun topLaunchedIds(limit: Int) = picks.map { it.resultId }.distinct()
+        override suspend fun launchesSince(sinceMillis: Long) = picks.count { it.timestampMillis >= sinceMillis }
         override suspend fun forget(resultId: String) { picks.removeAll { it.resultId == resultId } }
         override suspend fun clear() = picks.clear()
     }

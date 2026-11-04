@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Search-bar widget: Pal changes expression and tips slide by (ViewFlipper is the
+     animation home-screen widgets support). Tapping anywhere opens search. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingEnd="16dp">
+
+    <ViewFlipper
+        android:id="@+id/pal_flipper"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:autoStart="true"
+        android:flipInterval="2100"
+        android:inAnimation="@anim/widget_pop_in"
+        android:outAnimation="@anim/widget_fade_out">
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_happy" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_look" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_happy" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_blink" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_happy" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_stars" />
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/hint_flipper"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:autoStart="true"
+        android:flipInterval="3600"
+        android:inAnimation="@anim/widget_slide_in"
+        android:outAnimation="@anim/widget_slide_out">
+            <TextView style="@style/WidgetHint" android:text="@string/widget_hint" />
+            <TextView style="@style/WidgetHint" android:text="@string/widget_tip_timer" />
+            <TextView style="@style/WidgetHint" android:text="@string/widget_tip_hindi" />
+            <TextView style="@style/WidgetHint" android:text="@string/widget_tip_otp" />
+            <TextView style="@style/WidgetHint" android:text="@string/widget_tip_currency" />
+    </ViewFlipper>
+
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_widget_search"
+        android:tint="#FFFFC48A" />
+</LinearLayout>

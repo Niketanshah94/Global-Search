@@ -265,6 +265,18 @@
                 android:resource="@xml/search_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".widget.PalWidgetReceiver"
+            android:exported="true"
+            android:label="@string/pal_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pal_widget_info" />
+        </receiver>
+
         <service
             android:name=".tile.SearchTileService"
             android:exported="true"

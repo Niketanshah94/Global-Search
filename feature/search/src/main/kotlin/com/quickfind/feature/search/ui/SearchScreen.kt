@@ -49,7 +49,17 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.TextStyle
+import com.quickfind.core.ui.Brand
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -135,7 +145,7 @@ fun SearchScreen(
     ) {
         Column(Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
             if (barAtBottom) {
-                Header(actions)
+                Header(state, actions)
             } else {
                 SearchBar(queryText, state, actions, focusRequester, dismissThreshold)
                 FilterChips(state, actions)
@@ -158,10 +168,29 @@ fun SearchScreen(
     }
 }
 
+/**
+ * Pal reacts to the search: waves when idle, glances down at the results while you type,
+ * sweats while indexed results load, cheers (and hops) on a new top hit, frets on no results.
+ */
 @Composable
-private fun Header(actions: SearchActions) {
-    Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-        Pal(PalMood.HELLO, 44.dp)
+private fun Header(state: SearchUiState, actions: SearchActions) {
+    var celebrate by remember { mutableStateOf(false) }
+    LaunchedEffect(state.topHit?.id) {
+        if (state.topHit != null) {
+            celebrate = true
+            delay(1_100)
+            celebrate = false
+        }
+    }
+    val mood = when {
+        state.noResults -> PalMood.OOPS
+        celebrate -> PalMood.FOUND
+        state.hasQuery && state.isSearching -> PalMood.SEARCHING
+        state.hasQuery -> PalMood.HAPPY
+        else -> PalMood.HELLO
+    }
+    Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp, top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Pal(mood, 56.dp, lookAt = if (state.hasQuery) Offset(0.3f, 1f) else Offset.Zero)
         Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Wordmark(fontSize = 30.sp)
@@ -381,6 +410,9 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
         }
     }
     item(key = "suggestions", contentType = "suggestions") { Suggestions(actions) }
+    if (empty.foundToday > 0) {
+        item(key = "found-today", contentType = "stat") { FoundToday(empty.foundToday, Modifier.animateItem()) }
+    }
     if (empty.recentApps.isNotEmpty()) {
         item(key = "recent-apps", contentType = "grid") {
             CardBlock(stringResource(R.string.section_recent_apps), Modifier.animateItem()) { AppGrid(empty.recentApps, actions, icon) }
@@ -505,6 +537,38 @@ private fun AppGrid(apps: List<SearchResult>, actions: SearchActions, icon: Icon
                 }
                 repeat(4 - row.size) { Spacer(Modifier.weight(1f)) }
             }
+        }
+    }
+}
+
+/** "38 things found today · about 5 min saved": the website's counter, from real usage. */
+@Composable
+private fun FoundToday(count: Int, modifier: Modifier = Modifier) {
+    val shown by animateIntAsState(count, tween(900), label = "found")
+    Row(
+        modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            shown.toString(),
+            style = TextStyle(fontFamily = Brand.Display, fontWeight = FontWeight.ExtraBold, fontSize = 44.sp, color = Brand.PalOrange),
+        )
+        Spacer(Modifier.width(12.dp))
+        Column {
+            Text(
+                pluralStringResource(R.plurals.found_today, count, count),
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            )
+            // Estimate: about 8 seconds saved per search, the same figure the website uses.
+            Text(
+                stringResource(R.string.minutes_saved, maxOf(1, count * 8 / 60)),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

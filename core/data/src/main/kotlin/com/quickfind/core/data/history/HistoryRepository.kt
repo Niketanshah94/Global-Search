@@ -27,6 +27,9 @@ interface HistoryRepository {
     /** Most "frecent" result ids, for the empty-query screen. */
     suspend fun topLaunchedIds(limit: Int): List<String>
 
+    /** How many results were opened since [sinceMillis] (the "things found today" stat). */
+    suspend fun launchesSince(sinceMillis: Long): Int
+
     /** Removes one result from history (used when it is hidden). */
     suspend fun forget(resultId: String)
 
@@ -98,6 +101,11 @@ class RoomHistoryRepository @Inject constructor(
     override suspend fun topLaunchedIds(limit: Int): List<String> = mutex.withLock {
         ensureLoaded()
         Ranker.topByFrecency(launches, System.currentTimeMillis(), limit)
+    }
+
+    override suspend fun launchesSince(sinceMillis: Long): Int = mutex.withLock {
+        ensureLoaded()
+        launches.count { it.timestampMillis >= sinceMillis }
     }
 
     override suspend fun forget(resultId: String) {

@@ -96,6 +96,7 @@ import com.quickfind.core.data.settings.UserSettings
 import com.quickfind.core.indexing.FilePermissions
 import com.quickfind.core.indexing.IndexScheduler
 import com.quickfind.core.ui.Aurora
+import com.quickfind.core.ui.BrandButton
 import com.quickfind.core.ui.PalMood
 import com.quickfind.core.ui.PalWithBubble
 import com.quickfind.core.ui.Wordmark
@@ -319,7 +320,7 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
             val page = pager.currentPage
             val last = page == PAGES - 1
             val needsAsk = page == PAGE_ACCESS && !(contactsGranted && mediaGranted && calendarGranted)
-            GlowButton(
+            BrandButton(
                 text = stringResource(
                     when {
                         last -> R.string.onboarding_start
@@ -327,7 +328,6 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                         else -> R.string.next
                     },
                 ),
-                animated = !reducedMotion,
                 modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 12.dp),
             ) {
                 when {

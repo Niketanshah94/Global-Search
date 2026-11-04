@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pal widget (2x2): Pal cycles moods with a bounce while speech bubbles slide by. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_pal_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <ViewFlipper
+        android:id="@+id/bubble_flipper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoStart="true"
+        android:flipInterval="3200"
+        android:inAnimation="@anim/widget_pop_in"
+        android:outAnimation="@anim/widget_fade_out">
+            <TextView style="@style/WidgetBubble" android:text="@string/pal_widget_hi" />
+            <TextView style="@style/WidgetBubble" android:text="@string/pal_widget_lost" />
+            <TextView style="@style/WidgetBubble" android:text="@string/pal_widget_ma" />
+            <TextView style="@style/WidgetBubble" android:text="@string/pal_widget_letters" />
+            <TextView style="@style/WidgetBubble" android:text="@string/pal_widget_private" />
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/pal_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_weight="1"
+        android:autoStart="true"
+        android:flipInterval="1600"
+        android:inAnimation="@anim/widget_pop_in"
+        android:outAnimation="@anim/widget_fade_out">
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_big_hello" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_big_happy" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_big_search" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_big_found" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_big_happy" />
+        <ImageView style="@style/WidgetPal" android:src="@drawable/wpal_big_pro" />
+    </ViewFlipper>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/baloo2_extrabold"
+        android:text="@string/pal_widget_tap"
+        android:textColor="#FFFFC48A"
+        android:textSize="13sp" />
+</LinearLayout>

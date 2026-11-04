@@ -57,6 +57,7 @@ class SearchEngineTest {
             picks += QueryPick(normalizedQuery, resultId, System.nanoTime())
         }
         override suspend fun topLaunchedIds(limit: Int) = picks.map { it.resultId }.distinct().take(limit)
+        override suspend fun launchesSince(sinceMillis: Long) = picks.count { it.timestampMillis >= sinceMillis }
         override suspend fun forget(resultId: String) { picks.removeAll { it.resultId == resultId } }
         override suspend fun clear() = picks.clear()
     }
