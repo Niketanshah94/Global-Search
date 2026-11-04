@@ -96,9 +96,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .chips span.on{background:#1d1a16;color:#fff}
 .sbar{background:#fff;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:8px;font:500 15px var(--body);box-shadow:0 6px 18px rgba(60,40,10,.14)}
 .sbar .q{flex:1;white-space:nowrap;overflow:hidden}
-.sbar .q:after{content:"";display:inline-block;width:2px;height:16px;background:var(--orange);margin-left:2px;vertical-align:-3px;animation:blink 1s steps(1) infinite}
+.sbar .q:after{content:"";display:inline-block;width:2px;height:16px;background:var(--orange);margin-left:2px;vertical-align:-3px;animation:caret 1s steps(1) infinite}
 .sbar .enter{font:600 10px var(--body);color:#7a7266;background:#f1ece4;border-radius:6px;padding:3px 6px;white-space:nowrap}
-@keyframes blink{50%{opacity:0}}
+@keyframes caret{50%{opacity:0}}
 
 /* cream bands */
 .cream{background:var(--cream);color:var(--ink)}
@@ -212,7 +212,49 @@ footer a:hover{color:var(--text)}
   .btn.big{font-size:18px;padding:16px 24px}
   .price .peek{width:96px;top:-58px}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.sbar .q:after{animation:none}.btn{transition:none}}
+
+/* Pal motion: float, wave, blink, sparkle, snooze. All parts are SVG groups from mascot.js. */
+.pal svg .eyes,.pal svg .arms,.pal svg .extra{transform-box:fill-box}
+.pal svg .eyes{transform-origin:50% 50%;animation:blink 5s infinite}
+.pal svg .pupils{transition:transform .15s ease-out;transform-box:fill-box}
+.pal svg .arms-wave{transform-origin:92% 96%;animation:wave 2.4s ease-in-out infinite}
+.pal svg .arms-point{transform-origin:8% 96%;animation:nudge 3s ease-in-out infinite}
+.pal svg .arms-cheer{transform-origin:50% 100%;animation:cheer 1.2s ease-in-out infinite}
+.pal svg .extra-sparkle{transform-origin:50% 50%;animation:twinkle 1.6s ease-in-out infinite}
+.pal svg .extra-zzz{animation:zzz 2.8s ease-in-out infinite}
+.pal svg .extra-sweat{animation:sweat 2s ease-in infinite}
+.pal svg .eyes-sleepy,.pal svg .eyes-cool,.pal svg .eyes-stars{animation:none}
+@keyframes blink{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.08)}}
+@keyframes wave{0%,100%{transform:rotate(0)}15%{transform:rotate(-14deg)}30%{transform:rotate(10deg)}45%{transform:rotate(-12deg)}60%{transform:rotate(0)}}
+@keyframes nudge{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-10deg)}90%{transform:rotate(4deg)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+@keyframes zzz{0%{opacity:0;transform:translate(0,8px)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-14px)}}
+@keyframes sweat{0%{transform:translateY(0);opacity:1}100%{transform:translateY(10px);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+@keyframes hop{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-28px) scale(1.06,.96)}60%{transform:translateY(0) scale(.96,1.05)}100%{transform:translateY(0) scale(1)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes peek{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-4deg)}}
+@keyframes bounceIn{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-22px) scale(1.05)}65%{transform:translateY(0) scale(.97)}100%{transform:none}}
+.stage .pal.hi{animation:float 4s ease-in-out infinite;cursor:pointer}
+.stage .pal.hi.hop{animation:hop .6s ease-out}
+.bubble{animation:pop .5s .3s both cubic-bezier(.3,1.4,.6,1)}
+.price .peek{animation:peek 3.4s ease-in-out infinite}
+.faqhead .pal{animation:wobble 3s ease-in-out infinite;transform-origin:50% 90%}
+.final .pal{animation:breathe 3.6s ease-in-out infinite;transform-origin:50% 80%}
+.priv-pal .pal{animation:float 5s ease-in-out infinite}
+.strip .pal{transform-origin:50% 100%}
+.strip.in>div:nth-child(1) .pal{animation:bounceIn .7s .0s both}
+.strip.in>div:nth-child(2) .pal{animation:bounceIn .7s .12s both}
+.strip.in>div:nth-child(3) .pal{animation:bounceIn .7s .24s both}
+.strip.in>div:nth-child(4) .pal{animation:bounceIn .7s .36s both}
+.strip.in>div:nth-child(5) .pal{animation:bounceIn .7s .48s both}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}.sbar .q:after{animation:none}.btn{transition:none}
+  .pal,.pal *,.bubble,.strip .pal{animation:none!important;transition:none!important}
+}
 </style>
 </head>
 <body>
@@ -220,32 +262,32 @@ footer a:hover{color:var(--text)}
 <header class="nav"><div class="wrap">
   <a class="brand" href="#top" aria-label="FindPal home"><span class="tile"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="42" height="41.16" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pqcaglxr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pqcaglxg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pqcaglxh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pxzzzx2r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pxzzzx2g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pxzzzx2h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pqcaglxh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pxzzzx2h)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pqcaglxr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pqcaglxg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pxzzzx2r)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pxzzzx2g)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-happy">
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
-      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/>
+      <g class="pupils"><circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
+      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/></g></g>
   <path d="M82 118 q13 12 26 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span></span><span class="word">FIND<b>PAL</b></span></a>
   <a class="btn small" href="#download">Get the app</a>
 </div></header>
@@ -263,67 +305,67 @@ footer a:hover{color:var(--text)}
   <div class="stage">
     <span class="pal hi" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="170" height="166.6" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pr5rh09r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pr5rh09g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pr5rh09h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="peacqrxr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="peacqrxg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="peacqrxh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  <g><path d="M30 132 C 6 128, -10 108, -8 84" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <g class="arms arms-wave"><g><path d="M30 132 C 6 128, -10 108, -8 84" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
             <path d="M30 132 C 6 128, -10 108, -8 84" stroke="#F07A2E" stroke-width="10" fill="none" stroke-linecap="round"/>
             <circle cx="-8" cy="78" r="12" fill="#FFA35C" stroke="#2b1a10" stroke-width="3.5"/>
-            <path d="M-20 62 l-5 -7 M-9 58 l0 -9 M2 61 l5 -7" stroke="#FFE2B8" stroke-width="3.5" stroke-linecap="round"/></g>
+            <path d="M-20 62 l-5 -7 M-9 58 l0 -9 M2 61 l5 -7" stroke="#FFE2B8" stroke-width="3.5" stroke-linecap="round"/></g></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pr5rh09h)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#peacqrxh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pr5rh09r)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pr5rh09g)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#peacqrxr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#peacqrxg)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-happy">
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
-      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/>
+      <g class="pupils"><circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
+      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/></g></g>
   <path d="M82 118 q13 12 26 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span>
     <div class="bubble">Hi! I find your stuff.</div>
     <div class="phone" role="img" aria-label="FindPal on a phone: typing wh shows WhatsApp as the top hit">
       <div class="screen">
         <div class="top"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="33.32" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="prmref3r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="prmref3g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="prmref3h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pzyl982r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pzyl982g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pzyl982h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#prmref3h)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pzyl982h)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#prmref3r)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#prmref3g)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pzyl982r)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pzyl982g)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-happy">
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
-      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/>
+      <g class="pupils"><circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
+      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/></g></g>
   <path d="M82 118 q13 12 26 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span><span class="w">Find<b>Pal</b></span></div>
         <div class="stat"><span class="num" id="found">38</span><span>things found today<small>about 12 min saved</small></span></div>
         <div class="card" id="r2"><span class="ic" style="background:#e8743b">RP</span><div><b>Rahul Patel</b><span>Contact · +91 99251 22014</span></div></div>
@@ -342,152 +384,152 @@ footer a:hover{color:var(--text)}
   <div class="strip">
     <div><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="110" height="107.8" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pstwbvqr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pstwbvqg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pstwbvqh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pc9l2frr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pc9l2frg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pc9l2frh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  <g><path d="M30 132 C 6 128, -10 108, -8 84" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <g class="arms arms-cheer"><g><path d="M30 132 C 6 128, -10 108, -8 84" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
              <path d="M30 132 C 6 128, -10 108, -8 84" stroke="#F07A2E" stroke-width="10" fill="none" stroke-linecap="round"/>
              <circle cx="-8" cy="78" r="12" fill="#FFA35C" stroke="#2b1a10" stroke-width="3.5"/>
              <path d="M162 132 C 186 128, 202 108, 200 86" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
              <path d="M162 132 C 186 128, 202 108, 200 86" stroke="#F07A2E" stroke-width="10" fill="none" stroke-linecap="round"/>
-             <circle cx="200" cy="78" r="12" fill="#FFA35C" stroke="#2b1a10" stroke-width="3.5"/></g>
+             <circle cx="200" cy="78" r="12" fill="#FFA35C" stroke="#2b1a10" stroke-width="3.5"/></g></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pstwbvqh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pc9l2frh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pstwbvqr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pstwbvqg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pc9l2frr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pc9l2frg)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-stars">
       <path d="M72 66 l6 13 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2z" fill="#FFC93C" stroke="#2b1a10" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M118 66 l6 13 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2z" fill="#FFC93C" stroke="#2b1a10" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M118 66 l6 13 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2z" fill="#FFC93C" stroke="#2b1a10" stroke-width="3" stroke-linejoin="round"/></g>
   <ellipse cx="95" cy="124" rx="9" ry="11" fill="#7a2e14" stroke="#2b1a10" stroke-width="3.5"/><ellipse cx="95" cy="129" rx="5" ry="4" fill="#ff8a7a"/>
-  <path d="M168 30 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#FFC93C"/><path d="M26 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#FFC93C"/>
+  <g class="extra extra-sparkle"><path d="M168 30 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#FFC93C"/><path d="M26 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#FFC93C"/></g>
 </svg></span><b>1 s</b><span>with FindPal</span></div>
     <div><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="110" height="107.8" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="p08d58fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="p08d58fg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="p08d58fh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="p0k9by4r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="p0k9by4g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="p0k9by4h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#p08d58fh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#p0k9by4h)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#p08d58fr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#p08d58fg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#p0k9by4r)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#p0k9by4g)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-happy">
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
-      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/>
+      <g class="pupils"><circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
+      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/></g></g>
   <path d="M82 118 q13 12 26 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span><b>5 s</b><span>scroll the drawer</span></div>
     <div><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="110" height="107.8" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pxs0vcer" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pxs0vceg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pxs0vceh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pv4sqtbr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pv4sqtbg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pv4sqtbh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pxs0vceh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pv4sqtbh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pxs0vcer)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pxs0vceg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pv4sqtbr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pv4sqtbg)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-look">
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="81" cy="84" r="9" fill="#2b1a10"/><circle cx="127" cy="84" r="9" fill="#2b1a10"/>
-      <circle cx="84" cy="80" r="3.5" fill="#fff"/><circle cx="130" cy="80" r="3.5" fill="#fff"/>
+      <g class="pupils"><circle cx="81" cy="84" r="9" fill="#2b1a10"/><circle cx="127" cy="84" r="9" fill="#2b1a10"/>
+      <circle cx="84" cy="80" r="3.5" fill="#fff"/><circle cx="130" cy="80" r="3.5" fill="#fff"/></g>
       <path d="M58 64 q14 -8 28 0" stroke="#2b1a10" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M106 60 q14 -6 26 4" stroke="#2b1a10" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M106 60 q14 -6 26 4" stroke="#2b1a10" stroke-width="4" fill="none" stroke-linecap="round"/></g>
   <path d="M86 120 q10 4 20 -2" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <path d="M156 52 q8 12 0 18 q-8 -6 0 -18z" fill="#8fd3ff" stroke="#2b1a10" stroke-width="2.5"/>
+  <g class="extra extra-sweat"><path d="M156 52 q8 12 0 18 q-8 -6 0 -18z" fill="#8fd3ff" stroke="#2b1a10" stroke-width="2.5"/></g>
 </svg></span><b>10 s</b><span>open the wrong app</span></div>
     <div><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="110" height="107.8" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="p6funh4r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="p6funh4g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="p6funh4h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pg2sr6hr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pg2sr6hg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pg2sr6hh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#p6funh4h)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pg2sr6hh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#p6funh4r)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#p6funh4g)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pg2sr6hr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pg2sr6hg)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-worried">
       <ellipse cx="72" cy="88" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="88" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="72" cy="94" r="10" fill="#2b1a10"/><circle cx="118" cy="94" r="10" fill="#2b1a10"/>
-      <circle cx="75" cy="90" r="4" fill="#fff"/><circle cx="121" cy="90" r="4" fill="#fff"/>
-      <path d="M58 70 l26 -8 M132 70 l-26 -8" stroke="#2b1a10" stroke-width="4" stroke-linecap="round"/>
+      <g class="pupils"><circle cx="72" cy="94" r="10" fill="#2b1a10"/><circle cx="118" cy="94" r="10" fill="#2b1a10"/>
+      <circle cx="75" cy="90" r="4" fill="#fff"/><circle cx="121" cy="90" r="4" fill="#fff"/></g>
+      <path d="M58 70 l26 -8 M132 70 l-26 -8" stroke="#2b1a10" stroke-width="4" stroke-linecap="round"/></g>
   <path d="M84 126 q11 -9 22 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span><b>15 s</b><span>dig through Files</span></div>
     <div><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="110" height="107.8" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="phuaplbr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="phuaplbg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="phuaplbh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pca7ikzr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pca7ikzg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pca7ikzh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#phuaplbh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pca7ikzh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#phuaplbr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#phuaplbg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pca7ikzr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pca7ikzg)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-sleepy">
       <path d="M58 90 q14 12 28 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-      <path d="M104 90 q14 12 28 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M104 90 q14 12 28 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/></g>
   <path d="M86 118 q9 7 18 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <text x="150" y="40" font-family="Baloo 2" font-weight="800" font-size="26" fill="#FFE2B8">z</text><text x="168" y="22" font-family="Baloo 2" font-weight="800" font-size="18" fill="#FFE2B8">z</text>
+  <g class="extra extra-zzz"><text x="150" y="40" font-family="Baloo 2" font-weight="800" font-size="26" fill="#FFE2B8">z</text><text x="168" y="22" font-family="Baloo 2" font-weight="800" font-size="18" fill="#FFE2B8">z</text></g>
 </svg></span><b>20 s+</b><span>give up</span></div>
   </div>
   <div class="meter" aria-hidden="true"></div>
@@ -554,30 +596,30 @@ footer a:hover{color:var(--text)}
       <div class="screen">
         <div class="top"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="33.32" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pex36isr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pex36isg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pex36ish" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pagx38nr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pagx38ng" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pagx38nh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pex36ish)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pagx38nh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pex36isr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pex36isg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pagx38nr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pagx38ng)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-stars">
       <path d="M72 66 l6 13 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2z" fill="#FFC93C" stroke="#2b1a10" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M118 66 l6 13 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2z" fill="#FFC93C" stroke="#2b1a10" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M118 66 l6 13 14 2 -10 10 3 14 -13 -7 -13 7 3 -14 -10 -10 14 -2z" fill="#FFC93C" stroke="#2b1a10" stroke-width="3" stroke-linejoin="round"/></g>
   <ellipse cx="95" cy="124" rx="9" ry="11" fill="#7a2e14" stroke="#2b1a10" stroke-width="3.5"/><ellipse cx="95" cy="129" rx="5" ry="4" fill="#ff8a7a"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span><span class="w">Find<b>Pal</b></span></div>
         <div class="card"><span class="ic" style="background:#5f259f">Pe</span><div><b>PhonePe</b><span>App · “payment”</span></div></div>
         <div class="card"><span class="ic" style="background:#e8743b">रा</span><div><b>राहुल पटेल</b><span>Contact · +91 99251 22014</span></div></div>
@@ -592,35 +634,35 @@ footer a:hover{color:var(--text)}
 <div class="scallop"></div>
 
 <section><div class="wrap two">
-  <div style="text-align:center"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="260" height="254.79999999999998" viewBox="-26 -18 252 246">
+  <div class="priv-pal" style="text-align:center"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="260" height="254.79999999999998" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="ppu0uyxr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="ppu0uyxg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="ppu0uyxh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pr7161ur" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pr7161ug" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pr7161uh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  <g><path d="M162 132 C 186 128, 202 108, 200 86" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <g class="arms arms-point"><g><path d="M162 132 C 186 128, 202 108, 200 86" stroke="#2b1a10" stroke-width="17" fill="none" stroke-linecap="round"/>
              <path d="M162 132 C 186 128, 202 108, 200 86" stroke="#F07A2E" stroke-width="10" fill="none" stroke-linecap="round"/>
              <path d="M200 74 v-20" stroke="#2b1a10" stroke-width="11" stroke-linecap="round"/><path d="M200 74 v-20" stroke="#FFA35C" stroke-width="5" stroke-linecap="round"/>
-             <circle cx="200" cy="80" r="12" fill="#FFA35C" stroke="#2b1a10" stroke-width="3.5"/></g>
+             <circle cx="200" cy="80" r="12" fill="#FFA35C" stroke="#2b1a10" stroke-width="3.5"/></g></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#ppu0uyxh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pr7161uh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#ppu0uyxr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#ppu0uyxg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pr7161ur)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pr7161ug)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
-  
+  <g class="eyes eyes-cool">
       <path d="M50 76 h44 a4 4 0 0 1 4 4 v6 a18 18 0 0 1 -18 18 h-12 a18 18 0 0 1 -18 -18 v-6 a4 4 0 0 1 4 -4z" fill="#1b120c"/>
       <path d="M100 76 h44 a4 4 0 0 1 4 4 v6 a18 18 0 0 1 -18 18 h-12 a18 18 0 0 1 -18 -18 v-6 a4 4 0 0 1 4 -4z" fill="#1b120c"/>
       <path d="M94 82 h10" stroke="#1b120c" stroke-width="5"/>
-      <path d="M58 82 l10 -2 M108 82 l10 -2" stroke="#ffffff66" stroke-width="4" stroke-linecap="round"/>
+      <path d="M58 82 l10 -2 M108 82 l10 -2" stroke="#ffffff66" stroke-width="4" stroke-linecap="round"/></g>
   <path d="M80 118 q15 12 30 -2" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span></div>
   <div>
     <h2>Your phone. Your data. <span class="hl">Pal never tells.</span></h2>
@@ -640,30 +682,30 @@ footer a:hover{color:var(--text)}
       <ul><li>Search apps, contacts, files, folders, settings and calendar</li><li>Call, SMS and WhatsApp buttons, OTP copy</li><li>Indian-language name search</li><li>Calculator, units, currency, timers and alarms</li><li>Widget, Quick Settings tile and assistant gesture</li></ul></div>
     <div class="price pro"><span class="peek"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="120" height="117.6" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="p04tjtir" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="p04tjtig" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="p04tjtih" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pz5lf8ur" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pz5lf8ug" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pz5lf8uh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#p04tjtih)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pz5lf8uh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#p04tjtir)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#p04tjtig)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pz5lf8ur)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pz5lf8ug)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
-  
+  <g class="eyes eyes-cool">
       <path d="M50 76 h44 a4 4 0 0 1 4 4 v6 a18 18 0 0 1 -18 18 h-12 a18 18 0 0 1 -18 -18 v-6 a4 4 0 0 1 4 -4z" fill="#1b120c"/>
       <path d="M100 76 h44 a4 4 0 0 1 4 4 v6 a18 18 0 0 1 -18 18 h-12 a18 18 0 0 1 -18 -18 v-6 a4 4 0 0 1 4 -4z" fill="#1b120c"/>
       <path d="M94 82 h10" stroke="#1b120c" stroke-width="5"/>
-      <path d="M58 82 l10 -2 M108 82 l10 -2" stroke="#ffffff66" stroke-width="4" stroke-linecap="round"/>
+      <path d="M58 82 l10 -2 M108 82 l10 -2" stroke="#ffffff66" stroke-width="4" stroke-linecap="round"/></g>
   <path d="M80 118 q15 12 30 -2" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span></span><div class="tier">FindPal Pro</div><div class="amt" style="font-size:44px">Coming soon</div>
       <ul><li>Find text inside screenshots and photos</li><li>Ask AI: short answers with sources</li><li>Search inside PDFs and documents</li><li>Extra themes</li></ul></div>
   </div>
@@ -672,33 +714,33 @@ footer a:hover{color:var(--text)}
 <section style="padding-top:30px"><div class="wrap">
   <div class="faqhead"><span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="94.08" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pqkb12hr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pqkb12hg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pqkb12hh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="psruoiwr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="psruoiwg" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="psruoiwh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pqkb12hh)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#psruoiwh)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pqkb12hr)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pqkb12hg)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#psruoiwr)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#psruoiwg)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-worried">
       <ellipse cx="72" cy="88" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="88" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="72" cy="94" r="10" fill="#2b1a10"/><circle cx="118" cy="94" r="10" fill="#2b1a10"/>
-      <circle cx="75" cy="90" r="4" fill="#fff"/><circle cx="121" cy="90" r="4" fill="#fff"/>
-      <path d="M58 70 l26 -8 M132 70 l-26 -8" stroke="#2b1a10" stroke-width="4" stroke-linecap="round"/>
+      <g class="pupils"><circle cx="72" cy="94" r="10" fill="#2b1a10"/><circle cx="118" cy="94" r="10" fill="#2b1a10"/>
+      <circle cx="75" cy="90" r="4" fill="#fff"/><circle cx="121" cy="90" r="4" fill="#fff"/></g>
+      <path d="M58 70 l26 -8 M132 70 l-26 -8" stroke="#2b1a10" stroke-width="4" stroke-linecap="round"/></g>
   <path d="M84 126 q11 -9 22 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  
+  <g class="extra extra-none"></g>
 </svg></span><h2>Questions?</h2></div>
   <details><summary>Is FindPal free?</summary><p>Yes. Everything listed under Free stays free. FindPal Pro will add extras like searching text in screenshots and AI answers; core search is never locked.</p></details>
   <details><summary>Does FindPal read my files or messages?</summary><p>It reads file names and folders to build a search index on your phone, not what's inside them. Notifications are only kept if you turn that on, for 7 days, on your phone.</p></details>
@@ -711,30 +753,30 @@ footer a:hover{color:var(--text)}
 <section class="final"><div class="wrap">
   <span class="pal " aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="220" height="215.6" viewBox="-26 -18 252 246">
   <defs>
-    <linearGradient id="pdkgxs7r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
-    <radialGradient id="pdkgxs7g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
-    <linearGradient id="pdkgxs7h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
+    <linearGradient id="pj26d56r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFA35C"/><stop offset=".55" stop-color="#F07A2E"/><stop offset="1" stop-color="#D9572A"/></linearGradient>
+    <radialGradient id="pj26d56g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
+    <linearGradient id="pj26d56h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  
+  <g class="arms arms-none"></g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
-    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pdkgxs7h)" stroke="#2b1a10" stroke-width="4"/>
+    <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#pj26d56h)" stroke="#2b1a10" stroke-width="4"/>
     <path d="M116 168 h32 M116 182 h32" stroke="#7a4a2c" stroke-width="4"/>
     <rect x="112" y="132" width="40" height="18" rx="7" fill="#F07A2E" stroke="#2b1a10" stroke-width="4"/>
   </g>
   <!-- lens rim -->
-  <circle cx="95" cy="96" r="80" fill="url(#pdkgxs7r)" stroke="#2b1a10" stroke-width="5"/>
-  <circle cx="95" cy="96" r="62" fill="url(#pdkgxs7g)" stroke="#2b1a10" stroke-width="4"/>
+  <circle cx="95" cy="96" r="80" fill="url(#pj26d56r)" stroke="#2b1a10" stroke-width="5"/>
+  <circle cx="95" cy="96" r="62" fill="url(#pj26d56g)" stroke="#2b1a10" stroke-width="4"/>
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   
       <ellipse cx="56" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
       <ellipse cx="134" cy="112" rx="10" ry="6" fill="#ff8f6b" opacity=".55"/>
-  
+  <g class="eyes eyes-sleepy">
       <path d="M58 90 q14 12 28 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-      <path d="M104 90 q14 12 28 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M104 90 q14 12 28 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/></g>
   <path d="M86 118 q9 7 18 0" stroke="#2b1a10" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-  <text x="150" y="40" font-family="Baloo 2" font-weight="800" font-size="26" fill="#FFE2B8">z</text><text x="168" y="22" font-family="Baloo 2" font-weight="800" font-size="18" fill="#FFE2B8">z</text>
+  <g class="extra extra-zzz"><text x="150" y="40" font-family="Baloo 2" font-weight="800" font-size="26" fill="#FFE2B8">z</text><text x="168" y="22" font-family="Baloo 2" font-weight="800" font-size="18" fill="#FFE2B8">z</text></g>
 </svg></span>
   <h2>Stop digging. <span class="hl">Start finding.</span></h2>
   <a class="btn big" href="#download"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 9-14 9z" fill="#1d140e"/></svg>Coming soon on Google Play</a>
@@ -762,6 +804,26 @@ footer a:hover{color:var(--text)}
   ];
   var q=document.getElementById('q'), tt=document.getElementById('tt'), ta=document.getElementById('ta'), en=document.getElementById('en'), found=document.getElementById('found');
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Hero Pal: eyes follow the pointer; tap for a happy hop.
+  var hero=document.querySelector('.stage .pal.hi'), bubble=document.querySelector('.stage .bubble');
+  var pupils=hero.querySelector('.pupils');
+  window.addEventListener('pointermove',function(e){
+    var r=hero.getBoundingClientRect(), cx=r.left+r.width*.45, cy=r.top+r.height*.4;
+    var dx=e.clientX-cx, dy=e.clientY-cy, d=Math.max(1,Math.hypot(dx,dy)), k=Math.min(1,d/300)*6;
+    pupils.style.transform='translate('+(dx/d*k).toFixed(1)+'px,'+(dy/d*k).toFixed(1)+'px)';
+  },{passive:true});
+  hero.addEventListener('click',function(){
+    hero.classList.remove('hop'); void hero.offsetWidth; hero.classList.add('hop');
+    bubble.textContent='Found it!';
+    setTimeout(function(){ bubble.textContent='Hi! I find your stuff.'; hero.classList.remove('hop'); },1400);
+  });
+
+  // "Eats your time" strip: Pals bounce in one by one when scrolled into view.
+  var strip=document.querySelector('.strip');
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es,o){ es.forEach(function(e){ if(e.isIntersecting){ strip.classList.add('in'); o.disconnect(); } }); },{threshold:.4}).observe(strip);
+  }
   var i=0, count=38;
   function show(d){
     var k=0; q.textContent='';

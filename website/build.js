@@ -107,9 +107,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .chips span.on{background:#1d1a16;color:#fff}
 .sbar{background:#fff;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:8px;font:500 15px var(--body);box-shadow:0 6px 18px rgba(60,40,10,.14)}
 .sbar .q{flex:1;white-space:nowrap;overflow:hidden}
-.sbar .q:after{content:"";display:inline-block;width:2px;height:16px;background:var(--orange);margin-left:2px;vertical-align:-3px;animation:blink 1s steps(1) infinite}
+.sbar .q:after{content:"";display:inline-block;width:2px;height:16px;background:var(--orange);margin-left:2px;vertical-align:-3px;animation:caret 1s steps(1) infinite}
 .sbar .enter{font:600 10px var(--body);color:#7a7266;background:#f1ece4;border-radius:6px;padding:3px 6px;white-space:nowrap}
-@keyframes blink{50%{opacity:0}}
+@keyframes caret{50%{opacity:0}}
 
 /* cream bands */
 .cream{background:var(--cream);color:var(--ink)}
@@ -223,7 +223,49 @@ footer a:hover{color:var(--text)}
   .btn.big{font-size:18px;padding:16px 24px}
   .price .peek{width:96px;top:-58px}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.sbar .q:after{animation:none}.btn{transition:none}}
+
+/* Pal motion: float, wave, blink, sparkle, snooze. All parts are SVG groups from mascot.js. */
+.pal svg .eyes,.pal svg .arms,.pal svg .extra{transform-box:fill-box}
+.pal svg .eyes{transform-origin:50% 50%;animation:blink 5s infinite}
+.pal svg .pupils{transition:transform .15s ease-out;transform-box:fill-box}
+.pal svg .arms-wave{transform-origin:92% 96%;animation:wave 2.4s ease-in-out infinite}
+.pal svg .arms-point{transform-origin:8% 96%;animation:nudge 3s ease-in-out infinite}
+.pal svg .arms-cheer{transform-origin:50% 100%;animation:cheer 1.2s ease-in-out infinite}
+.pal svg .extra-sparkle{transform-origin:50% 50%;animation:twinkle 1.6s ease-in-out infinite}
+.pal svg .extra-zzz{animation:zzz 2.8s ease-in-out infinite}
+.pal svg .extra-sweat{animation:sweat 2s ease-in infinite}
+.pal svg .eyes-sleepy,.pal svg .eyes-cool,.pal svg .eyes-stars{animation:none}
+@keyframes blink{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.08)}}
+@keyframes wave{0%,100%{transform:rotate(0)}15%{transform:rotate(-14deg)}30%{transform:rotate(10deg)}45%{transform:rotate(-12deg)}60%{transform:rotate(0)}}
+@keyframes nudge{0%,70%,100%{transform:rotate(0)}80%{transform:rotate(-10deg)}90%{transform:rotate(4deg)}}
+@keyframes cheer{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+@keyframes zzz{0%{opacity:0;transform:translate(0,8px)}30%{opacity:1}100%{opacity:0;transform:translate(10px,-14px)}}
+@keyframes sweat{0%{transform:translateY(0);opacity:1}100%{transform:translateY(10px);opacity:0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+@keyframes hop{0%{transform:translateY(0) scale(1)}30%{transform:translateY(-28px) scale(1.06,.96)}60%{transform:translateY(0) scale(.96,1.05)}100%{transform:translateY(0) scale(1)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06);opacity:1}100%{transform:scale(1)}}
+@keyframes peek{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-4deg)}}
+@keyframes bounceIn{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-22px) scale(1.05)}65%{transform:translateY(0) scale(.97)}100%{transform:none}}
+.stage .pal.hi{animation:float 4s ease-in-out infinite;cursor:pointer}
+.stage .pal.hi.hop{animation:hop .6s ease-out}
+.bubble{animation:pop .5s .3s both cubic-bezier(.3,1.4,.6,1)}
+.price .peek{animation:peek 3.4s ease-in-out infinite}
+.faqhead .pal{animation:wobble 3s ease-in-out infinite;transform-origin:50% 90%}
+.final .pal{animation:breathe 3.6s ease-in-out infinite;transform-origin:50% 80%}
+.priv-pal .pal{animation:float 5s ease-in-out infinite}
+.strip .pal{transform-origin:50% 100%}
+.strip.in>div:nth-child(1) .pal{animation:bounceIn .7s .0s both}
+.strip.in>div:nth-child(2) .pal{animation:bounceIn .7s .12s both}
+.strip.in>div:nth-child(3) .pal{animation:bounceIn .7s .24s both}
+.strip.in>div:nth-child(4) .pal{animation:bounceIn .7s .36s both}
+.strip.in>div:nth-child(5) .pal{animation:bounceIn .7s .48s both}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}.sbar .q:after{animation:none}.btn{transition:none}
+  .pal,.pal *,.bubble,.strip .pal{animation:none!important;transition:none!important}
+}
 </style>`;
 
 const ico = (d) => `<svg width="24" height="24" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -357,7 +399,7 @@ const page = `
 <div class="scallop"></div>
 
 <section><div class="wrap two">
-  <div style="text-align:center">${P('cool', 'point', null, 260)}</div>
+  <div class="priv-pal" style="text-align:center">${P('cool', 'point', null, 260)}</div>
   <div>
     <h2>Your phone. Your data. <span class="hl">Pal never tells.</span></h2>
     <div class="priv">
@@ -417,6 +459,26 @@ const page = `
   ];
   var q=document.getElementById('q'), tt=document.getElementById('tt'), ta=document.getElementById('ta'), en=document.getElementById('en'), found=document.getElementById('found');
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Hero Pal: eyes follow the pointer; tap for a happy hop.
+  var hero=document.querySelector('.stage .pal.hi'), bubble=document.querySelector('.stage .bubble');
+  var pupils=hero.querySelector('.pupils');
+  window.addEventListener('pointermove',function(e){
+    var r=hero.getBoundingClientRect(), cx=r.left+r.width*.45, cy=r.top+r.height*.4;
+    var dx=e.clientX-cx, dy=e.clientY-cy, d=Math.max(1,Math.hypot(dx,dy)), k=Math.min(1,d/300)*6;
+    pupils.style.transform='translate('+(dx/d*k).toFixed(1)+'px,'+(dy/d*k).toFixed(1)+'px)';
+  },{passive:true});
+  hero.addEventListener('click',function(){
+    hero.classList.remove('hop'); void hero.offsetWidth; hero.classList.add('hop');
+    bubble.textContent='Found it!';
+    setTimeout(function(){ bubble.textContent='Hi! I find your stuff.'; hero.classList.remove('hop'); },1400);
+  });
+
+  // "Eats your time" strip: Pals bounce in one by one when scrolled into view.
+  var strip=document.querySelector('.strip');
+  if ('IntersectionObserver' in window){
+    new IntersectionObserver(function(es,o){ es.forEach(function(e){ if(e.isIntersecting){ strip.classList.add('in'); o.disconnect(); } }); },{threshold:.4}).observe(strip);
+  }
   var i=0, count=38;
   function show(d){
     var k=0; q.textContent='';

@@ -8,13 +8,13 @@ function pal(opts = {}) {
     happy: `
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
-      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/>`,
+      <g class="pupils"><circle cx="76" cy="90" r="9" fill="#2b1a10"/><circle cx="122" cy="90" r="9" fill="#2b1a10"/>
+      <circle cx="79" cy="86" r="3.5" fill="#fff"/><circle cx="125" cy="86" r="3.5" fill="#fff"/></g>`,
     look: `
       <ellipse cx="72" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="86" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="81" cy="84" r="9" fill="#2b1a10"/><circle cx="127" cy="84" r="9" fill="#2b1a10"/>
-      <circle cx="84" cy="80" r="3.5" fill="#fff"/><circle cx="130" cy="80" r="3.5" fill="#fff"/>
+      <g class="pupils"><circle cx="81" cy="84" r="9" fill="#2b1a10"/><circle cx="127" cy="84" r="9" fill="#2b1a10"/>
+      <circle cx="84" cy="80" r="3.5" fill="#fff"/><circle cx="130" cy="80" r="3.5" fill="#fff"/></g>
       <path d="M58 64 q14 -8 28 0" stroke="#2b1a10" stroke-width="4" fill="none" stroke-linecap="round"/>
       <path d="M106 60 q14 -6 26 4" stroke="#2b1a10" stroke-width="4" fill="none" stroke-linecap="round"/>`,
     stars: `
@@ -31,8 +31,8 @@ function pal(opts = {}) {
     worried: `
       <ellipse cx="72" cy="88" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
       <ellipse cx="118" cy="88" rx="17" ry="20" fill="#fff" stroke="#2b1a10" stroke-width="3.5"/>
-      <circle cx="72" cy="94" r="10" fill="#2b1a10"/><circle cx="118" cy="94" r="10" fill="#2b1a10"/>
-      <circle cx="75" cy="90" r="4" fill="#fff"/><circle cx="121" cy="90" r="4" fill="#fff"/>
+      <g class="pupils"><circle cx="72" cy="94" r="10" fill="#2b1a10"/><circle cx="118" cy="94" r="10" fill="#2b1a10"/>
+      <circle cx="75" cy="90" r="4" fill="#fff"/><circle cx="121" cy="90" r="4" fill="#fff"/></g>
       <path d="M58 70 l26 -8 M132 70 l-26 -8" stroke="#2b1a10" stroke-width="4" stroke-linecap="round"/>`,
   }[face];
   const mouth = {
@@ -77,7 +77,7 @@ function pal(opts = {}) {
     <radialGradient id="${id}g" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#FFFDF8"/><stop offset=".7" stop-color="#FFF1DC"/><stop offset="1" stop-color="#FFE0B8"/></radialGradient>
     <linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3420"/><stop offset="1" stop-color="#2b1a10"/></linearGradient>
   </defs>
-  ${arms}
+  <g class="arms arms-${arm}">${arms}</g>
   <!-- handle = body -->
   <g transform="rotate(-38 132 168)">
     <rect x="114" y="140" width="36" height="74" rx="18" fill="url(#${id}h)" stroke="#2b1a10" stroke-width="4"/>
@@ -90,9 +90,9 @@ function pal(opts = {}) {
   <path d="M52 62 a50 50 0 0 1 30 -22" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round" opacity=".9"/>
   <path d="M44 128 a54 54 0 0 1 -6 -18" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
   ${blush}
-  ${eyes}
+  <g class="eyes eyes-${face}">${eyes}</g>
   ${mouth}
-  ${extra}
+  <g class="extra extra-${opts.extra || 'none'}">${extra}</g>
 </svg>`;
 }
 if (typeof module !== 'undefined') module.exports = { pal };
