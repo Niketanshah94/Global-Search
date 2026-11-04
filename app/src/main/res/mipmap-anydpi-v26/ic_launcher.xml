@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Pal on a dark cocoa tile (see docs/brand). Themed icons fall back to the search glyph. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background" />
-    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <foreground android:drawable="@drawable/ic_launcher_pal" />
     <monochrome android:drawable="@drawable/ic_launcher_foreground" />
 </adaptive-icon>

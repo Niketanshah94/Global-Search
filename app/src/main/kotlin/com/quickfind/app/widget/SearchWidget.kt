@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
@@ -34,6 +33,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.quickfind.app.R
+import com.quickfind.core.ui.R as UiR
 import com.quickfind.feature.search.SearchActivity
 
 /** Home-screen search pill (spec 6, the main entry point). Tapping opens search with the keyboard up. */
@@ -61,10 +61,9 @@ class SearchWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
-                provider = ImageProvider(R.drawable.ic_widget_search),
+                provider = ImageProvider(UiR.drawable.ic_pal_face),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(ColorProvider(Color(0xFFF7A46B))),
-                modifier = GlanceModifier.size(24.dp),
+                modifier = GlanceModifier.size(32.dp),
             )
             Spacer(GlanceModifier.width(12.dp))
             Text(

@@ -74,7 +74,11 @@ import com.quickfind.core.model.SearchResult
 import com.quickfind.feature.search.R
 import com.quickfind.feature.search.SearchScope
 import com.quickfind.feature.search.SearchUiState
+import com.quickfind.core.ui.Pal
+import com.quickfind.core.ui.PalMood
 import com.quickfind.core.ui.R as UiR
+import com.quickfind.core.ui.Wordmark
+import androidx.compose.ui.unit.sp
 
 /** Everything the search screen can ask its host to do. Keeps [SearchScreen] stateless. */
 interface SearchActions {
@@ -157,11 +161,10 @@ fun SearchScreen(
 @Composable
 private fun Header(actions: SearchActions) {
     Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Pal(PalMood.HELLO, 44.dp)
+        Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
-            Text(
-                stringResource(R.string.screen_title),
-                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
-            )
+            Wordmark(fontSize = 30.sp)
             Text(
                 stringResource(R.string.screen_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
@@ -341,12 +344,19 @@ private fun LazyListScope.results(state: SearchUiState, actions: SearchActions, 
     }
     if (state.noResults) {
         item(key = "none", contentType = "none") {
-            Text(
-                stringResource(R.string.no_results, state.query),
-                modifier = Modifier.padding(24.dp).animateItem(),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Column(Modifier.fillMaxWidth().padding(24.dp).animateItem(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Pal(PalMood.OOPS, 120.dp)
+                Text(
+                    stringResource(R.string.no_results, state.query),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+                Text(
+                    stringResource(R.string.no_results_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -432,6 +442,14 @@ private fun Pill(text: String, iconRes: Int, emphasized: Boolean, modifier: Modi
 @Composable
 private fun LazyItemScope.Suggestions(actions: SearchActions) {
     Column(Modifier.animateItem().padding(horizontal = 4.dp, vertical = 4.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(bottom = 6.dp)) {
+            Pal(PalMood.RESTING, 56.dp)
+            Text(
+                stringResource(R.string.pal_idle),
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(start = 8.dp),
+            )
+        }
         Text(
             stringResource(R.string.try_these),
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),

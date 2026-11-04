@@ -7,7 +7,9 @@
     <string name="top_hit">Top hit · press Enter</string>
     <string name="show_more">Show %1$d more</string>
     <string name="show_less">Show less</string>
-    <string name="no_results">Nothing found for “%1$s”</string>
+    <string name="no_results">Pal couldn’t find “%1$s”</string>
+    <string name="no_results_hint">Check the spelling, or turn on more sources in Settings.</string>
+    <string name="pal_idle">Lost something? Ask your Pal.</string>
     <string name="empty_hint">Type to search apps, settings and more. Turn on contacts and files in settings.</string>
     <string name="paste_clipboard">Paste from clipboard</string>
     <string name="dismiss">Dismiss</string>
@@ -98,7 +100,7 @@
     <string name="copy_otp">Copy OTP %1$s · %2$s</string>
 
     <string name="screen_title">Search</string>
-    <string name="screen_subtitle">Results grow up from your thumb</string>
+    <string name="screen_subtitle">Find anything in two letters</string>
     <string name="filter_all">All</string>
     <string name="try_these">Try</string>
 

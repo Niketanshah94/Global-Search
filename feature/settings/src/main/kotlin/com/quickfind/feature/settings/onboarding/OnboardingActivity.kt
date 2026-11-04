@@ -96,6 +96,10 @@ import com.quickfind.core.data.settings.UserSettings
 import com.quickfind.core.indexing.FilePermissions
 import com.quickfind.core.indexing.IndexScheduler
 import com.quickfind.core.ui.Aurora
+import com.quickfind.core.ui.PalMood
+import com.quickfind.core.ui.PalWithBubble
+import com.quickfind.core.ui.Wordmark
+import androidx.compose.ui.unit.sp
 import com.quickfind.core.ui.AuroraBackground
 import com.quickfind.core.ui.GlowBorderBox
 import com.quickfind.core.ui.QuickFindTheme
@@ -225,7 +229,8 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                 ) {
                     when (page) {
                         0 -> {
-                            HeroOrb(rememberVectorPainter(Icons.Default.Search), animated = !reducedMotion)
+                            PalWithBubble(PalMood.HELLO, stringResource(R.string.pal_hello), size = 170.dp)
+                            Wordmark(fontSize = 44.sp)
                             GradientTitle(stringResource(R.string.onboarding_1_title))
                             Body(stringResource(R.string.onboarding_1_text))
                             DemoSearchBar(animated = !reducedMotion)
@@ -236,7 +241,7 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                             }
                         }
                         PAGE_PRIVACY -> {
-                            HeroOrb(painterResource(UiR.drawable.ic_shield), animated = !reducedMotion, size = 112.dp)
+                            PalWithBubble(PalMood.PRO, stringResource(R.string.pal_privacy), size = 130.dp)
                             GradientTitle(stringResource(R.string.privacy_page_title))
                             PrivacyPoint(painterResource(UiR.drawable.ic_smartphone), listOf(Aurora.Violet, Aurora.Cyan), stringResource(R.string.privacy_point_device_title), stringResource(R.string.privacy_point_device_text))
                             PrivacyPoint(painterResource(UiR.drawable.ic_visibility), listOf(Aurora.Cyan, Aurora.Violet), stringResource(R.string.privacy_point_names_title), stringResource(R.string.privacy_point_names_text))
@@ -244,7 +249,7 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                             PrivacyPoint(painterResource(UiR.drawable.ic_tune), listOf(Aurora.Amber, Aurora.Magenta), stringResource(R.string.privacy_point_control_title), stringResource(R.string.privacy_point_control_text))
                         }
                         PAGE_ACCESS -> {
-                            HeroOrb(painterResource(UiR.drawable.ic_key), animated = !reducedMotion, size = 96.dp)
+                            PalWithBubble(PalMood.SEARCHING, stringResource(R.string.pal_access), size = 110.dp)
                             GradientTitle(stringResource(R.string.access_page_title))
                             Body(stringResource(R.string.access_page_text))
                             PermissionCard(
@@ -292,7 +297,7 @@ private fun OnboardingScreen(viewModel: OnboardingViewModel, s: UserSettings, on
                             )
                         }
                         else -> {
-                            HeroOrb(painterResource(UiR.drawable.ic_sparkle), animated = !reducedMotion, size = 112.dp)
+                            PalWithBubble(PalMood.FOUND, stringResource(R.string.pal_ready), size = 140.dp)
                             GradientTitle(stringResource(R.string.onboarding_3_title))
                             Body(stringResource(R.string.onboarding_3_text))
                             EntryCard(
@@ -538,7 +543,7 @@ private fun GlowButton(text: String, animated: Boolean, modifier: Modifier = Mod
 private fun GradientTitle(text: String) {
     Text(
         text,
-        style = MaterialTheme.typography.headlineLarge.copy(brush = Aurora.horizontal(), fontWeight = FontWeight.ExtraBold),
+        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
         textAlign = TextAlign.Center,
     )
 }

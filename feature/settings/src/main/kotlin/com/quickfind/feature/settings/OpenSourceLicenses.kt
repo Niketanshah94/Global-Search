@@ -10,5 +10,6 @@ object OpenSourceLicenses {
         "Material Design icons" to "Apache License 2.0",
         "MediaPipe Tasks" to "Apache License 2.0",
         "Universal Sentence Encoder model" to "Apache License 2.0",
+        "Baloo 2 font (Ek Type)" to "SIL Open Font License 1.1",
     )
 }

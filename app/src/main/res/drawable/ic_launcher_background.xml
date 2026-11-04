@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Brand "Night" with a warm glow top-left, like the brand board icon. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
@@ -8,14 +9,12 @@
     <path android:pathData="M0,0h108v108h-108z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:endX="108"
-                android:endY="108"
-                android:startX="0"
-                android:startY="0"
-                android:type="linear">
-                <item android:color="#FFF2B54A" android:offset="0" />
-                <item android:color="#FFE8743B" android:offset="0.55" />
-                <item android:color="#FFD9485F" android:offset="1" />
+                android:centerX="34"
+                android:centerY="24"
+                android:gradientRadius="100"
+                android:type="radial">
+                <item android:color="#FF3A2414" android:offset="0" />
+                <item android:color="#FF120D09" android:offset="1" />
             </gradient>
         </aapt:attr>
     </path>

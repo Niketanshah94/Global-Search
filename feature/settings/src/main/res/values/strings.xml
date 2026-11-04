@@ -127,7 +127,7 @@
     <string name="disclosure_all_files_title">Turn on full file search?</string>
     <string name="disclosure_all_files_text">To find documents, downloads and other non-media files anywhere on your phone, Android needs you to allow “All files access” for FindPal on the next screen. FindPal only reads names and folders to build a search index that never leaves this phone.</string>
 
-    <string name="onboarding_1_title">Find anything.\nInstantly.</string>
+    <string name="onboarding_1_title">Find anything.\nIn two letters.</string>
     <string name="onboarding_1_text">Apps, contacts, files, settings and quick sums, from one search bar. Type two or three letters and press Enter.</string>
     <string name="onboarding_2_title">Choose what to search</string>
     <string name="onboarding_2_text">Apps, settings and the calculator work right away. Contacts and files need your permission; you can change this later.</string>
@@ -155,6 +155,10 @@
     <string name="access_allowed">Allowed</string>
     <string name="access_allow_continue">Allow &amp; continue</string>
     <string name="replay_intro">Show intro again</string>
+    <string name="pal_hello">Hi! I find your stuff.</string>
+    <string name="pal_privacy">Pal never tells.</string>
+    <string name="pal_access">I only use what you allow.</string>
+    <string name="pal_ready">Ready when you are!</string>
     <string name="onboarding_start">Start searching</string>
     <!-- Demo bar on the first intro screen: "what you type|what you get". -->
     <string-array name="onboarding_demo">

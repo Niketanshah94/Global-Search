@@ -5,6 +5,7 @@ All notable changes to QuickFind are recorded here. Format: [Keep a Changelog](h
 ## [Unreleased] — Phase 1 MVP
 
 ### Changed — brand
+- Pal, the FindPal mascot, is in the app: launcher icon (Pal on a dark cocoa tile; themed icons keep the search glyph), widget, a different Pal on each intro screen with speech bubbles, the FindPal wordmark (Baloo 2) in the search header, Pal resting above the suggestions and Pal "Oops" when nothing is found.
 - Renamed to **FindPal**: app name, widget, settings, intro and privacy texts; Play Store ID `com.findpal.app` (installs alongside older test builds, which can be uninstalled). Store listing text in `docs/store/`, brand assets in `docs/brand/`.
 
 ### Changed — "Thumb Zone" design
