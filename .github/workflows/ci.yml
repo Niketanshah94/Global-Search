@@ -12,6 +12,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      # True once the Play upload key secrets are added (docs/store/PLAY_CONSOLE.md).
+      HAS_UPLOAD_KEY: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +39,29 @@ jobs:
         with:
           name: quickfind-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
+
+      # Signed app bundle for Google Play. Runs only when the upload key secrets exist.
+      - name: Signed Play bundle (.aab)
+        if: success() && env.HAS_UPLOAD_KEY == 'true'
+        env:
+          PLAY_LICENSE_KEY: ${{ secrets.PLAY_LICENSE_KEY }}
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+          FINDPAL_UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
+          FINDPAL_UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          FINDPAL_UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+          FINDPAL_VERSION_CODE: ${{ github.run_number }}
+        run: |
+          echo "$UPLOAD_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          FINDPAL_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.jks" ./gradlew :app:bundleRelease
+          rm -f "$RUNNER_TEMP/upload.jks"
+
+      - name: Upload Play bundle
+        if: success() && env.HAS_UPLOAD_KEY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: findpal-play-bundle
+          path: app/build/outputs/bundle/release/app-release.aab
           retention-days: 30
 
       - name: Upload reports

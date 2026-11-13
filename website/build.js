@@ -440,7 +440,7 @@ const page = `
 
 <footer><div class="wrap">
   <div><span class="word" style="font-size:22px">Find<b>Pal</b></span><p style="margin-top:8px">© 2026 FindPal. Made in India.</p></div>
-  <nav aria-label="Footer"><a href="#top">Privacy Policy</a><a href="#top">Terms of Use</a><a href="#top">Contact</a></nav>
+  <nav aria-label="Footer"><a href="privacy.html">Privacy Policy</a><a href="#top">Terms of Use</a><a href="#top">Contact</a></nav>
 </div></footer>
 
 <script>

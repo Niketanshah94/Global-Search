@@ -17,17 +17,32 @@ android {
         applicationId = "com.findpal.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
+        // CI passes the run number so every Play upload gets a higher version code.
+        versionCode = providers.environmentVariable("FINDPAL_VERSION_CODE").orNull?.toIntOrNull() ?: 1
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Play upload key, from CI secrets only (see docs/store/PLAY_CONSOLE.md). Never commit keys.
+    // Without it, release builds are unsigned (fine for CI checks, not uploadable).
+    val uploadKeystore = providers.environmentVariable("FINDPAL_UPLOAD_KEYSTORE").orNull
+    signingConfigs {
+        if (uploadKeystore != null) {
+            create("upload") {
+                storeFile = file(uploadKeystore)
+                storePassword = providers.environmentVariable("FINDPAL_UPLOAD_STORE_PASSWORD").get()
+                keyAlias = providers.environmentVariable("FINDPAL_UPLOAD_KEY_ALIAS").get()
+                keyPassword = providers.environmentVariable("FINDPAL_UPLOAD_KEY_PASSWORD").get()
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("upload")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signing is configured outside the repo (Play App Signing / CI secrets). Never commit keys.
         }
     }
 

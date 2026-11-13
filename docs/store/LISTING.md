@@ -47,10 +47,14 @@ The search bar sits right above your keyboard and results grow up from it, so th
 🔒 PRIVATE BY DESIGN
 Everything is searched on your phone. Contacts, files, notifications and history never leave it. No ads, no tracking. The only download is public exchange rates for currency conversion, and you can turn it off. Every permission is optional, and you can delete all data from Settings at any time.
 
+⭐ FREE AND PRO
+FindPal Free searches your contacts: find anyone in two letters, in English or Indian scripts, and call them in one tap.
+FindPal Pro unlocks everything else: apps, files, settings, calendar and notifications, OTP copy, quick answers, search by meaning, pins and nicknames, plus WhatsApp, SMS, Telegram and Signal from search. Try Pro free for 7 days, then pay monthly or yearly. Cancel anytime in Google Play.
+
 📲 OPEN IT FROM ANYWHERE
 Home-screen widget, Quick Settings tile, the assistant gesture (long-press Home or swipe from the corner), app shortcuts, or an optional notification.
 
-FindPal works on Android 8.0 and newer. Apps, settings and the calculator work with no permissions at all.
+FindPal works on Android 8.0 and newer. Contact search needs only the contacts permission; every other permission is optional.
 
 ## Category and tags
 - Category: **Tools**
@@ -59,7 +63,7 @@ FindPal works on Android 8.0 and newer. Apps, settings and the calculator work w
 ## Contact details
 - Email: (your support address)
 - Website: (the published website URL)
-- Privacy policy: (required; publish the privacy section of the website as its own page)
+- Privacy policy: `https://<your-site>/privacy.html` (the page is in `website/privacy.html`; replace SUPPORT_EMAIL and DEVELOPER_NAME in it first)
 
 ## Graphic assets
 | Asset | Size | File |
@@ -68,6 +72,6 @@ FindPal works on Android 8.0 and newer. Apps, settings and the calculator work w
 | Feature graphic | 1024 × 500 PNG | `images/feature-graphic.png` |
 | Phone screenshots | 1080 × 1920 PNG (6) | `images/screenshot-1.png` … `screenshot-6.png` |
 
-Screenshots are design renders of the current Thumb Zone UI. Before launch, replace them with
+All of these are in `docs/store/images/` (regenerate them with `node docs/store/build-images.js`). Screenshots are design renders of the current Thumb Zone UI. Before launch, replace them with
 real device captures if anything in the app has changed (Play requires screenshots to show the
 actual app).
