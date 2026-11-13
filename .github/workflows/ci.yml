@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 45
     env:
       # True once the Play upload key secrets are added (docs/store/PLAY_CONSOLE.md).
-      HAS_UPLOAD_KEY: ${{ secrets.UPLOAD_KEYSTORE_BASE64 != '' }}
+      HAS_UPLOAD_KEY: ${{ secrets.UPLOAD_STORE_PASSWORD != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -48,24 +48,23 @@ jobs:
         if: success() && env.HAS_UPLOAD_KEY == 'true'
         env:
           PLAY_LICENSE_KEY: ${{ secrets.PLAY_LICENSE_KEY }}
-          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
-          FINDPAL_UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
-          FINDPAL_UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
-          FINDPAL_UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+          UPLOAD_STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
           FINDPAL_VERSION_CODE: ${{ github.run_number }}
         run: |
-          # Tolerate spaces/line breaks picked up when pasting the secret.
-          for v in FINDPAL_UPLOAD_STORE_PASSWORD FINDPAL_UPLOAD_KEY_PASSWORD FINDPAL_UPLOAD_KEY_ALIAS; do
-            export "$v=$(printf '%s' "${!v}" | tr -d '[:space:]')"
-          done
-          printf '%s' "$UPLOAD_KEYSTORE_BASE64" | tr -d '[:space:]' | base64 -d -i > "$RUNNER_TEMP/upload.jks"
-          echo "Keystore secret: $(printf '%s' "$UPLOAD_KEYSTORE_BASE64" | tr -d '[:space:]' | wc -c) base64 chars -> $(wc -c < "$RUNNER_TEMP/upload.jks") bytes"
-          # Fail early with a clear message if the keystore, password or alias is wrong.
-          if ! keytool -list -keystore "$RUNNER_TEMP/upload.jks" -storepass "$FINDPAL_UPLOAD_STORE_PASSWORD" -alias "$FINDPAL_UPLOAD_KEY_ALIAS" > /dev/null; then
-            echo "::error::Upload key check failed: re-paste UPLOAD_KEYSTORE_BASE64, UPLOAD_STORE_PASSWORD and UPLOAD_KEY_ALIAS exactly (see docs/store/PLAY_CONSOLE.md 7b)."
+          # The upload keystore is committed encrypted (app/signing/upload.jks.enc) with its own
+          # store password, so only that one short secret is needed. PKCS12: key password = store
+          # password, alias "findpal".
+          PW="$(printf '%s' "$UPLOAD_STORE_PASSWORD" | tr -d '[:space:]')"
+          echo "UPLOAD_STORE_PASSWORD length: ${#PW} (expected 24)"
+          if ! printf '%s' "$PW" | openssl enc -d -aes-256-cbc -pbkdf2 -iter 300000 \
+               -in app/signing/upload.jks.enc -out "$RUNNER_TEMP/upload.jks" -pass stdin; then
+            echo "::error::Could not unlock the upload key: re-paste the UPLOAD_STORE_PASSWORD secret exactly (24 characters, from GITHUB-SECRETS.txt)."
             exit 1
           fi
-          FINDPAL_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.jks" ./gradlew :app:bundleRelease
+          keytool -list -keystore "$RUNNER_TEMP/upload.jks" -storepass "$PW" -alias findpal > /dev/null
+          FINDPAL_UPLOAD_KEYSTORE="$RUNNER_TEMP/upload.jks" \
+          FINDPAL_UPLOAD_STORE_PASSWORD="$PW" FINDPAL_UPLOAD_KEY_PASSWORD="$PW" FINDPAL_UPLOAD_KEY_ALIAS=findpal \
+            ./gradlew :app:bundleRelease
           rm -f "$RUNNER_TEMP/upload.jks"
 
       - name: Upload Play bundle

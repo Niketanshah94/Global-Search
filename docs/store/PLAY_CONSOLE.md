@@ -168,18 +168,17 @@ keytool -genkeypair -v -keystore findpal-upload.jks -alias findpal \
 ```
 Keep `findpal-upload.jks` and its passwords somewhere safe, such as a password manager. Never commit them. Play App Signing (on by default) holds the real signing key; this upload key only proves uploads come from you, and Google can reset it if you lose it.
 
-### 7b. Give it to GitHub so CI builds the signed bundle
-On GitHub, go to repo **Settings → Secrets and variables → Actions → New repository secret** and add:
+### 7b. Let CI sign the bundle
+The upload keystore is committed **encrypted** at `app/signing/upload.jks.enc`, locked with its own 24-character random store password. CI needs just one GitHub secret, in **Settings → Secrets and variables → Actions**:
 
 | Secret | Value |
 |---|---|
-| `UPLOAD_KEYSTORE_BASE64` | Output of `base64 -w0 findpal-upload.jks` (macOS: `base64 -i findpal-upload.jks`) |
-| `UPLOAD_STORE_PASSWORD` | The keystore password |
-| `UPLOAD_KEY_ALIAS` | `findpal` |
-| `UPLOAD_KEY_PASSWORD` | The key password (often the same) |
-| `PLAY_LICENSE_KEY` | From Play Console → Monetise → Monetisation setup → Licensing (add once the app exists) |
+| `UPLOAD_STORE_PASSWORD` | The 24-character password from `GITHUB-SECRETS.txt` |
+| `PLAY_LICENSE_KEY` | From Play Console → Monetize → Monetization setup → Licensing (add once the app exists) |
 
-Each push then also produces a **`findpal-play-bundle`** artifact (`app-release.aab`) on the Actions run. Its version code is the CI run number, so it goes up with every build automatically.
+(`UPLOAD_KEYSTORE_BASE64`, `UPLOAD_KEY_ALIAS` and `UPLOAD_KEY_PASSWORD` are no longer used, so you can delete them.)
+
+Every push, and every **Actions → CI → Run workflow**, then also produces a **`findpal-play-bundle`** artifact (`app-release.aab`). Its version code is the CI run number, so it goes up with every build. Keep `findpal-upload.jks` and the password backed up yourself too. If they're ever lost, Play App Signing lets you request a new upload key.
 
 ### 7c. Internal testing first (Test and release → Testing → Internal testing)
 1. **Create new release** → accept **Play App Signing** → upload `app-release.aab`.
