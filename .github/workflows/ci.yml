@@ -25,6 +25,9 @@ jobs:
       # Spec 16: lint, unit tests and assembleRelease on every push.
       - name: Lint, unit tests, release build
         run: ./gradlew lint test assembleRelease assembleDebug --continue
+        env:
+          # Optional: Play Console licensing key, so FindPal Pro purchases are signature-checked.
+          PLAY_LICENSE_KEY: ${{ secrets.PLAY_LICENSE_KEY }}
 
       # Installable test build (debug-signed). Download it from the run's Artifacts section.
       - name: Upload debug APK

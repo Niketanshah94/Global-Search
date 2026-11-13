@@ -58,10 +58,12 @@ dependencies {
     implementation(project(":core:sources"))
     implementation(project(":core:indexing"))
     implementation(project(":core:ui"))
+    implementation(project(":core:billing"))
     implementation(project(":feature:search"))
     implementation(project(":feature:settings"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.profileinstaller)

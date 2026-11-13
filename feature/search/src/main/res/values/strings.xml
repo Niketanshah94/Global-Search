@@ -121,4 +121,12 @@
         <item>payment</item>
         <item>yt lofi</item>
     </string-array>
+    <!-- FindPal Free: everything except contacts and calling is Pro -->
+    <string name="go_pro">Go Pro</string>
+    <plurals name="locked_title">
+        <item quantity="one">Pal found %d more result</item>
+        <item quantity="other">Pal found %d more results</item>
+    </plurals>
+    <string name="locked_cta">Unlock with Pro · try it free for 7 days</string>
+    <string name="otp_locked">Your OTP is here · copy it with Pro</string>
 </resources>

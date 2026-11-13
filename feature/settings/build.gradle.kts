@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:indexing"))
     implementation(project(":core:ui"))
+    implementation(project(":core:billing"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)

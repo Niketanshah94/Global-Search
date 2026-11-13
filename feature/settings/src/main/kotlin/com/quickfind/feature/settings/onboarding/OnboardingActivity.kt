@@ -1,5 +1,8 @@
 package com.quickfind.feature.settings.onboarding
 
+import com.quickfind.core.data.billing.EntitlementRepository
+import com.quickfind.core.data.Destinations
+import android.content.Intent
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -119,7 +122,10 @@ import javax.inject.Inject
 class OnboardingViewModel @Inject constructor(
     private val repository: SettingsRepository,
     private val scheduler: IndexScheduler,
+    private val entitlements: EntitlementRepository,
 ) : ViewModel() {
+    val isPro: Boolean get() = entitlements.isPro
+
     val settings: StateFlow<UserSettings> = repository.settings
 
     fun update(transform: (UserSettings) -> UserSettings) {
@@ -149,6 +155,18 @@ class OnboardingViewModel @Inject constructor(
 class OnboardingActivity : ComponentActivity() {
     private val viewModel: OnboardingViewModel by viewModels()
 
+    /** Onboarding ends on the Pro paywall (7-day free trial, or "Continue with Free"). */
+    private fun finishWithPaywall() {
+        if (!viewModel.isPro) {
+            startActivity(
+                Intent(Destinations.ACTION_PAYWALL)
+                    .setPackage(packageName)
+                    .putExtra(Destinations.EXTRA_FROM_ONBOARDING, true),
+            )
+        }
+        finish()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -156,9 +174,9 @@ class OnboardingActivity : ComponentActivity() {
             val s by viewModel.settings.collectAsStateWithLifecycle()
             QuickFindTheme(preference = s.themeMode.toPreference(), dynamicColor = s.dynamicColor) {
                 // Back counts as "skip": onboarding should not come back on the next open.
-                BackHandler { viewModel.finish(::finish) }
+                BackHandler { viewModel.finish(::finishWithPaywall) }
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    OnboardingScreen(viewModel, s, onDone = { viewModel.finish(::finish) })
+                    OnboardingScreen(viewModel, s, onDone = { viewModel.finish(::finishWithPaywall) })
                 }
             }
         }

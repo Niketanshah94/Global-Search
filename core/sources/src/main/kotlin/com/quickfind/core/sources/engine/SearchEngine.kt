@@ -1,5 +1,6 @@
 package com.quickfind.core.sources.engine
 
+import com.quickfind.core.data.billing.EntitlementRepository
 import com.quickfind.core.data.di.DefaultDispatcher
 import com.quickfind.core.data.di.IoDispatcher
 import com.quickfind.core.data.history.HistoryRepository
@@ -9,6 +10,8 @@ import com.quickfind.core.matching.NormalizedQuery
 import com.quickfind.core.matching.ranking.AssembledResults
 import com.quickfind.core.matching.instant.QueryPrefixes
 import com.quickfind.core.matching.ranking.ResultAssembler
+import com.quickfind.core.model.ProGate
+import com.quickfind.core.model.ResultSection
 import com.quickfind.core.model.WebSearchEngine
 import com.quickfind.core.model.SearchResult
 import com.quickfind.core.model.SourceKind
@@ -34,11 +37,25 @@ data class SearchRequest(
     val scope: Set<SourceType>? = null,
 )
 
+/** Results FindPal Free found but does not show (everything except contacts). */
+data class LockedResults(val count: Int, val types: Set<SourceType>) {
+    val sections: List<ResultSection> get() = ResultSection.entries.filter { s -> s.types.any { it in types } }
+
+    companion object {
+        val NONE = LockedResults(0, emptySet())
+
+        fun of(locked: List<SearchResult>) =
+            if (locked.isEmpty()) NONE else LockedResults(locked.distinctBy { it.id }.size, locked.mapTo(HashSet()) { it.type })
+    }
+}
+
 data class EngineResult(
     val query: String,
     val results: AssembledResults,
     /** False while indexed sources are still running; their results merge in later. */
     val isComplete: Boolean,
+    /** Free tier only: what Pro would have shown too. */
+    val locked: LockedResults = LockedResults.NONE,
 )
 
 data class EmptyStateContent(
@@ -46,6 +63,8 @@ data class EmptyStateContent(
     val recentApps: List<SearchResult>,
     val recentFiles: List<SearchResult>,
     val otp: OtpProvider.Code? = null,
+    /** Free tier: an OTP is waiting but copying it is Pro. */
+    val otpLocked: Boolean = false,
     /** Results opened since local midnight. */
     val foundToday: Int = 0,
 )
@@ -64,6 +83,7 @@ class SearchEngine @Inject constructor(
     private val history: HistoryRepository,
     private val resultPrefs: ResultPrefsRepository,
     private val settings: SettingsRepository,
+    private val entitlements: EntitlementRepository,
     @DefaultDispatcher private val cpu: CoroutineDispatcher,
     @IoDispatcher private val io: CoroutineDispatcher,
 ) {
@@ -80,6 +100,7 @@ class SearchEngine @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun results(requests: Flow<SearchRequest>): Flow<EngineResult> = requests.transformLatest { request ->
         val user = settings.settings.value
+        val isPro = entitlements.current().isPro
         // Prefix shortcuts: "f report" (files only), "yt lofi" (YouTube search).
         var text = request.text
         var scopeTypes = request.scope
@@ -130,18 +151,31 @@ class SearchEngine @Inject constructor(
                 .flatten()
                 .filter(inScope)
 
-            val fastAssembled = withContext(cpu) { ResultAssembler.assemble(fast, context, hidden) }
-            emit(EngineResult(request.text, fastAssembled, isComplete = indexed.isEmpty()))
+            val (fastShown, fastLocked) = gate(fast, isPro, hidden)
+            val fastAssembled = withContext(cpu) { ResultAssembler.assemble(fastShown, context, hidden) }
+            emit(EngineResult(request.text, fastAssembled, isComplete = indexed.isEmpty(), locked = fastLocked))
 
             if (indexed.isNotEmpty()) {
                 val all = fast + indexedJobs.awaitAll().flatten().filter(inScope)
-                val assembled = withContext(cpu) { ResultAssembler.assemble(all, context, hidden) }
-                emit(EngineResult(request.text, assembled, isComplete = true))
+                val (shown, locked) = gate(all, isPro, hidden)
+                val assembled = withContext(cpu) { ResultAssembler.assemble(shown, context, hidden) }
+                emit(EngineResult(request.text, assembled, isComplete = true, locked = locked))
             }
         }
     }
 
+    /**
+     * FindPal Free shows contacts only. Web search is a fallback, not a find, so it is neither
+     * shown nor counted as locked.
+     */
+    private fun gate(results: List<SearchResult>, isPro: Boolean, hidden: Set<String>): Pair<List<SearchResult>, LockedResults> {
+        if (isPro) return results to LockedResults.NONE
+        val (shown, locked) = results.partition { ProGate.isFree(it.type) }
+        return shown to LockedResults.of(locked.filter { it.type != SourceType.WEB && it.id !in hidden })
+    }
+
     suspend fun emptyState(): EmptyStateContent {
+        val isPro = entitlements.current().isPro
         val hidden = resultPrefs.hiddenIds.value
         val enabled = sources.filter { it.isEnabled.value }
         val recentIds = history.topLaunchedIds(RECENT_APPS * 2)
@@ -159,9 +193,10 @@ class SearchEngine @Inject constructor(
         }.timeInMillis
         return EmptyStateContent(
             pinned = emptyList(),
-            recentApps = recentApps,
-            recentFiles = recentFiles,
-            otp = otp,
+            recentApps = if (isPro) recentApps else emptyList(),
+            recentFiles = if (isPro) recentFiles else emptyList(),
+            otp = if (isPro) otp else null,
+            otpLocked = !isPro && otp != null,
             foundToday = history.launchesSince(midnight),
         )
     }

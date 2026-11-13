@@ -1,6 +1,8 @@
 package com.quickfind.feature.search
 
 import app.cash.turbine.test
+import com.quickfind.core.data.billing.Entitlement
+import com.quickfind.core.data.billing.EntitlementRepository
 import com.quickfind.core.data.db.HiddenResultEntity
 import com.quickfind.core.data.history.HistoryRepository
 import com.quickfind.core.data.results.ResultPrefsRepository
@@ -76,6 +78,12 @@ class SearchViewModelTest {
         override suspend fun removeNickname(resultId: String) { nicknames.value = nicknames.value.filterValues { it.id != resultId } }
     }
 
+    private class Entitlements(pro: Boolean = true) : EntitlementRepository {
+        override val entitlement = MutableStateFlow(Entitlement(subscribed = pro, loaded = true))
+        override suspend fun setSubscribed(active: Boolean) { entitlement.value = entitlement.value.copy(subscribed = active) }
+        override suspend fun setTestUnlock(on: Boolean) { entitlement.value = entitlement.value.copy(testUnlock = on) }
+    }
+
     private class Settings : SettingsRepository {
         override val settings = MutableStateFlow(UserSettings())
         override val loaded = settings
@@ -88,10 +96,11 @@ class SearchViewModelTest {
     private val prefs = Prefs()
 
     private fun vm() = SearchViewModel(
-        SearchEngine(setOf(apps), history, prefs, Settings(), dispatcher, dispatcher),
+        SearchEngine(setOf(apps), history, prefs, Settings(), Entitlements(), dispatcher, dispatcher),
         prefs,
         history,
         Settings(),
+        Entitlements(),
     )
 
     @Test

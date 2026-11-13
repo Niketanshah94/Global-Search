@@ -79,6 +79,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quickfind.core.model.ResultAction
+import com.quickfind.feature.search.LockedUi
+import com.quickfind.core.model.ProGate
+import com.quickfind.core.model.ProFeature
 import com.quickfind.core.model.ResultSection
 import com.quickfind.core.model.SearchResult
 import com.quickfind.feature.search.R
@@ -106,6 +109,8 @@ interface SearchActions {
     fun onDismissClipboard()
     fun onOpenSettings()
     fun onDismiss()
+    /** Opens the FindPal Pro paywall, saying which feature was tapped. */
+    fun onUpgrade(feature: ProFeature)
 }
 
 object SearchTestTags {
@@ -198,6 +203,17 @@ private fun Header(state: SearchUiState, actions: SearchActions) {
                 stringResource(R.string.screen_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (!state.isPro) {
+            Text(
+                stringResource(R.string.go_pro),
+                style = TextStyle(fontFamily = Brand.Display, fontWeight = FontWeight.ExtraBold, fontSize = 15.sp, color = Brand.Ink),
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Brand.Cream)
+                    .clickable { actions.onUpgrade(ProFeature.GENERAL) }
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
             )
         }
         IconButton(onClick = actions::onOpenSettings) {
@@ -371,6 +387,11 @@ private fun LazyListScope.results(state: SearchUiState, actions: SearchActions, 
             ResultCard(result, actions, icon, Modifier.animateItem())
         }
     }
+    state.locked?.let { locked ->
+        item(key = "locked", contentType = "locked") {
+            LockedCard(locked, Modifier.animateItem()) { actions.onUpgrade(ProGate.featureFor(locked.types)) }
+        }
+    }
     if (state.noResults) {
         item(key = "none", contentType = "none") {
             Column(Modifier.fillMaxWidth().padding(24.dp).animateItem(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -402,6 +423,16 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
             ) { actions.onCopy(otp.code) }
         }
     }
+    if (empty.otpLocked) {
+        item(key = "otp-locked", contentType = "pill") {
+            Pill(
+                text = stringResource(R.string.otp_locked),
+                iconRes = UiR.drawable.ic_key,
+                emphasized = true,
+                modifier = Modifier.animateItem(),
+            ) { actions.onUpgrade(ProFeature.OTP) }
+        }
+    }
     if (empty.clipboardAvailable) {
         item(key = "clipboard", contentType = "pill") {
             Pill(stringResource(R.string.paste_clipboard), UiR.drawable.ic_copy, emphasized = false, modifier = Modifier.animateItem()) {
@@ -426,6 +457,42 @@ private fun LazyListScope.emptyState(state: SearchUiState, actions: SearchAction
     if (empty.recentFiles.isNotEmpty()) {
         items(empty.recentFiles, key = { "recent-file:${it.id}" }, contentType = { "row" }) { r ->
             ResultCard(r, actions, icon, Modifier.animateItem(), badge = stringResource(R.string.section_recent_files))
+        }
+    }
+}
+
+/** Free tier: "Pal found 7 more · Apps, Files", a cream card that opens the Pro paywall. */
+@Composable
+private fun LockedCard(locked: LockedUi, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.inverseSurface,
+        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
+        Row(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Pal(PalMood.PRO, 52.dp)
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    pluralStringResource(R.plurals.locked_title, locked.count, locked.count),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+                )
+                Text(
+                    locked.sections.take(3).map { sectionTitle(it) }.joinToString(" · "),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.inverseOnSurface.copy(alpha = 0.7f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    stringResource(R.string.locked_cta),
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.inversePrimary,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
         }
     }
 }

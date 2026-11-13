@@ -113,11 +113,10 @@
     <string name="delete_index_summary">Removes the file index; it rebuilds while files search is on</string>
     <string name="delete_index_confirm">Delete the file index from this phone?</string>
 
-    <string name="pro_title">FindPal Pro</string>
-    <string name="pro_summary">Coming soon</string>
+    <string name="pro_summary">Apps, files, WhatsApp, OTP and more · try it free for 7 days</string>
     <string name="about_title">About</string>
     <string name="version">Version %1$s</string>
-    <string name="about_privacy">FindPal searches your phone on your phone. Nothing you type or index leaves the device. The only network request downloads public exchange rates (European Central Bank, via frankfurter.app) when you convert a currency, and you can turn that off.</string>
+    <string name="about_privacy">FindPal searches your phone on your phone. Nothing you type or index leaves the device. The only network request downloads public exchange rates (European Central Bank, via frankfurter.app) when you convert a currency, and you can turn that off. FindPal Pro subscriptions are handled entirely by Google Play: FindPal never sees your payment details.</string>
     <string name="licenses">Open-source licenses</string>
 
     <string name="disclosure_contacts_title">Search your contacts?</string>
@@ -169,4 +168,52 @@
         <item>payment|PhonePe · GPay</item>
     </string-array>
     <string name="onboarding_3_text">Make FindPal your default assistant app to open search with a long-press on Home or a corner swipe. You can also use the widget or the Quick Settings tile.</string>
+
+    <!-- FindPal Pro paywall -->
+    <string name="close">Close</string>
+    <string name="retry">Try again</string>
+    <string name="continue_free">Continue with Free</string>
+    <string name="restore_purchase">Restore purchase</string>
+    <string name="manage_subscription">Manage subscription in Google Play</string>
+    <string name="headline_general">Find everything with Pro</string>
+    <string name="headline_apps">Open any app in two letters</string>
+    <string name="headline_files">Find any file, in any folder</string>
+    <string name="headline_messaging">WhatsApp, SMS and Telegram, right from search</string>
+    <string name="headline_otp">Copy every OTP in one tap</string>
+    <string name="headline_answers">Maths, money, units and timers</string>
+    <string name="headline_more">See everything Pal found</string>
+    <string name="headline_pins">Pin and nickname your favourites</string>
+    <string name="paywall_sub">FindPal Free searches your contacts. Pro searches your whole phone.</string>
+    <string name="benefit_apps">Apps, files, settings and calendar</string>
+    <string name="benefit_messaging">WhatsApp, SMS, Telegram, Signal and email</string>
+    <string name="benefit_otp">Your latest OTP, ready to copy</string>
+    <string name="benefit_answers">Maths, currency, units, timers and alarms</string>
+    <string name="benefit_meaning">Search by meaning: “taxi” finds Uber</string>
+    <string name="benefit_more">Pins, nicknames, scope shortcuts and more</string>
+    <string name="plan_yearly">Yearly</string>
+    <string name="plan_monthly">Monthly</string>
+    <string name="plan_save">Save %1$d%%</string>
+    <string name="plan_trial">%1$d days free</string>
+    <string name="plan_per_month_equiv">%1$s a month</string>
+    <string name="price_year">%1$s/year</string>
+    <string name="price_month">%1$s/month</string>
+    <string name="cta_trial">Start %1$d-day free trial</string>
+    <string name="cta_subscribe">Subscribe</string>
+    <string name="terms_trial_year">Free for %1$d days, then %2$s a year. Renews automatically until you cancel. Cancel anytime in Google Play, at least a day before the trial ends to avoid being charged.</string>
+    <string name="terms_trial_month">Free for %1$d days, then %2$s a month. Renews automatically until you cancel. Cancel anytime in Google Play, at least a day before the trial ends to avoid being charged.</string>
+    <string name="terms_year">%1$s a year. Renews automatically until you cancel. Cancel anytime in Google Play.</string>
+    <string name="terms_month">%1$s a month. Renews automatically until you cancel. Cancel anytime in Google Play.</string>
+    <string name="billing_unavailable">Subscriptions need Google Play. Install FindPal from the Play Store and sign in to your Google account, then try again.</string>
+    <string name="pay_pending">Your payment is pending. Pro unlocks as soon as Google Play confirms it.</string>
+    <string name="pay_failed">The purchase did not go through. Please try again.</string>
+    <string name="restore_checking">Checking Google Play for your subscription…</string>
+    <string name="test_unlock">Unlock Pro (test build only)</string>
+    <string name="pro_active_title">You have FindPal Pro</string>
+    <string name="pro_active_sub">Thanks for supporting FindPal! Everything is unlocked.</string>
+    <string name="pro_active_test">Unlocked for testing. Real users subscribe through Google Play.</string>
+    <string name="pro_upgrade">Upgrade to FindPal Pro</string>
+    <string name="pro_active_row">FindPal Pro · active</string>
+    <string name="pro_active_row_test">FindPal Pro · test unlock</string>
+    <string name="pro_test_switch">Test: unlock Pro</string>
+    <string name="pro_test_switch_summary">Test builds only. Lets you try Pro without Google Play.</string>
 </resources>

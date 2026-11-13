@@ -2,6 +2,9 @@ package com.quickfind.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quickfind.core.billing.BillingRepository
+import com.quickfind.core.data.billing.Entitlement
+import com.quickfind.core.data.billing.EntitlementRepository
 import com.quickfind.core.data.db.FileDao
 import com.quickfind.core.data.db.HiddenResultEntity
 import com.quickfind.core.data.db.NotificationDao
@@ -27,8 +30,18 @@ class SettingsViewModel @Inject constructor(
     private val scheduler: IndexScheduler,
     fileDao: FileDao,
     private val notificationDao: NotificationDao,
+    private val entitlements: EntitlementRepository,
+    private val billing: BillingRepository,
 ) : ViewModel() {
     val settings: StateFlow<UserSettings> = repository.settings
+
+    val entitlement: StateFlow<Entitlement> = entitlements.entitlement
+
+    val manageSubscriptionUrl: String get() = billing.manageSubscriptionUrl
+
+    fun setTestUnlock(on: Boolean) {
+        viewModelScope.launch { entitlements.setTestUnlock(on) }
+    }
 
     val hidden: StateFlow<List<HiddenResultEntity>> =
         resultPrefs.hidden.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())

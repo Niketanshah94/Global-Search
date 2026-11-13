@@ -32,7 +32,13 @@ data class EmptyUi(
     /** A one-time code from the last 10 minutes of notifications. */
     val otp: OtpUi? = null,
     val foundToday: Int = 0,
+    /** Free tier: an OTP is waiting; the pill offers Pro instead of the code. */
+    val otpLocked: Boolean = false,
 )
+
+/** Free tier: what Pro would also have shown for this query. */
+@Immutable
+data class LockedUi(val count: Int, val sections: List<ResultSection>, val types: Set<SourceType>)
 
 @Immutable
 data class OtpUi(val code: String, val source: String)
@@ -53,7 +59,9 @@ data class SearchUiState(
     val filter: ResultSection? = null,
     /** Results per section (top hit included), for the filter chips. */
     val counts: List<Pair<ResultSection, Int>> = emptyList(),
+    val isPro: Boolean = true,
+    val locked: LockedUi? = null,
 ) {
     val hasQuery: Boolean get() = query.isNotBlank()
-    val noResults: Boolean get() = hasQuery && !isSearching && topHit == null && sections.isEmpty()
+    val noResults: Boolean get() = hasQuery && !isSearching && topHit == null && sections.isEmpty() && locked == null
 }

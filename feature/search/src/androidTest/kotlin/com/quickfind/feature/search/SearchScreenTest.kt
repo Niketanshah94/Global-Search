@@ -17,6 +17,7 @@ import com.quickfind.core.model.SearchResult
 import com.quickfind.core.model.SourceType
 import com.quickfind.core.ui.QuickFindTheme
 import com.quickfind.feature.search.ui.SearchActions
+import com.quickfind.core.model.ProFeature
 import com.quickfind.feature.search.ui.SearchScreen
 import com.quickfind.feature.search.ui.SearchTestTags
 import org.junit.Assert.assertEquals
@@ -48,6 +49,7 @@ class SearchScreenTest {
         override fun onDismissClipboard() { events += "dismissClip" }
         override fun onOpenSettings() { events += "settings" }
         override fun onDismiss() { events += "dismiss" }
+        override fun onUpgrade(feature: ProFeature) { events += "upgrade:$feature" }
     }
 
     private fun setContent(state: SearchUiState, recorder: Recorder) {

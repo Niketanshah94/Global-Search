@@ -22,5 +22,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".billing.PaywallActivity"
+            android:exported="false"
+            android:theme="@style/Theme.QuickFind">
+            <intent-filter>
+                <action android:name="com.quickfind.action.PAYWALL" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

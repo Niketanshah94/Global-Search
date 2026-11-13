@@ -1,6 +1,8 @@
 package com.quickfind.core.sources.engine
 
 import app.cash.turbine.test
+import com.quickfind.core.data.billing.Entitlement
+import com.quickfind.core.data.billing.EntitlementRepository
 import com.quickfind.core.data.db.HiddenResultEntity
 import com.quickfind.core.data.history.HistoryRepository
 import com.quickfind.core.data.results.ResultPrefsRepository
@@ -75,6 +77,12 @@ class SearchEngineTest {
         override suspend fun removeNickname(resultId: String) { nicknames.value = nicknames.value.filterValues { it.id != resultId } }
     }
 
+    private class FakeEntitlements(pro: Boolean = true) : EntitlementRepository {
+        override val entitlement = MutableStateFlow(Entitlement(subscribed = pro, loaded = true))
+        override suspend fun setSubscribed(active: Boolean) { entitlement.value = entitlement.value.copy(subscribed = active) }
+        override suspend fun setTestUnlock(on: Boolean) { entitlement.value = entitlement.value.copy(testUnlock = on) }
+    }
+
     private class FakeSettings : SettingsRepository {
         override val settings = MutableStateFlow(UserSettings())
         override val loaded = settings
@@ -90,7 +98,8 @@ class SearchEngineTest {
         history: FakeHistory = FakeHistory(),
         prefs: FakePrefs = FakePrefs(),
         dispatcher: kotlinx.coroutines.CoroutineDispatcher,
-    ) = SearchEngine(sources, history, prefs, FakeSettings(), dispatcher, dispatcher)
+        pro: Boolean = true,
+    ) = SearchEngine(sources, history, prefs, FakeSettings(), FakeEntitlements(pro), dispatcher, dispatcher)
 
     @Test
     fun whTopHitIsWhatsApp() = runTest {
@@ -184,6 +193,29 @@ class SearchEngineTest {
         val d = StandardTestDispatcher(testScheduler)
         engine(setOf(apps), dispatcher = d).results(flowOf(SearchRequest("wh"))).test {
             assertEquals("WhatsApp", awaitItem().results.topHit!!.result.title)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun freeTierShowsContactsAndCountsTheRestAsLocked() = runTest {
+        val d = StandardTestDispatcher(testScheduler)
+        val contacts = FakeSource(SourceType.CONTACT, SourceKind.IN_MEMORY, listOf("Walter", "Camila"))
+        engine(setOf(apps, contacts), dispatcher = d, pro = false).results(flowOf(SearchRequest("wa"))).test {
+            val r = awaitItem()
+            assertEquals("Walter", r.results.topHit!!.result.title)
+            assertTrue(r.results.sections.all { s -> s.items.all { it.result.type == SourceType.CONTACT } })
+            assertTrue(r.locked.count > 0)
+            assertEquals(setOf(SourceType.APP), r.locked.types)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun proTierHasNothingLocked() = runTest {
+        val d = StandardTestDispatcher(testScheduler)
+        engine(setOf(apps), dispatcher = d, pro = true).results(flowOf(SearchRequest("wa"))).test {
+            assertEquals(0, awaitItem().locked.count)
             awaitComplete()
         }
     }

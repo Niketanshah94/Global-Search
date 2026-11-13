@@ -1,5 +1,8 @@
 package com.quickfind.feature.settings
 
+import com.quickfind.core.data.billing.Entitlement
+import android.net.Uri
+import android.content.pm.ApplicationInfo
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -67,6 +70,8 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
     val s by viewModel.settings.collectAsStateWithLifecycle()
     val hidden by viewModel.hidden.collectAsStateWithLifecycle()
     val indexed by viewModel.indexedFiles.collectAsStateWithLifecycle()
+    val entitlement by viewModel.entitlement.collectAsStateWithLifecycle()
+    val testBuild = remember { (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0 }
 
     var page by rememberSaveable { mutableStateOf(Page.MAIN) }
     var disclosure by remember { mutableStateOf(Disclosure.NONE) }
@@ -197,6 +202,14 @@ fun SettingsScreen(viewModel: SettingsViewModel, onClose: () -> Unit) {
                     onAssistant = { activity?.let(SystemLinks::openAssistantSettings) },
                     canPinWidget = SystemLinks.canPinWidget(context),
                     onAddWidget = { SystemLinks.requestPinWidget(context) },
+                    entitlement = entitlement,
+                    testBuild = testBuild,
+                    onUpgrade = {
+                        context.startActivity(Intent(Destinations.ACTION_PAYWALL).setPackage(context.packageName))
+                    },
+                    onManageSubscription = {
+                        runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(viewModel.manageSubscriptionUrl))) }
+                    },
                 )
                 Page.PERMISSIONS -> permissionsPage(
                     contactsGranted = contactsGranted,
@@ -326,7 +339,22 @@ private fun LazyListScope.mainPage(
     onAssistant: () -> Unit,
     canPinWidget: Boolean,
     onAddWidget: () -> Unit,
+    entitlement: Entitlement,
+    testBuild: Boolean,
+    onUpgrade: () -> Unit,
+    onManageSubscription: () -> Unit,
 ) {
+    // FindPal Pro first: free users see the upgrade, subscribers see how to manage it.
+    item {
+        when {
+            entitlement.subscribed -> ClickRow(stringResource(R.string.pro_active_row), stringResource(R.string.manage_subscription), onClick = onManageSubscription)
+            entitlement.isPro -> ClickRow(stringResource(R.string.pro_active_row_test), stringResource(R.string.pro_test_switch_summary), enabled = false) {}
+            else -> ClickRow(stringResource(R.string.pro_upgrade), stringResource(R.string.pro_summary), onClick = onUpgrade)
+        }
+    }
+    if (testBuild) {
+        item { SwitchRow(stringResource(R.string.pro_test_switch), stringResource(R.string.pro_test_switch_summary), entitlement.testUnlock) { viewModel.setTestUnlock(it) } }
+    }
     item { SectionTitle(stringResource(R.string.section_sources)) }
     item { SwitchRow(stringResource(R.string.source_apps), null, s.appsEnabled) { on -> viewModel.update { it.copy(appsEnabled = on) } } }
     item { SwitchRow(stringResource(R.string.source_work_apps), null, s.showWorkApps, enabled = s.appsEnabled) { on -> viewModel.update { it.copy(showWorkApps = on) } } }
@@ -443,8 +471,6 @@ private fun LazyListScope.mainPage(
     item { SectionTitle(stringResource(R.string.section_more)) }
     item { ClickRow(stringResource(R.string.permissions_title), stringResource(R.string.permissions_summary)) { onNavigate(Page.PERMISSIONS) } }
     item { ClickRow(stringResource(R.string.privacy_title), stringResource(R.string.privacy_summary)) { onNavigate(Page.PRIVACY) } }
-    // Phase 3 adds Play Billing; the row is here so the settings layout does not change later.
-    item { ClickRow(stringResource(R.string.pro_title), stringResource(R.string.pro_summary), enabled = false) {} }
     item { ClickRow(stringResource(R.string.about_title), null) { onNavigate(Page.ABOUT) } }
 }
 

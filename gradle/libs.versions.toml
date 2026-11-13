@@ -22,6 +22,8 @@ profileinstaller = "1.4.1"
 benchmark = "1.4.0"
 baselineprofile = "1.4.0"
 mediapipe = "0.10.26"
+# Play requires a Billing Library no more than ~2 years old for new apps and updates.
+playBilling = "8.0.0"
 junit = "4.13.2"
 mockk = "1.14.5"
 turbine = "1.2.1"
@@ -64,6 +66,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+play-billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "playBilling" }
 mediapipe-tasks-text = { module = "com.google.mediapipe:tasks-text", version.ref = "mediapipe" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 junit = { module = "junit:junit", version.ref = "junit" }

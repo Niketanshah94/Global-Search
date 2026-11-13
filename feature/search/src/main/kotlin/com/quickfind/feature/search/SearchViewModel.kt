@@ -5,12 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.quickfind.core.data.billing.EntitlementRepository
 import com.quickfind.core.data.history.HistoryRepository
 import com.quickfind.core.data.results.ResultPrefsRepository
 import com.quickfind.core.data.settings.SettingsRepository
 import com.quickfind.core.data.settings.UserSettings
 import com.quickfind.core.matching.instant.QueryPrefixes
 import com.quickfind.core.matching.ranking.AssembledResults
+import com.quickfind.core.model.ProGate
 import com.quickfind.core.model.ResultSection
 import com.quickfind.core.model.SearchResult
 import com.quickfind.core.sources.engine.EmptyStateContent
@@ -22,6 +24,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,6 +36,7 @@ class SearchViewModel @Inject constructor(
     private val resultPrefs: ResultPrefsRepository,
     private val history: HistoryRepository,
     private val settingsRepository: SettingsRepository,
+    private val entitlements: EntitlementRepository,
 ) : ViewModel() {
 
     private val query = MutableStateFlow("")
@@ -53,20 +58,29 @@ class SearchViewModel @Inject constructor(
     val settings: StateFlow<UserSettings> = settingsRepository.settings
 
     private val engineResults: StateFlow<EngineResult> = engine
-        .results(combine(query, scope) { q, s -> SearchRequest(q, s?.types) })
+        // Pro status is an input too: after subscribing, the query on screen re-runs unlocked.
+        .results(combine(query, scope, entitlements.entitlement.map { it.isPro }.distinctUntilChanged()) { q, s, _ -> SearchRequest(q, s?.types) })
         .stateIn(viewModelScope, SharingStarted.Eagerly, EngineResult("", AssembledResults.EMPTY, isComplete = true))
 
     /** Empty-screen content plus result id -> nickname, so the sheet updates as soon as one is set. */
-    private val emptyUi = combine(emptyContent, resultPrefs.pinned, clipboard, resultPrefs.nicknames) { content, pinned, clip, nicks ->
+    private val emptyUi = combine(
+        emptyContent,
+        resultPrefs.pinned,
+        clipboard,
+        resultPrefs.nicknames,
+        entitlements.entitlement,
+    ) { content, pinned, clip, nicks, entitlement ->
+        val pro = entitlement.isPro
         EmptyUi(
-            pinned = pinned,
+            pinned = if (pro) pinned else pinned.filter { ProGate.isFree(it.type) },
             recentApps = content.recentApps,
             recentFiles = content.recentFiles,
             clipboardAvailable = clip,
             otp = content.otp?.let { OtpUi(it.code, it.source) },
             foundToday = content.foundToday,
+            otpLocked = content.otpLocked,
         ) to
-            nicks.entries.associate { (nick, r) -> r.id to nick }
+            (nicks.entries.associate { (nick, r) -> r.id to nick } to pro)
     }
 
     val uiState: StateFlow<SearchUiState> = combine(
@@ -77,7 +91,8 @@ class SearchViewModel @Inject constructor(
         emptyUi,
     ) { q, s, results, openAndFilter, emptyAndNicks ->
         val (open, chosen) = openAndFilter
-        val (empty, nicknames) = emptyAndNicks
+        val (empty, nicksAndPro) = emptyAndNicks
+        val (nicknames, pro) = nicksAndPro
         val showingCurrent = results.query == q
         val assembled = results.results
         val top = assembled.topHit?.result
@@ -107,6 +122,10 @@ class SearchViewModel @Inject constructor(
             nicknames = nicknames,
             filter = active,
             counts = counts,
+            isPro = pro,
+            // Only for the query on screen, so an old count never sits under new results.
+            locked = results.locked.takeIf { !pro && showingCurrent && it.count > 0 }
+                ?.let { LockedUi(it.count, it.sections, it.types) },
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, SearchUiState())
 
@@ -150,6 +169,8 @@ class SearchViewModel @Inject constructor(
     fun toggleSection(section: ResultSection) {
         expanded.value = if (section in expanded.value) expanded.value - section else expanded.value + section
     }
+
+    val isPro: Boolean get() = entitlements.isPro
 
     /** Called when the screen becomes visible: refreshes recent apps/files. */
     fun refreshEmptyState() {

@@ -24,6 +24,8 @@ import com.quickfind.core.data.Destinations
 import com.quickfind.core.data.settings.SearchBarPosition
 import com.quickfind.core.data.settings.ThemeMode
 import com.quickfind.core.indexing.IndexScheduler
+import com.quickfind.core.model.ProFeature
+import com.quickfind.core.model.ProGate
 import com.quickfind.core.model.ResultAction
 import com.quickfind.core.model.ResultSection
 import com.quickfind.core.model.SearchResult
@@ -111,6 +113,7 @@ class SearchActivity : ComponentActivity() {
                         override fun onClearScope() = viewModel.setScope(null)
                         override fun onPasteClipboard() = paste()
                         override fun onCopy(text: String) {
+                            if (!viewModel.isPro) return openPaywall(ProFeature.QUICK_ANSWERS)
                             executor.execute(this@SearchActivity, ResultAction.CopyText(text))
                         }
                         override fun onDismissClipboard() = viewModel.dismissClipboard()
@@ -118,6 +121,7 @@ class SearchActivity : ComponentActivity() {
                             startActivity(Intent(Destinations.ACTION_SETTINGS).setPackage(packageName))
                         }
                         override fun onDismiss() = finish()
+                        override fun onUpgrade(feature: ProFeature) = openPaywall(feature)
                     }
                 }
                 SearchScreen(
@@ -140,7 +144,7 @@ class SearchActivity : ComponentActivity() {
                         },
                         onTogglePin = {
                             sheetFor = null
-                            viewModel.togglePin(result)
+                            if (viewModel.isPro) viewModel.togglePin(result) else openPaywall(ProFeature.PINS)
                         },
                         onHide = {
                             sheetFor = null
@@ -150,7 +154,7 @@ class SearchActivity : ComponentActivity() {
                         nickname = state.nicknames[result.id],
                         onEditNickname = {
                             sheetFor = null
-                            nicknameFor = result
+                            if (viewModel.isPro) nicknameFor = result else openPaywall(ProFeature.PINS)
                         },
                     )
                 }
@@ -230,7 +234,20 @@ class SearchActivity : ComponentActivity() {
         viewModel.setScope(scope)
     }
 
+    private fun openPaywall(feature: ProFeature) {
+        startActivity(
+            Intent(Destinations.ACTION_PAYWALL)
+                .setPackage(packageName)
+                .putExtra(Destinations.EXTRA_PRO_FEATURE, feature.name),
+        )
+    }
+
     private fun perform(result: SearchResult, action: ResultAction, view: View) {
+        // FindPal Free: contacts can be called (or opened); WhatsApp, SMS and the rest are Pro.
+        if (!viewModel.isPro && !(ProGate.isFree(result.type) && ProGate.isFree(action))) {
+            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+            return openPaywall(ProGate.featureFor(action))
+        }
         val outcome = executor.execute(this, action)
         if (outcome == ActionOutcome.FAILED) return
         // A light tick when something launches (spec 7).

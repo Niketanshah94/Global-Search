@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
+import com.quickfind.core.data.billing.DataStoreEntitlementRepository
+import com.quickfind.core.data.billing.EntitlementRepository
 import com.quickfind.core.data.db.FileDao
 import com.quickfind.core.data.db.HistoryDao
 import com.quickfind.core.data.db.IndexMetaDao
@@ -77,4 +79,5 @@ abstract class DataBindsModule {
     @Binds abstract fun settings(impl: DataStoreSettingsRepository): SettingsRepository
     @Binds abstract fun history(impl: RoomHistoryRepository): HistoryRepository
     @Binds abstract fun resultPrefs(impl: RoomResultPrefsRepository): ResultPrefsRepository
+    @Binds abstract fun entitlements(impl: DataStoreEntitlementRepository): EntitlementRepository
 }
