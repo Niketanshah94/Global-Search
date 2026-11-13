@@ -3,6 +3,8 @@ name: CI
 on:
   push:
   pull_request:
+  # "Run workflow" button on the Actions tab, e.g. to build the Play bundle after adding secrets.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
