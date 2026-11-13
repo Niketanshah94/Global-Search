@@ -294,7 +294,7 @@ const page = `
     <p class="lede">FindPal searches your whole phone from one bar: apps, people, files, OTPs, settings and quick sums. Type two letters, and the right thing is already under your thumb.</p>
     <div class="cta" id="download"><a class="btn big" href="#download" aria-label="Coming soon on Google Play">
       <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 9-14 9z" fill="#1d140e"/></svg>Coming soon on Google Play</a></div>
-    <div class="trust"><span><b>Free</b> core search</span><span>·</span><span><b>No ads</b>, no tracking</span><span>·</span><span>Works <b>offline</b></span></div>
+    <div class="trust"><span><b>7 days free</b> Pro trial</span><span>·</span><span><b>No ads</b>, no tracking</span><span>·</span><span>Works <b>offline</b></span></div>
   </div>
   <div class="stage">
     ${P('happy', 'wave', null, 170, 'hi')}
@@ -414,16 +414,17 @@ const page = `
 <section id="pricing" style="padding-top:20px"><div class="wrap">
   <h2>Pricing</h2>
   <div class="prices">
-    <div class="price"><div class="tier">Free</div><div class="amt">₹0</div>
-      <ul><li>Search apps, contacts, files, folders, settings and calendar</li><li>Call, SMS and WhatsApp buttons, OTP copy</li><li>Indian-language name search</li><li>Calculator, units, currency, timers and alarms</li><li>Widget, Quick Settings tile and assistant gesture</li></ul></div>
-    <div class="price pro"><span class="peek">${P('cool', 'none', null, 120)}</span><div class="tier">FindPal Pro</div><div class="amt" style="font-size:44px">Coming soon</div>
-      <ul><li>Find text inside screenshots and photos</li><li>Ask AI: short answers with sources</li><li>Search inside PDFs and documents</li><li>Extra themes</li></ul></div>
+    <div class="price"><div class="tier">Free</div><div class="amt">$0</div>
+      <ul><li>Search your contacts in two letters</li><li>Indian-language name search (राहुल ↔ rahul)</li><li>Call any contact or number in one tap</li><li>Widget, Quick Settings tile and assistant gesture</li></ul></div>
+    <div class="price pro"><span class="peek">${P('cool', 'none', null, 120)}</span><div class="tier">FindPal Pro</div><div class="amt">$4.99<small>/ month</small></div>
+      <ul><li>Everything in Free</li><li>Apps, files, folders, settings, calendar and notifications</li><li>WhatsApp, SMS, Telegram, Signal and email from search</li><li>OTP copy, calculator, units, currency, timers and alarms</li><li>Search by meaning, pins and nicknames</li><li><b>7-day free trial</b> · save with yearly</li></ul></div>
   </div>
+  <p style="margin-top:18px;color:var(--muted);font-size:15px">Billed through Google Play in your local currency. Cancel anytime in Google Play. Prices may vary by country.</p>
 </div></section>
 
 <section style="padding-top:30px"><div class="wrap">
   <div class="faqhead">${P('worried', 'none', null, 96)}<h2>Questions?</h2></div>
-  <details><summary>Is FindPal free?</summary><p>Yes. Everything listed under Free stays free. FindPal Pro will add extras like searching text in screenshots and AI answers; core search is never locked.</p></details>
+  <details><summary>Is FindPal free?</summary><p>FindPal is free to download and search your contacts. FindPal Pro unlocks the rest of your phone (apps, files, settings, OTPs, quick answers and messaging shortcuts) for $4.99 a month, or less with a yearly plan. New subscribers get 7 days free, and you can cancel anytime in Google Play.</p></details>
   <details><summary>Does FindPal read my files or messages?</summary><p>It reads file names and folders to build a search index on your phone, not what's inside them. Notifications are only kept if you turn that on, for 7 days, on your phone.</p></details>
   <details><summary>Does it need the internet?</summary><p>No. Search works offline. The only network request downloads public exchange rates when you convert a currency, and you can switch that off.</p></details>
   <details><summary>Do I have to change my home screen?</summary><p>No. FindPal is a normal app. Open it from the widget, the Quick Settings tile, the assistant gesture (long-press Home or swipe from a corner) or the app icon.</p></details>
@@ -440,7 +441,7 @@ const page = `
 
 <footer><div class="wrap">
   <div><span class="word" style="font-size:22px">Find<b>Pal</b></span><p style="margin-top:8px">© 2026 FindPal. Made in India.</p></div>
-  <nav aria-label="Footer"><a href="privacy.html">Privacy Policy</a><a href="#top">Terms of Use</a><a href="#top">Contact</a></nav>
+  <nav aria-label="Footer"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a><a href="mailto:SUPPORT_EMAIL">Contact</a></nav>
 </div></footer>
 
 <script>

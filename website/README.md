@@ -7,5 +7,9 @@ Google Fonts (Baloo 2, Inter Tight, Inter).
 To change content, edit `build.js` and run `node website/build.js`; it regenerates `index.html`
 from the brand mascot in `docs/brand/source/mascot.js`.
 
-Before launch: point the "Coming soon on Google Play" buttons at the Play listing, and replace the
-footer's Privacy Policy, Terms and Contact links with real pages (Play requires a privacy policy URL).
+Pages: `index.html` (home), `privacy.html` (privacy policy, the URL Google Play asks for) and
+`terms.html` (terms of use, including subscription and free-trial terms). Upload all three to the
+same folder on your server.
+
+Before launch: replace `SUPPORT_EMAIL`, `DEVELOPER_NAME` and `GOVERNING_LAW` in the three pages,
+and point the "Coming soon on Google Play" buttons at the Play listing.
